@@ -1,9 +1,19 @@
 import axios from "axios";
 
+// Validate API base URL
+const getBaseURL = () => {
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL;
+  if (!url || url === 'undefined') {
+    console.error('❌ NEXT_PUBLIC_API_BASE_URL is not set! Please check your environment variables.');
+    return ''; // Return empty string to avoid undefined in URLs
+  }
+  return url;
+};
+
 // console.log("httpServices Base_URL:", process.env.NEXT_PUBLIC_API_BASE_URL);
 
 const instance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: getBaseURL(),
   timeout: 50000,
   headers: {
     Accept: "application/json",
