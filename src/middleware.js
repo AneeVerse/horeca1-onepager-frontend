@@ -6,6 +6,11 @@ const defaultLocale = "en";
 const protectedRoutes = ["/user", "/order", "/checkout"];
 
 export async function middleware(request) {
+  // If auth secret is missing (or running in edge without access), bypass to avoid crashes
+  if (!process.env.NEXTAUTH_SECRET) {
+    return NextResponse.next();
+  }
+
   const { pathname } = request.nextUrl;
 
   // Skip internal and static assets
@@ -54,5 +59,6 @@ export async function middleware(request) {
 }
 
 export const config = {
-  matcher: ["/((?!_next|favicon.ico|api|images).*)"],
+  // Only run middleware on protected paths to reduce edge crashes/timeouts
+  matcher: ["/user/:path*", "/order/:path*", "/checkout/:path*"],
 };
