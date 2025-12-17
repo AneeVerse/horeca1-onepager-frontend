@@ -25,13 +25,14 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  // Fetch settings with fallback to null if they fail
-  const { globalSetting } = await getGlobalSetting().catch(() => ({ globalSetting: null }));
-  const { storeSetting } = await getStoreSetting().catch(() => ({ storeSetting: null }));
-  const { storeCustomizationSetting, error } = await getStoreCustomizationSetting().catch(() => ({ 
-    storeCustomizationSetting: null, 
-    error: 'Settings unavailable' 
-  }));
+  // Fetch settings with error handling - use defaults if API fails
+  const globalResult = await getGlobalSetting();
+  const storeResult = await getStoreSetting();
+  const customizationResult = await getStoreCustomizationSetting();
+
+  const globalSetting = globalResult.globalSetting || {};
+  const storeSetting = storeResult.storeSetting || {};
+  const storeCustomizationSetting = customizationResult.storeCustomizationSetting || {};
 
   return (
     <html lang="en" className="" suppressHydrationWarning>
@@ -57,7 +58,7 @@ export default async function RootLayout({ children }) {
               {/* <MobileFooter globalSetting={globalSetting} /> */}
               <div className="w-full">
                 <FooterTop
-                  error={error}
+                  error={customizationResult.error}
                   storeCustomizationSetting={storeCustomizationSetting}
                 />
                 <div className="hidden relative  lg:block mx-auto max-w-screen-2xl py-6 px-3 sm:px-10">
@@ -68,7 +69,7 @@ export default async function RootLayout({ children }) {
                 <hr className="hr-line"></hr>
                 <div className="border-t border-gray-100 w-full">
                   <Footer
-                    error={error}
+                    error={customizationResult.error}
                     storeCustomizationSetting={storeCustomizationSetting}
                   />
                 </div>

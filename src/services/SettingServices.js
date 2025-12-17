@@ -9,15 +9,12 @@ const getStoreCustomizationSetting = async () => {
       signal: controller.signal,
       next: { revalidate: 900 }, // revalidate every 15 minutes
     });
-
+    
     clearTimeout(timeoutId);
     const storeCustomizationSetting = await handleResponse(response);
     return { storeCustomizationSetting };
   } catch (error) {
-    if (error.name === 'AbortError') {
-      return { error: 'Request timeout - settings unavailable' };
-    }
-    return { error: error.message || 'Failed to fetch customization settings' };
+    return { error: error.message, storeCustomizationSetting: null };
   }
 };
 
@@ -30,15 +27,12 @@ const getGlobalSetting = async () => {
       signal: controller.signal,
       next: { revalidate: 300 }, // revalidate every 5 minutes
     });
-
+    
     clearTimeout(timeoutId);
     const globalSetting = await handleResponse(response);
     return { globalSetting };
   } catch (error) {
-    if (error.name === 'AbortError') {
-      return { error: 'Request timeout - settings unavailable' };
-    }
-    return { error: error.message || 'Failed to fetch global settings' };
+    return { error: error.message, globalSetting: null };
   }
 };
 
@@ -65,15 +59,12 @@ const getStoreSetting = async () => {
       signal: controller.signal,
       next: { revalidate: 300 }, // revalidate every 5 minutes
     });
-
+    
     clearTimeout(timeoutId);
     const storeSetting = await handleResponse(response);
     return { storeSetting };
   } catch (error) {
-    if (error.name === 'AbortError') {
-      return { error: 'Request timeout - settings unavailable' };
-    }
-    return { error: error.message || 'Failed to fetch store settings' };
+    return { error: error.message, storeSetting: null };
   }
 };
 
