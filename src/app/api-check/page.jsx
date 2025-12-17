@@ -73,17 +73,27 @@ export default function ApiCheckPage() {
                 {connectionStatus.connected ? '✅ Connected' : '❌ Not Connected'}
               </div>
               <div className="space-y-2 text-sm">
+                {connectionStatus.url && (
+                  <div>
+                    <span className="font-semibold">Testing URL:</span>{' '}
+                    <code className="bg-gray-100 px-2 py-1 rounded text-xs break-all">
+                      {connectionStatus.url}
+                    </code>
+                  </div>
+                )}
                 <div>
                   <span className="font-semibold">Status Code:</span>{' '}
                   {connectionStatus.status || 'N/A'}
                 </div>
                 <div>
                   <span className="font-semibold">Message:</span>{' '}
-                  {connectionStatus.message}
+                  <div className="mt-1 p-2 bg-gray-50 rounded text-xs whitespace-pre-wrap">
+                    {connectionStatus.message}
+                  </div>
                 </div>
                 {connectionStatus.error && (
                   <div>
-                    <span className="font-semibold">Error:</span>{' '}
+                    <span className="font-semibold">Error Type:</span>{' '}
                     {connectionStatus.error}
                   </div>
                 )}
@@ -97,22 +107,52 @@ export default function ApiCheckPage() {
         {/* Instructions */}
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 mt-6">
           <h3 className="font-semibold text-blue-900 mb-2">How to Fix:</h3>
-          <ol className="list-decimal list-inside space-y-2 text-sm text-blue-800">
-            <li>
-              Make sure <code className="bg-blue-100 px-1 rounded">NEXT_PUBLIC_API_BASE_URL</code> is set in your
-              deployment environment (Vercel/Netlify)
-            </li>
-            <li>
-              The URL should point to your backend API (e.g.,{' '}
-              <code className="bg-blue-100 px-1 rounded">https://your-backend.vercel.app/v1</code>)
-            </li>
-            <li>
-              Ensure your backend is running and accessible from the internet
-            </li>
-            <li>
-              Check that your backend CORS settings allow requests from your frontend domain
-            </li>
-          </ol>
+          <div className="space-y-4 text-sm text-blue-800">
+            <div>
+              <h4 className="font-semibold mb-1">1. Set Missing Environment Variables:</h4>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>
+                  <code className="bg-blue-100 px-1 rounded">NEXTAUTH_URL</code> - Set to your frontend URL (e.g.,{' '}
+                  <code className="bg-blue-100 px-1 rounded">https://store-henna-tau.vercel.app</code>)
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-1">2. Verify Backend Connection:</h4>
+              <ul className="list-disc list-inside ml-4 space-y-1">
+                <li>
+                  Check if <code className="bg-blue-100 px-1 rounded">NEXT_PUBLIC_API_BASE_URL</code> is correct
+                </li>
+                <li>
+                  Test the backend URL directly in browser: <code className="bg-blue-100 px-1 rounded break-all">
+                    {envVars.NEXT_PUBLIC_API_BASE_URL || 'your-backend-url'}/setting/global
+                  </code>
+                </li>
+                <li>
+                  Ensure your backend is deployed and running on Vercel
+                </li>
+                <li>
+                  Check backend CORS settings allow requests from{' '}
+                  <code className="bg-blue-100 px-1 rounded">store-henna-tau.vercel.app</code>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-1">3. Backend CORS Configuration:</h4>
+              <p className="ml-4">
+                In your backend code, ensure CORS allows your frontend domain:
+              </p>
+              <pre className="bg-blue-100 p-2 rounded mt-1 text-xs overflow-x-auto">
+{`app.use(cors({
+  origin: [
+    'https://store-henna-tau.vercel.app',
+    'https://horeca1-frontend.vercel.app'
+  ],
+  credentials: true
+}));`}
+              </pre>
+            </div>
+          </div>
         </div>
       </div>
     </div>

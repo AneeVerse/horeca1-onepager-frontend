@@ -24,28 +24,59 @@ const handleResponse = async (response) => {
 
 // Connection checker utility
 const checkBackendConnection = async () => {
+  const testUrl = `${baseURL}/setting/global`;
+  
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
-    const response = await fetch(`${baseURL}/setting/global`, {
+    const response = await fetch(testUrl, {
       method: 'GET',
       signal: controller.signal,
+      headers: {
+        'Accept': 'application/json',
+      },
     });
     
     clearTimeout(timeoutId);
     
+    if (!response.ok) {
+      const errorText = await response.text();
+      return {
+        connected: false,
+        status: response.status,
+        message: `Backend returned status ${response.status}: ${errorText.substring(0, 100)}`,
+        url: testUrl,
+      };
+    }
+    
     return {
-      connected: response.ok,
+      connected: true,
       status: response.status,
-      message: response.ok ? 'Backend connected successfully!' : `Backend returned status ${response.status}`,
+      message: 'Backend connected successfully!',
+      url: testUrl,
     };
   } catch (error) {
+    let errorMessage = error.message || 'Failed to connect to backend';
+    
+    if (error.name === 'AbortError') {
+      errorMessage = `Request timed out after 10 seconds. The backend at ${testUrl} is not responding. Check if:
+- The backend URL is correct
+- The backend is deployed and running
+- CORS is configured to allow requests from this domain`;
+    } else if (error.message.includes('Failed to fetch')) {
+      errorMessage = `Network error: Cannot reach ${testUrl}. Check if:
+- The backend URL is correct
+- The backend is accessible from the internet
+- There are no firewall restrictions`;
+    }
+    
     return {
       connected: false,
       status: 0,
-      message: error.message || 'Failed to connect to backend',
+      message: errorMessage,
       error: error.name,
+      url: testUrl,
     };
   }
 };
