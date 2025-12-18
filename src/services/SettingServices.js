@@ -25,7 +25,7 @@ const getGlobalSetting = async () => {
     
     const response = await fetch(`${baseURL}/setting/global`, {
       signal: controller.signal,
-      next: { revalidate: 300 }, // revalidate every 5 minutes
+      cache: "no-store", // Force fresh data - no caching
     });
     
     clearTimeout(timeoutId);

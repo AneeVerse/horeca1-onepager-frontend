@@ -1,6 +1,6 @@
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
-const Price = ({ product, price, card, originalPrice, currency }) => {
+const Price = ({ product, price, card, originalPrice, currency, showUnit = false }) => {
   const { getNumberTwo } = useUtilsFunction();
 
   // From "second design" logic
@@ -15,6 +15,9 @@ const Price = ({ product, price, card, originalPrice, currency }) => {
       ? ((discountAmount / originalPrice) * 100).toFixed(2)
       : 0;
 
+  // Get unit from product
+  const unit = product?.unit || "";
+
   return (
     <>
       <div className="product-price font-bold">
@@ -27,6 +30,7 @@ const Price = ({ product, price, card, originalPrice, currency }) => {
         >
           {currency}
           {finalPrice}
+          {showUnit && unit && <span className="text-sm font-normal text-gray-500">/{unit}</span>}
         </span>
         {discountAmount > 0 && (
           <span
@@ -38,6 +42,7 @@ const Price = ({ product, price, card, originalPrice, currency }) => {
           >
             {currency}
             {baseOriginalPrice}
+            {showUnit && unit && <span className="text-xs">/{unit}</span>}
           </span>
         )}
       </div>

@@ -6,10 +6,11 @@ import { useCart } from "react-use-cart";
 
 // Internal imports
 import CartDrawer from "@components/drawer/CartDrawer";
+import { SidebarContext } from "@context/SidebarContext";
 
 const NotifyIcon = ({ currency }) => {
   const { totalItems } = useCart();
-  const [openCartDrawer, setOpenCartDrawer] = useState(false);
+  const { cartDrawerOpen, setCartDrawerOpen } = React.useContext(SidebarContext);
   const [isHydrated, setIsHydrated] = useState(false);
   let [mounted, setMounted] = useState(false);
 
@@ -25,13 +26,13 @@ const NotifyIcon = ({ currency }) => {
     <>
       <CartDrawer
         currency={currency}
-        open={openCartDrawer}
-        setOpen={setOpenCartDrawer}
+        open={cartDrawerOpen}
+        setOpen={setCartDrawerOpen}
       />
       <button
         type="button"
         aria-label={isHydrated ? `Cart with ${totalItems} items` : "Cart"}
-        onClick={() => setOpenCartDrawer(!openCartDrawer)}
+        onClick={() => setCartDrawerOpen(!cartDrawerOpen)}
         className="relative flex-shrink-0 rounded-full text-gray-200 p-1 mx-2 hover:text-white focus:outline-none"
       >
         {isHydrated && totalItems > 0 && (

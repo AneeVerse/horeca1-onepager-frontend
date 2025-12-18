@@ -7,22 +7,23 @@ import { useCart } from "react-use-cart";
 
 //internal import
 import CartDrawer from "@components/drawer/CartDrawer";
+import { SidebarContext } from "@context/SidebarContext";
 
 const StickyCart = ({ currency }) => {
   const { totalItems, cartTotal } = useCart();
-  const [openCartDrawer, setOpenCartDrawer] = useState(false);
+  const { cartDrawerOpen, setCartDrawerOpen } = React.useContext(SidebarContext);
 
   return (
     <>
       <CartDrawer
         currency={currency}
-        open={openCartDrawer}
-        setOpen={setOpenCartDrawer}
+        open={cartDrawerOpen}
+        setOpen={setCartDrawerOpen}
       />
-      {!openCartDrawer && (
+      {!cartDrawerOpen && (
         <button
           aria-label="Cart"
-          onClick={() => setOpenCartDrawer(!openCartDrawer)}
+          onClick={() => setCartDrawerOpen(!cartDrawerOpen)}
           className="absolute"
         >
           <div className="right-0 w-35 float-right fixed top-2/4 bottom-2/4 align-middle shadow-lg cursor-pointer z-30 hidden lg:block xl:block">

@@ -1,11 +1,14 @@
 import { useState } from "react";
 import { useCart } from "react-use-cart";
+import { useContext } from "react";
+import { SidebarContext } from "@context/SidebarContext";
 
 import { notifyError, notifySuccess } from "@utils/toast";
 
 const useAddToCart = () => {
   const [item, setItem] = useState(1);
   const { addItem, items, updateItemQuantity, totalItems } = useCart();
+  const { setCartDrawerOpen } = useContext(SidebarContext);
   // console.log('products',products)
   // console.log("items", items);
 
@@ -32,6 +35,7 @@ const useAddToCart = () => {
       ) {
         addItem(updatedProduct, item);
         notifySuccess(`${item} ${product.title} added to cart!`);
+        setCartDrawerOpen(true); // Auto-open cart drawer
       } else {
         notifyError("Insufficient stock!");
       }
@@ -44,6 +48,7 @@ const useAddToCart = () => {
       ) {
         addItem(updatedProduct, item);
         notifySuccess(`${item} ${product.title} added to cart!`);
+        setCartDrawerOpen(true); // Auto-open cart drawer
       } else {
         notifyError("Insufficient stock!");
       }

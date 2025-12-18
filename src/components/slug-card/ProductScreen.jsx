@@ -24,13 +24,31 @@ import { Button } from "@components/ui/button";
 import ProductReviews from "./ProductReviews";
 import { FiChevronRight, FiHeadphones, FiMinus, FiPlus } from "react-icons/fi";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@headlessui/react";
-import { Fragment } from "react";
+import { Fragment, useState, useEffect, useContext } from "react";
+import { useCart } from "react-use-cart";
+import { SidebarContext } from "@context/SidebarContext";
 
 const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
   const { globalSetting, storeCustomization } = useSetting();
   const { showingTranslateValue } = useUtilsFunction();
   const currency = globalSetting?.default_currency || "$";
   const { item, setItem } = useAddToCart();
+  const { addItem } = useCart();
+  const { setCartDrawerOpen } = useContext(SidebarContext);
+  const [isPromoTime, setIsPromoTime] = useState(false);
+
+  // Check if current time is between 6pm (18:00) and 9am (09:00)
+  useEffect(() => {
+    const checkPromoTime = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      // 6pm (18:00) to midnight (23:59) or midnight (00:00) to 9am (08:59)
+      setIsPromoTime(hours >= 18 || hours < 9);
+    };
+    checkPromoTime();
+    const interval = setInterval(checkPromoTime, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
   const {
     value,
     setValue,
@@ -145,17 +163,154 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                   />
                 </div>
               </div>
-              <div className="flex items-center mb-8">
-                <Price
-                  price={price}
-                  product={product}
-                  currency={currency}
-                  originalPrice={originalPrice}
-                />
-                <span className="ml-2 block">
-                  <Discount slug product={product} discount={discount} />
-                </span>
+              <div className="flex items-center mb-4">
+                <div className="flex flex-col">
+                  {isPromoTime && product?.promoPricing?.singleUnit > 0 ? (
+                    <div className="flex items-center gap-3">
+                      <span className="inline-flex items-center gap-1.5 text-xs font-bold text-white bg-gradient-to-r from-emerald-500 to-teal-500 px-2.5 py-1 rounded-full shadow-sm">
+                        <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
+                        PROMO ACTIVE
+                      </span>
+                      <span className="text-2xl lg:text-3xl font-bold text-emerald-600">
+                        {currency}{product.promoPricing.singleUnit}
+                        {product?.unit && <span className="text-sm font-normal text-emerald-500">/{product.unit}</span>}
+                      </span>
+                    </div>
+                  ) : (
+                    <Price
+                      price={price}
+                      product={product}
+                      currency={currency}
+                      originalPrice={originalPrice}
+                      showUnit={true}
+                    />
+                  )}
+                </div>
+                {!isPromoTime && (
+                  <span className="ml-2 block">
+                    <Discount slug product={product} discount={discount} />
+                  </span>
+                )}
               </div>
+
+              {/* Bulk Pricing Display - Only show when NOT promo time */}
+              {!isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0) && (
+                <div className="mb-6 bg-gray-50 rounded-xl p-4 space-y-3">
+                  {product?.bulkPricing?.bulkRate1?.quantity > 0 && product?.bulkPricing?.bulkRate1?.pricePerUnit > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-emerald-600 font-medium">
+                        {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.bulkPricing.bulkRate1.quantity} {product.unit ? `${product.unit}s` : "units"}+
+                      </span>
+                      <button
+                        onClick={() => {
+                          const bulkQuantity = product.bulkPricing.bulkRate1.quantity;
+                          const bulkItem = {
+                            ...product,
+                            title: showingTranslateValue(product?.title),
+                            id: `${product._id}-bulk1`,
+                            variant: product.prices,
+                            price: product.bulkPricing.bulkRate1.pricePerUnit,
+                            originalPrice: product.prices?.originalPrice,
+                          };
+                          addItem(bulkItem, bulkQuantity);
+                        }}
+                        className="text-base font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                      >
+                        Add {product.bulkPricing.bulkRate1.quantity}
+                      </button>
+                    </div>
+                  )}
+                  {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-base text-emerald-600 font-medium">
+                        {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.bulkPricing.bulkRate2.quantity} {product.unit ? `${product.unit}s` : "units"}+
+                      </span>
+                      <button
+                        onClick={() => {
+                          const bulkQuantity = product.bulkPricing.bulkRate2.quantity;
+                          const bulkItem = {
+                            ...product,
+                            title: showingTranslateValue(product?.title),
+                            id: `${product._id}-bulk2`,
+                            variant: product.prices,
+                            price: product.bulkPricing.bulkRate2.pricePerUnit,
+                            originalPrice: product.prices?.originalPrice,
+                          };
+                          addItem(bulkItem, bulkQuantity);
+                          setCartDrawerOpen(true); // Auto-open cart drawer
+                        }}
+                        className="text-base font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                      >
+                        Add {product.bulkPricing.bulkRate2.quantity}
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Promo Bulk Pricing Display (6pm-9am) - Clean Modern Style */}
+              {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
+                <div className="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-200/50 shadow-sm">
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-semibold text-emerald-800">Night Special Bulk Rates</span>
+                  </div>
+                  <div className="space-y-2">
+                    {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
+                      <div className="flex items-center justify-between bg-white/60 rounded-lg px-3 py-2">
+                        <span className="text-sm text-emerald-700 font-medium">
+                          {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+
+                        </span>
+                        <button
+                          onClick={() => {
+                            const promoQuantity = product.promoPricing.bulkRate1.quantity;
+                            const promoItem = {
+                              ...product,
+                              title: showingTranslateValue(product?.title),
+                              id: `${product._id}-promo-bulk1`,
+                              variant: product.prices,
+                              price: product.promoPricing.bulkRate1.pricePerUnit,
+                              originalPrice: product.prices?.originalPrice,
+                              isPromo: true,
+                            };
+                            addItem(promoItem, promoQuantity);
+                            setCartDrawerOpen(true);
+                          }}
+                          className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
+                        >
+                          Add {product.promoPricing.bulkRate1.quantity}
+                        </button>
+                      </div>
+                    )}
+                    {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
+                      <div className="flex items-center justify-between bg-white/60 rounded-lg px-3 py-2">
+                        <span className="text-sm text-emerald-700 font-medium">
+                          {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+
+                        </span>
+                        <button
+                          onClick={() => {
+                            const promoQuantity = product.promoPricing.bulkRate2.quantity;
+                            const promoItem = {
+                              ...product,
+                              title: showingTranslateValue(product?.title),
+                              id: `${product._id}-promo-bulk2`,
+                              variant: product.prices,
+                              price: product.promoPricing.bulkRate2.pricePerUnit,
+                              originalPrice: product.prices?.originalPrice,
+                              isPromo: true,
+                            };
+                            addItem(promoItem, promoQuantity);
+                            setCartDrawerOpen(true);
+                          }}
+                          className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
+                        >
+                          Add {product.promoPricing.bulkRate2.quantity}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
               <div className="mb-6">
                 {variantTitle?.map((a, i) => (
                   <span key={a._id} className="mb-2 block">
@@ -211,11 +366,28 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
 
                     {/* Add to Cart Button */}
                     <Button
-                      onClick={() => handleAddToCart(product)}
+                      onClick={() => {
+                        // Use promo pricing if promo time and promo pricing exists
+                        if (isPromoTime && product?.promoPricing?.singleUnit > 0 && product?.variants?.length === 0) {
+                          const promoItem = {
+                            ...product,
+                            title: showingTranslateValue(product?.title),
+                            id: `${product._id}-promo`,
+                            variant: product.prices,
+                            price: product.promoPricing.singleUnit,
+                            originalPrice: product.prices?.originalPrice,
+                            isPromo: true,
+                          };
+                          addItem(promoItem, item);
+                          setCartDrawerOpen(true);
+                        } else {
+                          handleAddToCart(product);
+                        }
+                      }}
                       className="text-sm leading-4 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold  text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none px-4 md:px-6 lg:px-8 py-4 md:py-3.5 lg:py-4 w-full h-11"
                       variant="create"
                     >
-                      Add to Cart
+                      {isPromoTime && product?.promoPricing?.singleUnit > 0 ? "Add Promo Price to Cart" : "Add to Cart"}
                     </Button>
                   </div>
                 </div>
