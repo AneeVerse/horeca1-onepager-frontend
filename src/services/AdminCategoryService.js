@@ -125,6 +125,27 @@ export const updateCategoryStatus = async (id, status) => {
   }
 };
 
+// Update category order
+export const updateCategoryOrder = async (categories) => {
+  try {
+    const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+    const response = await fetch(`${baseURL}/category/order/update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({ categories }),
+    });
+
+    const data = await handleResponse(response);
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: error.message };
+  }
+};
+
+
 
 
 

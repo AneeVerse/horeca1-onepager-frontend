@@ -155,14 +155,14 @@ const PromoTimerCard = () => {
     );
   }
 
-  // Show "Promo Starting Soon" Card - Subtle gray theme
+  // Show "Promo Starting Soon" Card - Light, modern theme matching site design
   return (
     <div className="w-full h-full min-h-[300px] lg:min-h-0">
-      <div className="bg-gradient-to-br from-gray-800 via-gray-900 to-slate-900 h-full min-h-[300px] lg:min-h-0 rounded-xl shadow-lg overflow-hidden relative">
+      <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 h-full min-h-[300px] lg:min-h-0 rounded-xl shadow-lg border-2 border-emerald-200 overflow-hidden relative">
         {/* Subtle pattern */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{
-            backgroundImage: `radial-gradient(circle at 25% 25%, white 1%, transparent 1%)`,
+            backgroundImage: `radial-gradient(circle at 25% 25%, emerald-600 1%, transparent 1%)`,
             backgroundSize: '20px 20px'
           }}></div>
         </div>
@@ -171,59 +171,61 @@ const PromoTimerCard = () => {
           {/* Header */}
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 bg-emerald-500/20 rounded-lg">
-                <Sun className="w-4 h-4 text-emerald-400" />
+              <div className="p-1.5 bg-emerald-100 rounded-lg">
+                <Sun className="w-4 h-4 text-emerald-600" />
               </div>
-              <span className="text-gray-400 font-medium text-sm">Day Time</span>
+              <span className="text-emerald-700 font-medium text-sm">Day Time</span>
             </div>
-            <div className="px-2.5 py-1 bg-gray-700/50 rounded-full">
-              <span className="text-gray-400 text-xs font-medium">Upcoming</span>
+            <div className="px-2.5 py-1 bg-emerald-100 rounded-full border border-emerald-200">
+              <span className="text-emerald-700 text-xs font-medium">Upcoming</span>
             </div>
           </div>
 
           {/* Main Content */}
           <div className="flex-1 flex flex-col justify-center">
             <div className="flex items-center gap-2 mb-2">
-              <Moon className="w-5 h-5 text-emerald-400" />
-              <h2 className="text-lg font-bold text-white">Night Promo</h2>
+              <Moon className="w-5 h-5 text-emerald-600" />
+              <h2 className="text-lg font-bold text-gray-800">Night Promo</h2>
             </div>
-            <p className="text-gray-400 text-sm mb-4 leading-relaxed">
+            <p className="text-gray-600 text-sm mb-4 leading-relaxed">
               Special bulk pricing starts at 6:00 PM. Save more on bulk orders!
             </p>
 
             {/* Timer */}
-            <div className="bg-white/5 backdrop-blur-sm rounded-xl p-3">
-              <p className="text-gray-500 text-xs mb-2 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Starts in
+            <div className="bg-white/80 backdrop-blur-sm rounded-xl p-3 border border-emerald-100 shadow-sm">
+              <p className="text-gray-600 text-xs mb-2 flex items-center gap-1 font-medium">
+                <Clock className="w-3 h-3 text-emerald-600" /> Starts in
               </p>
               <div className="flex gap-2">
-                <div className="flex-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg py-2 px-1 text-center">
-                  <span className="text-2xl font-bold text-emerald-400">
+                <div className="flex-1 bg-emerald-500 border border-emerald-600 rounded-lg py-2 px-1 text-center shadow-sm">
+                  <span className="text-2xl font-bold text-white">
                     {timeRemaining.hours.toString().padStart(2, "0")}
                   </span>
-                  <p className="text-gray-500 text-xs mt-0.5">Hours</p>
+                  <p className="text-emerald-700 text-xs mt-0.5 font-medium">Hours</p>
                 </div>
-                <div className="flex-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg py-2 px-1 text-center">
-                  <span className="text-2xl font-bold text-emerald-400">
+                <div className="flex-1 bg-emerald-500 border border-emerald-600 rounded-lg py-2 px-1 text-center shadow-sm">
+                  <span className="text-2xl font-bold text-white">
                     {timeRemaining.minutes.toString().padStart(2, "0")}
                   </span>
-                  <p className="text-gray-500 text-xs mt-0.5">Mins</p>
+                  <p className="text-emerald-700 text-xs mt-0.5 font-medium">Mins</p>
                 </div>
-                <div className="flex-1 bg-emerald-500/10 border border-emerald-500/20 rounded-lg py-2 px-1 text-center">
-                  <span className="text-2xl font-bold text-emerald-400">
+                <div className="flex-1 bg-emerald-500 border border-emerald-600 rounded-lg py-2 px-1 text-center shadow-sm">
+                  <span className="text-2xl font-bold text-white">
                     {timeRemaining.seconds.toString().padStart(2, "0")}
                   </span>
-                  <p className="text-gray-500 text-xs mt-0.5">Secs</p>
+                  <p className="text-emerald-700 text-xs mt-0.5 font-medium">Secs</p>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Footer */}
-          <div className="mt-3 pt-3 border-t border-gray-700/50">
+          <div className="mt-3 pt-3 border-t border-emerald-200">
             <div className="flex items-center justify-between">
-              <span className="text-gray-500 text-xs">6:00 PM - 9:00 AM</span>
-              <span className="text-emerald-400 font-semibold text-sm">Coming Soon</span>
+              <span className="text-gray-600 text-xs font-medium">6:00 PM - 9:00 AM</span>
+              <span className="text-emerald-600 font-semibold text-sm flex items-center gap-1">
+                <Zap className="w-3 h-3" /> Coming Soon
+              </span>
             </div>
           </div>
         </div>

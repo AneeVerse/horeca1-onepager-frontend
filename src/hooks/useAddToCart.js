@@ -44,7 +44,7 @@ const useAddToCart = () => {
       ) {
         addItem(cartItem, item);
         notifySuccess(`${item} ${product.title} added to cart!`);
-        setCartDrawerOpen(true); // Auto-open cart drawer
+        // Cart drawer should only open when user clicks cart icon in navbar
       } else {
         notifyError("Insufficient stock!");
       }
@@ -57,7 +57,7 @@ const useAddToCart = () => {
       ) {
         addItem(cartItem, item);
         notifySuccess(`${item} ${product.title} added to cart!`);
-        setCartDrawerOpen(true); // Auto-open cart drawer
+        // Cart drawer should only open when user clicks cart icon in navbar
       } else {
         notifyError("Insufficient stock!");
       }

@@ -57,7 +57,7 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
           </div>
         </div>
       </header>
-      {/* navbar bottom */}
+      {/* navbar bottom - NavbarPromo will check pathname and hide on home page */}
       <NavbarPromo
         languages={languages}
         categories={categories}

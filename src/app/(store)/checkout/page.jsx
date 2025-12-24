@@ -4,19 +4,19 @@ import CheckoutForm from "@components/checkout/CheckoutForm";
 import { getShippingAddress } from "@services/CustomerServices";
 
 export const metadata = {
-  title: "Checkout | Kachabazar",
+  title: "Checkout | Horeca1",
   description:
     "Complete your purchase securely and quickly with our checkout process.",
   keywords: ["checkout", "payment", "shipping", "order"],
   // You can also add more advanced metadata here
   openGraph: {
-    title: "Checkout | Kachabazar",
+    title: "Checkout | Horeca1",
     description:
       "Complete your purchase securely and quickly with our checkout process.",
-    url: "https://kachabazar-store-nine.vercel.app/checkout",
+    url: "https://Horeca1-store-nine.vercel.app/checkout",
     images: [
       {
-        url: "https://kachabazar-store-nine.vercel.app/og-image.jpg",
+        url: "https://Horeca1-store-nine.vercel.app/og-image.jpg",
         width: 800,
         height: 600,
         alt: "Checkout Page",

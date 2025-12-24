@@ -44,11 +44,10 @@ const Invoice = ({ data, printRef, globalSetting }) => {
           <div className="lg:text-right text-left">
             <h2 className="text-lg font-semibold mt-4 lg:mt-0 md:mt-0">
               <Link href="/">
-                <Image
-                  width={110}
-                  height={40}
-                  src="/logo/logo-color.svg"
-                  alt="logo"
+                <img
+                  className="h-10 w-auto"
+                  src="https://res.cloudinary.com/dezs8ma9n/image/upload/v1766484997/horecaLogo_hirtnv.png"
+                  alt="horeca1"
                 />
               </Link>
             </h2>

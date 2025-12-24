@@ -77,7 +77,7 @@ const ProductCard = ({ product, attributes }) => {
       brand: product.brand,
     };
     addItem(newItem);
-    setCartDrawerOpen(true); // Auto-open cart drawer
+    // Cart drawer should only open when user clicks cart icon in navbar
   };
 
   const handleModalOpen = (event, id) => {
@@ -231,7 +231,7 @@ const ProductCard = ({ product, attributes }) => {
                         brand: product.brand,
                       };
                       addItem(bulkItem, bulkQuantity);
-                      setCartDrawerOpen(true); // Auto-open cart drawer
+                      // Cart drawer should only open when user clicks cart icon in navbar
                     }}
                     className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
@@ -264,7 +264,7 @@ const ProductCard = ({ product, attributes }) => {
                         brand: product.brand,
                       };
                       addItem(bulkItem, bulkQuantity);
-                      setCartDrawerOpen(true); // Auto-open cart drawer
+                      // Cart drawer should only open when user clicks cart icon in navbar
                     }}
                     className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
@@ -304,7 +304,7 @@ const ProductCard = ({ product, attributes }) => {
                         brand: product.brand,
                       };
                       addItem(promoItem, promoQuantity);
-                      setCartDrawerOpen(true);
+                      // Cart drawer should only open when user clicks cart icon in navbar
                     }}
                     className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
@@ -338,7 +338,7 @@ const ProductCard = ({ product, attributes }) => {
                         brand: product.brand,
                       };
                       addItem(promoItem, promoQuantity);
-                      setCartDrawerOpen(true);
+                      // Cart drawer should only open when user clicks cart icon in navbar
                     }}
                     className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
@@ -386,7 +386,7 @@ const ProductCard = ({ product, attributes }) => {
                     isPromo: true,
                   };
                   addItem(promoItem, 1);
-                  setCartDrawerOpen(true);
+                  // Cart drawer should only open when user clicks cart icon in navbar
                 } else {
                   handleAddItem(product);
                 }

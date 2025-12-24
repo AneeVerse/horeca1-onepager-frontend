@@ -2,6 +2,7 @@
 
 import { Fragment, useContext } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Transition,
   Popover,
@@ -30,9 +31,16 @@ import { useSetting } from "@context/SettingContext";
 const NavbarPromo = ({ languages, categories, categoryError }) => {
   const { isLoading, setIsLoading } = useContext(SidebarContext);
   const { storeCustomization } = useSetting();
+  const pathname = usePathname();
+  const isHomePage = pathname === "/";
 
   const { showingTranslateValue } = useUtilsFunction();
   const navbar = storeCustomization?.navbar;
+
+  // Hide navigation bar on home page
+  if (isHomePage) {
+    return null;
+  }
 
   return (
     <>

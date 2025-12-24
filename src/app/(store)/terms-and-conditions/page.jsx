@@ -6,19 +6,19 @@ import CMSkeletonTwo from "@components/preloader/CMSkeleton";
 import { getStoreCustomizationSetting } from "@services/SettingServices";
 
 export const metadata = {
-  title: "Terms and Conditions | Kachabazar",
+  title: "Terms and Conditions | Horeca1",
   description:
     "Read our terms and conditions to understand your rights and obligations.",
   keywords: ["terms", "conditions", "user rights", "legal"],
   // You can also add more advanced metadata here
   openGraph: {
-    title: "Terms and Conditions | Kachabazar",
+    title: "Terms and Conditions | Horeca1",
     description:
       "Read our terms and conditions to understand your rights and obligations.",
-    url: "https://kachabazar-store-nine.vercel.app/terms-and-conditions",
+    url: "https://Horeca1-store-nine.vercel.app/terms-and-conditions",
     images: [
       {
-        url: "https://kachabazar-store-nine.vercel.app/og-image.jpg",
+        url: "https://Horeca1-store-nine.vercel.app/og-image.jpg",
         width: 800,
         height: 600,
         alt: "Terms and Conditions Page",

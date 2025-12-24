@@ -8,7 +8,7 @@ import FaqContent from "@components/faq/FaqContent";
 import { getStoreCustomizationSetting } from "@services/SettingServices";
 
 export const metadata = {
-  title: "FAQ | Kachabazar",
+  title: "FAQ | Horeca1",
   description:
     "Get in touch with us! Find our contact information and fill out our contact form.",
   keywords: ["contact", "email", "phone", "location"],
@@ -17,10 +17,10 @@ export const metadata = {
     title: "FAQ | Horeca1",
     description:
       "Get in touch with us! Find our contact information and fill out our contact form.",
-    url: "https://kachabazar-store-nine.vercel.app/faq",
+    url: "https://Horeca1-store-nine.vercel.app/faq",
     images: [
       {
-        url: "https://kachabazar-store-nine.vercel.app/og-image.jpg",
+        url: "https://Horeca1-store-nine.vercel.app/og-image.jpg",
         width: 800,
         height: 600,
         alt: "FAQ Page",

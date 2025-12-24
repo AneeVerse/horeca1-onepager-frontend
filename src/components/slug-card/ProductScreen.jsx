@@ -247,7 +247,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             brand: product.brand,
                           };
                           addItem(bulkItem, bulkQuantity);
-                          setCartDrawerOpen(true); // Auto-open cart drawer
+                          // Cart drawer should only open when user clicks cart icon in navbar
                         }}
                         className="text-base font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
                       >
@@ -289,7 +289,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                               brand: product.brand,
                             };
                             addItem(promoItem, promoQuantity);
-                            setCartDrawerOpen(true);
+                            // Cart drawer should only open when user clicks cart icon in navbar
                           }}
                           className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
                         >
@@ -320,7 +320,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                               brand: product.brand,
                             };
                             addItem(promoItem, promoQuantity);
-                            setCartDrawerOpen(true);
+                            // Cart drawer should only open when user clicks cart icon in navbar
                           }}
                           className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
                         >
@@ -404,7 +404,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             brand: product.brand,
                           };
                           addItem(promoItem, item);
-                          setCartDrawerOpen(true);
+                          // Cart drawer should only open when user clicks cart icon in navbar
                         } else {
                           handleAddToCart(product);
                         }
@@ -472,7 +472,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                   <ul role="list" className="mt-4 flex items-center space-x-6">
                     <li>
                       <FacebookShareButton
-                        url={`https://kachabazar-store-nine.vercel.app/product/${product?.slug}`}
+                        url={`https://Horeca1-store-nine.vercel.app/product/${product?.slug}`}
                       >
                         <a
                           href="#"
@@ -516,7 +516,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                     </li>
                     <li>
                       <TwitterShareButton
-                        url={`https://kachabazar-store-nine.vercel.app/product/${product?.slug}`}
+                        url={`https://Horeca1-store-nine.vercel.app/product/${product?.slug}`}
                       >
                         <a
                           href="#"

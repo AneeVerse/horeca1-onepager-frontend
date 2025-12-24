@@ -6,19 +6,19 @@ import PageHeader from "@components/header/PageHeader";
 import { getStoreCustomizationSetting } from "@services/SettingServices";
 
 export const metadata = {
-  title: "Offers | Kachabazar",
+  title: "Offers | Horeca1",
   description:
-    "Discover the latest offers and discounts available at Kachabazar.",
+    "Discover the latest offers and discounts available at Horeca1.",
   keywords: ["offers", "discounts", "promotions", "sales"],
   // You can also add more advanced metadata here
   openGraph: {
-    title: "Offers | Kachabazar",
+    title: "Offers | Horeca1",
     description:
-      "Discover the latest offers and discounts available at Kachabazar.",
-    url: "https://kachabazar-store-nine.vercel.app/offers",
+      "Discover the latest offers and discounts available at Horeca1.",
+    url: "https://Horeca1-store-nine.vercel.app/offers",
     images: [
       {
-        url: "https://kachabazar-store-nine.vercel.app/og-image.jpg",
+        url: "https://Horeca1-store-nine.vercel.app/og-image.jpg",
         width: 800,
         height: 600,
         alt: "Offers Page",

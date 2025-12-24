@@ -434,36 +434,29 @@ export default function OrdersPage() {
                         {order.paymentMethod}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium ${
+                        <select
+                          value={order.status}
+                          onChange={(e) => updateOrderStatus(order._id, e.target.value)}
+                          disabled={updating}
+                          className={`text-xs font-medium rounded-lg px-3 py-1.5 border focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${
                             statusColors[order.status]
-                          }`}
+                          } border-transparent`}
                         >
-                          <StatusIcon className="h-4 w-4" />
-                          {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
-                        </span>
+                          <option value="pending">Pending</option>
+                          <option value="processing">Processing</option>
+                          <option value="delivered">Delivered</option>
+                          <option value="cancel">Cancel</option>
+                        </select>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-center">
-                        <div className="flex items-center justify-center gap-2">
-                          <button
-                            onClick={() => setSelectedOrder(order)}
-                            className="p-2 text-gray-500 hover:text-emerald-600 hover:bg-emerald-50 rounded-lg"
-                            title="View Details"
-                          >
-                            <EyeIcon className="h-5 w-5" />
-                          </button>
-                          <select
-                            value={order.status}
-                            onChange={(e) => updateOrderStatus(order._id, e.target.value)}
-                            disabled={updating}
-                            className="text-xs border rounded-lg px-2 py-1 focus:ring-emerald-500 focus:border-emerald-500"
-                          >
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="delivered">Delivered</option>
-                            <option value="cancel">Cancel</option>
-                          </select>
-                        </div>
+                        <button
+                          onClick={() => setSelectedOrder(order)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                          title="View Order Details"
+                        >
+                          <EyeIcon className="h-4 w-4" />
+                          View
+                        </button>
                       </td>
                     </tr>
                   );

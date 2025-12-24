@@ -20,7 +20,7 @@ const MyAccount = async () => {
   
   // #region agent log
   const fs = require('fs');
-  const logPath = 'c:\\Users\\Roger\\Desktop\\horeca1\\kachabazar\\.cursor\\debug.log';
+  const logPath = 'c:\\Users\\Roger\\Desktop\\horeca1\\Horeca1\\.cursor\\debug.log';
   try {
     fs.appendFileSync(logPath, JSON.stringify({location:'my-account/page.jsx:17',message:'Fetched customer data',data:{customerId,customerName:customer?.name,customerEmail:customer?.email,customerPhone:customer?.phone,hasCustomer:!!customer},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})+'\n');
   } catch(e) {}

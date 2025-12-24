@@ -2,11 +2,28 @@
 
 import { useEffect, useState } from "react";
 import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
   getAllCategories,
   addCategory,
   updateCategory,
   deleteCategory,
   updateCategoryStatus,
+  updateCategoryOrder,
 } from "@services/AdminCategoryService";
 import {
   PlusIcon,
@@ -18,6 +35,7 @@ import {
   XMarkIcon,
   MagnifyingGlassIcon,
   FunnelIcon,
+  Bars3Icon,
 } from "@heroicons/react/24/outline";
 import Cookies from "js-cookie";
 import CloudinaryUploader from "@components/admin/CloudinaryUploader";
@@ -33,6 +51,102 @@ const getLanguageValue = (data, fallback = "Untitled") => {
   return fallback;
 };
 
+// Sortable Row Component
+function SortableRow({ category, onEdit, onDelete, onToggleStatus, getLanguageValue }) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: category._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <tr
+      ref={setNodeRef}
+      style={style}
+      className="hover:bg-gray-50"
+    >
+      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+        <div className="flex items-center gap-2">
+          <button
+            {...attributes}
+            {...listeners}
+            className="cursor-grab active:cursor-grabbing text-gray-400 hover:text-gray-600"
+            title="Drag to reorder"
+          >
+            <Bars3Icon className="h-5 w-5" />
+          </button>
+          {category.icon && category.icon.startsWith("http") ? (
+            <img
+              src={category.icon}
+              alt={getLanguageValue(category.title || category.name)}
+              className="h-10 w-10 rounded object-cover"
+            />
+          ) : category.image && category.image.startsWith("http") ? (
+            <img
+              src={category.image}
+              alt={getLanguageValue(category.title || category.name)}
+              className="h-10 w-10 rounded object-cover"
+            />
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
+        </div>
+      </td>
+      <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
+        {getLanguageValue(category.title || category.name)}
+      </td>
+      <td className="px-3 py-4 text-sm text-gray-500 max-w-xs truncate">
+        {getLanguageValue(category.description, "—")}
+      </td>
+      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+        <button
+          onClick={() => onToggleStatus(category._id, category.status)}
+          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
+            category.status === "show"
+              ? "bg-emerald-600"
+              : "bg-gray-200"
+          }`}
+        >
+          <span
+            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+              category.status === "show"
+                ? "translate-x-5"
+                : "translate-x-0"
+            }`}
+          />
+        </button>
+      </td>
+      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+        <div className="flex items-center justify-end gap-2">
+          <button
+            onClick={() => onEdit(category)}
+            className="text-blue-600 hover:text-blue-900"
+            title="Edit"
+          >
+            <PencilIcon className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => onDelete(category._id)}
+            className="text-red-600 hover:text-red-900"
+            title="Delete"
+          >
+            <TrashIcon className="h-5 w-5" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+}
+
 export default function CategoriesPage() {
   const [categories, setCategories] = useState([]);
   const [filteredCategories, setFilteredCategories] = useState([]);
@@ -47,6 +161,13 @@ export default function CategoriesPage() {
     icon: "", // Backend uses 'icon' field for image URL
     status: "show",
   });
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const fetchCategories = async () => {
     setLoading(true);
@@ -82,6 +203,69 @@ export default function CategoriesPage() {
       setFilteredCategories(categories);
     }
   }, [searchQuery, categories]);
+
+  const handleDragEnd = async (event) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:207',message:'Drag end event triggered',data:{activeId:active.id,overId:over?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
+      const oldIndex = filteredCategories.findIndex((cat) => cat._id === active.id);
+      const newIndex = filteredCategories.findIndex((cat) => cat._id === over.id);
+
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:212',message:'Calculated indices',data:{oldIndex,newIndex,filteredCount:filteredCategories.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+
+      const newCategories = arrayMove(filteredCategories, oldIndex, newIndex);
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:216',message:'New categories array created',data:{newCategoriesCount:newCategories.length,firstCategory:newCategories[0]?._id,lastCategory:newCategories[newCategories.length-1]?._id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      
+      // Update order in backend first
+      const categoriesWithOrder = newCategories.map((cat, index) => ({
+        _id: cat._id,
+        order: index,
+      }));
+
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:230',message:'Preparing order update',data:{categoriesWithOrder:categoriesWithOrder.slice(0,3).map(c=>({_id:c._id,order:c.order}))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+
+      try {
+        const result = await updateCategoryOrder(categoriesWithOrder);
+        
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:235',message:'Order update API call completed',data:{success:!result.error,error:result.error},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        
+        // Update the order field in local state to match backend
+        const updatedCategories = newCategories.map((cat, index) => ({
+          ...cat,
+          order: index,
+        }));
+        
+        // Update both states after successful API call
+        setCategories(updatedCategories);
+        setFilteredCategories(updatedCategories);
+      } catch (err) {
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:250',message:'Order update failed',data:{error:err.message,errorStack:err.stack?.substring(0,200)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
+        // #endregion
+        
+        setError(err.message || "Failed to update category order");
+        // Revert on error by refetching
+        fetchCategories();
+      }
+    }
+  };
 
   const handleOpenModal = (category = null) => {
     if (category) {
@@ -247,9 +431,6 @@ export default function CategoriesPage() {
             <table className="min-w-full divide-y divide-gray-300">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-                    ID
-                  </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     ICON
                   </th>
@@ -267,76 +448,29 @@ export default function CategoriesPage() {
                   </th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 bg-white">
-                {filteredCategories.map((category) => (
-                  <tr key={category._id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                      {category._id?.substring(0, 4).toUpperCase() || "—"}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      {category.icon && category.icon.startsWith("http") ? (
-                        <img
-                          src={category.icon}
-                          alt={getLanguageValue(category.title || category.name)}
-                          className="h-10 w-10 rounded object-cover"
-                        />
-                      ) : category.image && category.image.startsWith("http") ? (
-                        <img
-                          src={category.image}
-                          alt={getLanguageValue(category.title || category.name)}
-                          className="h-10 w-10 rounded object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-400">—</span>
-                      )}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
-                      {getLanguageValue(category.title || category.name)}
-                    </td>
-                    <td className="px-3 py-4 text-sm text-gray-500 max-w-xs truncate">
-                      {getLanguageValue(category.description, "—")}
-                    </td>
-                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                      <button
-                        onClick={() =>
-                          handleToggleStatus(category._id, category.status)
-                        }
-                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
-                          category.status === "show"
-                            ? "bg-emerald-600"
-                            : "bg-gray-200"
-                        }`}
-                      >
-                        <span
-                          className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                            category.status === "show"
-                              ? "translate-x-5"
-                              : "translate-x-0"
-                          }`}
-                        />
-                      </button>
-                    </td>
-                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          onClick={() => handleOpenModal(category)}
-                          className="text-blue-600 hover:text-blue-900"
-                          title="Edit"
-                        >
-                          <PencilIcon className="h-5 w-5" />
-                        </button>
-                        <button
-                          onClick={() => handleDelete(category._id)}
-                          className="text-red-600 hover:text-red-900"
-                          title="Delete"
-                        >
-                          <TrashIcon className="h-5 w-5" />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+              <DndContext
+                sensors={sensors}
+                collisionDetection={closestCenter}
+                onDragEnd={handleDragEnd}
+              >
+                <SortableContext
+                  items={filteredCategories.map((cat) => cat._id)}
+                  strategy={verticalListSortingStrategy}
+                >
+                  <tbody className="divide-y divide-gray-200 bg-white">
+                    {filteredCategories.map((category) => (
+                      <SortableRow
+                        key={category._id}
+                        category={category}
+                        onEdit={handleOpenModal}
+                        onDelete={handleDelete}
+                        onToggleStatus={handleToggleStatus}
+                        getLanguageValue={getLanguageValue}
+                      />
+                    ))}
+                  </tbody>
+                </SortableContext>
+              </DndContext>
             </table>
           </div>
         </div>

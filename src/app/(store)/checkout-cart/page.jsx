@@ -2,19 +2,19 @@ import CheckoutCartScreen from "@components/checkout/CheckoutCartScreen";
 import React from "react";
 
 export const metadata = {
-  title: "Checkout Cart | Kachabazar",
+  title: "Checkout Cart | Horeca1",
   description:
     "Get in touch with us! Find our contact information and fill out our contact form.",
   keywords: ["contact", "email", "phone", "location"],
   // You can also add more advanced metadata here
   openGraph: {
-    title: "Checkout Cart | Kachabazar",
+    title: "Checkout Cart | Horeca1",
     description:
       "Get in touch with us! Find our contact information and fill out our contact form.",
-    url: "https://kachabazar-store-nine.vercel.app/faq",
+    url: "https://Horeca1-store-nine.vercel.app/faq",
     images: [
       {
-        url: "https://kachabazar-store-nine.vercel.app/og-image.jpg",
+        url: "https://Horeca1-store-nine.vercel.app/og-image.jpg",
         width: 800,
         height: 600,
         alt: "Checkout Cart Page",

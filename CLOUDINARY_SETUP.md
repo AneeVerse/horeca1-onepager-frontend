@@ -25,9 +25,9 @@ NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_upload_preset_name
 2. Scroll down to **Upload presets**
 3. Click **Add upload preset**
 4. Configure:
-   - **Preset name**: Choose a name (e.g., `kachabazar_products`)
+   - **Preset name**: Choose a name (e.g., `Horeca1_products`)
    - **Signing mode**: Set to **Unsigned** (for client-side uploads)
-   - **Folder**: Optional - set a folder name (e.g., `kachabazar/categories`)
+   - **Folder**: Optional - set a folder name (e.g., `Horeca1/categories`)
    - **Format**: Set to **Auto** or specific format
    - **Quality**: Set to **Auto** or specific quality
 5. Click **Save**
@@ -44,7 +44,7 @@ NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=your_upload_preset_name
 **Example:**
 ```env
 NEXT_PUBLIC_CLOUDINARY_URL=https://api.cloudinary.com/v1_1/demo123/image/upload
-NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=kachabazar_products
+NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET=Horeca1_products
 ```
 
 ## File Location
@@ -71,6 +71,7 @@ After setting up, test the image upload in the admin panel:
 - **Upload fails**: Verify your upload preset is set to "Unsigned"
 - **CORS errors**: Make sure your Cloudinary account allows uploads from your domain
 - **Image not showing**: Check the browser console for errors and verify the URL format
+
 
 
 

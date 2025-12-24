@@ -62,8 +62,8 @@ const PagesDrawer = ({ open, setOpen, categories, categoryError }) => {
                   <Link href="/" className="flex flex-shrink-0 items-center">
                     <img
                       className="h-8 w-auto"
-                      src="/logo/logo-color.png"
-                      alt="Kachabazar"
+                      src="https://res.cloudinary.com/dezs8ma9n/image/upload/v1766484997/horecaLogo_hirtnv.png"
+                      alt="Horeca1"
                     />
                   </Link>
                 </div>

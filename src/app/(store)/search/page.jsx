@@ -20,7 +20,7 @@ export async function generateMetadata({ searchParams }) {
   const product = products[0];
 
   return {
-    title: `${product?.title?.en || "Search"} | Kachabazar`,
+    title: `${product?.title?.en || "Search"} | Horeca1`,
     description: product?.description?.en,
     keywords: [product?.tags],
     openGraph: {

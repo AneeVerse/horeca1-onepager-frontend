@@ -7,6 +7,74 @@ import { Tag, Clock, Gift } from "lucide-react";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import { baseURL } from "@services/CommonService";
 
+// Countdown Timer Component for Sale Start
+const SaleCountdownTimer = () => {
+  const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
+
+  useEffect(() => {
+    const updateTimer = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const seconds = now.getSeconds();
+
+      // Calculate time until 6pm (18:00)
+      let remainingHours, remainingMinutes, remainingSeconds;
+
+      if (hours < 18) {
+        // Before 6pm, calculate time until 6pm today
+        remainingHours = 17 - hours;
+        remainingMinutes = 59 - minutes;
+        remainingSeconds = 60 - seconds;
+      } else {
+        // After 6pm, calculate time until 6pm next day
+        remainingHours = (24 - hours - 1) + 18;
+        remainingMinutes = 59 - minutes;
+        remainingSeconds = 60 - seconds;
+      }
+
+      if (remainingSeconds === 60) {
+        remainingSeconds = 0;
+        remainingMinutes += 1;
+      }
+      if (remainingMinutes === 60) {
+        remainingMinutes = 0;
+        remainingHours += 1;
+      }
+
+      setTimeRemaining({
+        hours: Math.max(0, remainingHours),
+        minutes: Math.max(0, remainingMinutes),
+        seconds: Math.max(0, remainingSeconds),
+      });
+    };
+
+    updateTimer();
+    const interval = setInterval(updateTimer, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <div className="flex items-center gap-2 text-xs mb-2">
+      <Clock className="w-3 h-3 text-orange-500" />
+      <span className="text-gray-600 font-medium">Sale starts in:</span>
+      <div className="flex items-center gap-1">
+        <span className="bg-orange-500 text-white px-1.5 py-0.5 rounded font-bold text-xs">
+          {timeRemaining.hours.toString().padStart(2, "0")}
+        </span>
+        <span className="text-gray-500">:</span>
+        <span className="bg-orange-500 text-white px-1.5 py-0.5 rounded font-bold text-xs">
+          {timeRemaining.minutes.toString().padStart(2, "0")}
+        </span>
+        <span className="text-gray-500">:</span>
+        <span className="bg-orange-500 text-white px-1.5 py-0.5 rounded font-bold text-xs">
+          {timeRemaining.seconds.toString().padStart(2, "0")}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 const CouponSection = () => {
   const [coupons, setCoupons] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -97,13 +165,11 @@ const CouponSection = () => {
 
                     {/* Coupon Details */}
                     <div className="flex-1 min-w-0">
+                      {/* Promotional Timing */}
                       <div className="flex items-center gap-2 mb-1">
-                        <span className={`text-lg font-bold ${isExpired ? "text-gray-400" : "text-emerald-600"}`}>
-                          {coupon?.discountType?.type === "fixed"
-                            ? `${currency}${coupon?.discountType?.value}`
-                            : `${coupon?.discountType?.value}%`}
+                        <span className="text-sm font-semibold text-orange-600">
+                          Sale: 6pm - 9am
                         </span>
-                        <span className="text-sm text-gray-600">Off</span>
                         <span
                           className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                             isExpired
@@ -111,23 +177,16 @@ const CouponSection = () => {
                               : "bg-emerald-100 text-emerald-600"
                           }`}
                         >
-                          {isExpired ? "Expired" : "Active"}
+                          {isExpired ? "Expired" : "Upcoming"}
                         </span>
                       </div>
 
-                      <h4 className="text-sm font-medium text-gray-800 truncate mb-1">
+                      <h4 className="text-sm font-medium text-gray-800 truncate mb-2">
                         {showingTranslateValue(coupon?.title)}
                       </h4>
 
-                      {/* Timer */}
-                      {!isExpired && (
-                        <div className="flex items-center gap-1 text-xs text-gray-500 mb-2">
-                          <Clock className="w-3 h-3" />
-                          <span>
-                            Expires: {dayjs(coupon.endTime).format("MMM DD, YYYY")}
-                          </span>
-                        </div>
-                      )}
+                      {/* Countdown Timer to Next Sale Start */}
+                      <SaleCountdownTimer />
 
                       {/* Coupon Code */}
                       <div className="flex items-center gap-2">
@@ -162,6 +221,7 @@ const CouponSection = () => {
 };
 
 export default CouponSection;
+
 
 
 

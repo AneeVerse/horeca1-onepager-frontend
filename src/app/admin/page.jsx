@@ -26,15 +26,24 @@ export default function AdminDashboard() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [categoriesRes, productsRes] = await Promise.all([
+        const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+        const { baseURL } = await import("@services/CommonService");
+        
+        const [categoriesRes, productsRes, ordersRes] = await Promise.all([
           getAllCategories(),
           getAllProducts(),
+          fetch(`${baseURL}/orders/dashboard-count`, {
+            headers: {
+              "Content-Type": "application/json",
+              ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            },
+          }).then(res => res.ok ? res.json() : { totalOrder: 0 }).catch(() => ({ totalOrder: 0 })),
         ]);
 
         setStats({
           categories: categoriesRes.categories?.length || 0,
           products: productsRes.products?.products?.length || productsRes.products?.length || 0,
-          orders: 0, // TODO: Add orders API
+          orders: ordersRes.totalOrder || 0,
           customers: 0, // TODO: Add customers API
           coupons: 0, // TODO: Add coupons API
           loading: false,

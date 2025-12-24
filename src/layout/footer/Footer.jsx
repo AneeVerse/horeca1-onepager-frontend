@@ -251,15 +251,10 @@ const Footer = async ({ error, storeCustomizationSetting }) => {
                 rel="noreferrer"
               >
                 <div className="relative w-32 h-10">
-                  <Image
-                    // width={110}
-                    // height={40}
-                    width="0"
-                    height="0"
-                    sizes="100vw"
-                    className="w-full h-auto"
-                    src={footer?.block4_logo || "/logo/logo-color.svg"}
-                    alt="logo"
+                  <img
+                    className="h-10 w-auto"
+                    src="https://res.cloudinary.com/dezs8ma9n/image/upload/v1766484997/horecaLogo_hirtnv.png"
+                    alt="horeca1"
                   />
                 </div>
               </Link>

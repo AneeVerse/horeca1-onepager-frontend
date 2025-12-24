@@ -30,9 +30,23 @@ export default async function RootLayout({ children }) {
   const storeSetting = storeResult.storeSetting || {};
   // Merge API response with frontend defaults, ensuring continue_button uses correct value
   const apiCustomization = customizationResult.storeCustomizationSetting || {};
+  
+  // Deep merge to ensure API values override defaults, especially for nested objects like home
   const storeCustomizationSetting = {
     ...defaultStoreCustomization,
     ...apiCustomization,
+    // Deep merge for home to ensure API values take precedence
+    home: {
+      ...defaultStoreCustomization.home,
+      ...apiCustomization.home,
+      // Ensure API values override defaults for these specific fields - check if API has the nested .en property
+      quick_delivery_subtitle: (apiCustomization.home?.quick_delivery_subtitle?.en || apiCustomization.home?.quick_delivery_subtitle) 
+        ? apiCustomization.home.quick_delivery_subtitle 
+        : defaultStoreCustomization.home.quick_delivery_subtitle,
+      quick_delivery_description: (apiCustomization.home?.quick_delivery_description?.en || apiCustomization.home?.quick_delivery_description)
+        ? apiCustomization.home.quick_delivery_description
+        : defaultStoreCustomization.home.quick_delivery_description,
+    },
     // Ensure checkout.continue_button always uses the correct value
     checkout: {
       ...defaultStoreCustomization.checkout,
@@ -43,6 +57,13 @@ export default async function RootLayout({ children }) {
       },
     },
   };
+  
+  // #region agent log
+  const quickDeliverySubtitle = storeCustomizationSetting?.home?.quick_delivery_subtitle?.en;
+  const quickDeliveryDescription = storeCustomizationSetting?.home?.quick_delivery_description?.en;
+  console.log('[DEBUG] storeCustomizationSetting.home.quick_delivery_subtitle.en:', quickDeliverySubtitle);
+  console.log('[DEBUG] storeCustomizationSetting.home.quick_delivery_description.en:', quickDeliveryDescription);
+  // #endregion
 
   return (
     <html lang="en" className="" suppressHydrationWarning>

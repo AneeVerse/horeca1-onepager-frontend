@@ -54,10 +54,7 @@ const Home = async () => {
             </div>
           </div>
 
-          {/* Banner */}
-          <div className="bg-orange-100 px-10 py-6 rounded-lg mt-6 dark:bg-slate-600">
-            <Banner storeCustomizationSetting={storeCustomizationSetting} />
-          </div>
+          {/* Banner - Hidden per user request */}
         </div>
       </div>
 

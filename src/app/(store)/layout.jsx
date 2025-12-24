@@ -24,10 +24,7 @@ export default async function StoreLayout({ children }) {
         {children}
       </main>
       <div className="w-full">
-        <FooterTop
-          error={customizationResult.error}
-          storeCustomizationSetting={storeCustomizationSetting}
-        />
+        {/* FooterTop (Daily Needs section) - Hidden per user request */}
         <div className="hidden relative lg:block mx-auto max-w-screen-2xl py-6 px-3 sm:px-10">
           <FeatureCard
             storeCustomizationSetting={storeCustomizationSetting}
@@ -44,6 +41,7 @@ export default async function StoreLayout({ children }) {
     </>
   );
 }
+
 
 
 
