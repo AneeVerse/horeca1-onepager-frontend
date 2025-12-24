@@ -211,6 +211,11 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             variant: product.prices,
                             price: product.bulkPricing.bulkRate1.pricePerUnit,
                             originalPrice: product.prices?.originalPrice,
+                            // Explicitly preserve product details for order details
+                            sku: product.sku,
+                            hsn: product.hsn,
+                            unit: product.unit,
+                            brand: product.brand,
                           };
                           addItem(bulkItem, bulkQuantity);
                         }}
@@ -235,6 +240,11 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             variant: product.prices,
                             price: product.bulkPricing.bulkRate2.pricePerUnit,
                             originalPrice: product.prices?.originalPrice,
+                            // Explicitly preserve product details for order details
+                            sku: product.sku,
+                            hsn: product.hsn,
+                            unit: product.unit,
+                            brand: product.brand,
                           };
                           addItem(bulkItem, bulkQuantity);
                           setCartDrawerOpen(true); // Auto-open cart drawer
@@ -272,6 +282,11 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                               price: product.promoPricing.bulkRate1.pricePerUnit,
                               originalPrice: product.prices?.originalPrice,
                               isPromo: true,
+                              // Explicitly preserve product details for order details
+                              sku: product.sku,
+                              hsn: product.hsn,
+                              unit: product.unit,
+                              brand: product.brand,
                             };
                             addItem(promoItem, promoQuantity);
                             setCartDrawerOpen(true);
@@ -298,6 +313,11 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                               price: product.promoPricing.bulkRate2.pricePerUnit,
                               originalPrice: product.prices?.originalPrice,
                               isPromo: true,
+                              // Explicitly preserve product details for order details
+                              sku: product.sku,
+                              hsn: product.hsn,
+                              unit: product.unit,
+                              brand: product.brand,
                             };
                             addItem(promoItem, promoQuantity);
                             setCartDrawerOpen(true);
@@ -377,6 +397,11 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             price: product.promoPricing.singleUnit,
                             originalPrice: product.prices?.originalPrice,
                             isPromo: true,
+                            // Explicitly preserve product details for order details
+                            sku: product.sku,
+                            hsn: product.hsn,
+                            unit: product.unit,
+                            brand: product.brand,
                           };
                           addItem(promoItem, item);
                           setCartDrawerOpen(true);
