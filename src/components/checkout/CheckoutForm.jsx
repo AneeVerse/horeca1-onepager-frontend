@@ -1,16 +1,12 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { CardElement } from "@stripe/react-stripe-js";
 import Link from "next/link";
 import {
   IoReturnUpBackOutline,
   IoArrowForward,
   IoBagHandle,
-  IoWalletSharp,
-  IoLocationSharp,
 } from "react-icons/io5";
-import { ImCreditCard } from "react-icons/im";
 import useTranslation from "next-translate/useTranslation";
 
 //internal import
@@ -18,8 +14,6 @@ import Label from "@components/form/Label";
 import Error from "@components/form/Error";
 import CartItem from "@components/cart/CartItem";
 import InputArea from "@components/form/InputArea";
-import InputShipping from "@components/form/InputShipping";
-import InputPayment from "@components/form/InputPayment";
 import useCheckoutSubmit from "@hooks/useCheckoutSubmit";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
@@ -255,84 +249,9 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 </div>
               </div>
 
-              <Label label="Delivery Option" />
-              <div className="grid grid-cols-6 gap-6">
-                <div className="col-span-6 sm:col-span-3">
-                  <InputShipping
-                    currency={currency}
-                    register={register}
-                    handleShippingCost={handleShippingCost}
-                    name="Standard Delivery"
-                    description="3-5 business days"
-                    value={Number(checkout?.shipping_one_cost) || 40}
-                  />
-                  <Error errorMessage={errors.shippingOption} />
-                </div>
-
-                <div className="col-span-6 sm:col-span-3">
-                  <InputShipping
-                    currency={currency}
-                    register={register}
-                    handleShippingCost={handleShippingCost}
-                    name="Express Delivery"
-                    description="Same day / Next day"
-                    value={Number(checkout?.shipping_two_cost) || 80}
-                  />
-                  <Error errorMessage={errors.shippingOption} />
-                </div>
-              </div>
-            </div>
-
-            <div className="form-group mt-12">
-              <h2 className="font-semibold text-base text-gray-700 pb-3">
-                03. {showingTranslateValue(checkout?.payment_method)}
-              </h2>
-              {showCard && (
-                <div className="mb-3">
-                  <CardElement />{" "}
-                  <p className="text-red-400 text-sm mt-1">{error}</p>
-                </div>
-              )}
-              <div className="grid sm:grid-cols-3 grid-cols-1 gap-4">
-                {storeSetting?.cod_status && (
-                  <div className="">
-                    <InputPayment
-                      setShowCard={setShowCard}
-                      register={register}
-                      name={t("common:cashOnDelivery")}
-                      value="Cash"
-                      Icon={IoWalletSharp}
-                    />
-                    <Error errorMessage={errors.paymentMethod} />
-                  </div>
-                )}
-
-                {storeSetting?.stripe_status && (
-                  <div className="">
-                    <InputPayment
-                      setShowCard={setShowCard}
-                      register={register}
-                      name={t("common:creditCard")}
-                      value="Card"
-                      Icon={ImCreditCard}
-                    />
-                    <Error errorMessage={errors.paymentMethod} />
-                  </div>
-                )}
-
-                {/* {storeSetting?.razorpay_status && ( */}
-                <div className="">
-                  <InputPayment
-                    setShowCard={setShowCard}
-                    register={register}
-                    name="RazorPay"
-                    value="RazorPay"
-                    Icon={ImCreditCard}
-                  />
-                  <Error errorMessage={errors.paymentMethod} />
-                </div>
-                {/* )} */}
-              </div>
+              {/* Hidden defaults: no delivery selection, always Razorpay */}
+              <input type="hidden" value="Standard Delivery" {...register("shippingOption")} />
+              <input type="hidden" value="RazorPay" {...register("paymentMethod")} />
             </div>
 
             <div className="grid grid-cols-6 gap-4 lg:gap-6 mt-10">
@@ -354,7 +273,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 <Button
                   type="submit"
                   variant="create"
-                  disabled={isEmpty || !stripe || isCheckoutSubmit}
+                  disabled={isEmpty || isCheckoutSubmit}
                   isLoading={isCheckoutSubmit}
                   className="w-full h-10 rounded-sm"
                 >
