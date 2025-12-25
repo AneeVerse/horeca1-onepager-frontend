@@ -23,8 +23,8 @@ import {
   updateCategory,
   deleteCategory,
   updateCategoryStatus,
-  updateCategoryOrder,
 } from "@services/AdminCategoryService";
+import { updateCategoryOrder } from "@services/ServerActionServices";
 import {
   PlusIcon,
   PencilIcon,
@@ -208,22 +208,10 @@ export default function CategoriesPage() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:207',message:'Drag end event triggered',data:{activeId:active.id,overId:over?.id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
-      
       const oldIndex = filteredCategories.findIndex((cat) => cat._id === active.id);
       const newIndex = filteredCategories.findIndex((cat) => cat._id === over.id);
 
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:212',message:'Calculated indices',data:{oldIndex,newIndex,filteredCount:filteredCategories.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
-
       const newCategories = arrayMove(filteredCategories, oldIndex, newIndex);
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:216',message:'New categories array created',data:{newCategoriesCount:newCategories.length,firstCategory:newCategories[0]?._id,lastCategory:newCategories[newCategories.length-1]?._id},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
       
       // Update order in backend first
       const categoriesWithOrder = newCategories.map((cat, index) => ({
@@ -231,16 +219,9 @@ export default function CategoriesPage() {
         order: index,
       }));
 
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:230',message:'Preparing order update',data:{categoriesWithOrder:categoriesWithOrder.slice(0,3).map(c=>({_id:c._id,order:c.order}))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-      // #endregion
-
       try {
-        const result = await updateCategoryOrder(categoriesWithOrder);
-        
-        // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:235',message:'Order update API call completed',data:{success:!result.error,error:result.error},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-        // #endregion
+        const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+        const result = await updateCategoryOrder(categoriesWithOrder, token);
         
         if (result.error) {
           throw new Error(result.error);
@@ -256,10 +237,6 @@ export default function CategoriesPage() {
         setCategories(updatedCategories);
         setFilteredCategories(updatedCategories);
       } catch (err) {
-        // #region agent log
-        fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/categories/page.jsx:250',message:'Order update failed',data:{error:err.message,errorStack:err.stack?.substring(0,200)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'C'})}).catch(()=>{});
-        // #endregion
-        
         setError(err.message || "Failed to update category order");
         // Revert on error by refetching
         fetchCategories();

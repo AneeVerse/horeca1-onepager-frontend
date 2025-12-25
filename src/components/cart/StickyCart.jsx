@@ -18,6 +18,10 @@ const StickyCart = ({ currency }) => {
   const [dragging, setDragging] = useState(false);
   const dragMovedRef = useRef(false);
   const offsetRef = useRef({ x: 0, y: 0 });
+  
+  // Animation state
+  const [isAnimating, setIsAnimating] = useState(false);
+  const prevTotalItemsRef = useRef(totalItems);
 
   useEffect(() => {
     // initial position: right 24px, center vertically
@@ -25,6 +29,18 @@ const StickyCart = ({ currency }) => {
     const h = typeof window !== "undefined" ? window.innerHeight : 0;
     setPos({ x: Math.max(16, w - 120), y: Math.max(80, h / 2 - 60) });
   }, []);
+
+  // Trigger pop animation when items are added or quantity increases
+  useEffect(() => {
+    if (totalItems > prevTotalItemsRef.current) {
+      setIsAnimating(true);
+      const timer = setTimeout(() => {
+        setIsAnimating(false);
+      }, 600); // Animation duration
+      return () => clearTimeout(timer);
+    }
+    prevTotalItemsRef.current = totalItems;
+  }, [totalItems]);
 
   useEffect(() => {
     const handleMove = (e) => {
@@ -82,6 +98,13 @@ const StickyCart = ({ currency }) => {
               setCartDrawerOpen(true);
             }}
             className="cursor-grab active:cursor-grabbing shadow-lg rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            style={
+              isAnimating
+                ? {
+                    animation: "pop 0.6s ease-in-out",
+                  }
+                : undefined
+            }
           >
             <div className="flex flex-col items-center justify-center bg-indigo-50 p-2 text-gray-700">
               <span className="text-2xl mb-1 text-emerald-600">

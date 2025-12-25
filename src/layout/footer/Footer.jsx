@@ -1,13 +1,6 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import {
-  XIcon,
-  FacebookIcon,
-  LinkedinIcon,
-  PinterestIcon,
-  WhatsappIcon,
-} from "react-share";
 
 //internal imports
 
@@ -276,124 +269,6 @@ const Footer = async ({ error, storeCustomizationSetting }) => {
         </div>
 
         <hr className="hr-line"></hr>
-
-        <div className="mx-auto max-w-screen-2xl px-4 sm:px-10 bg-gray-50 shadow-sm border border-gray-50 rounded-lg">
-          <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-3 gap-5 sm:gap-9 lg:gap-11 xl:gap-7 py-8 items-center justify-between">
-            <div className="col-span-1">
-              {footer?.social_links_status && (
-                <div>
-                  {(footer?.social_facebook ||
-                    footer?.social_twitter ||
-                    footer?.social_pinterest ||
-                    footer?.social_linkedin ||
-                    footer?.social_whatsapp) && (
-                    <span className="text-base leading-7 font-medium block mb-2 pb-0.5">
-                      Follow Us
-                    </span>
-                  )}
-                  <ul className="text-sm flex">
-                    {footer?.social_facebook && (
-                      <li className="flex items-center mr-3 transition ease-in-out duration-500">
-                        <Link
-                          href={`${footer?.social_facebook}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto text-gray-500 hover:text-white"
-                        >
-                          <FacebookIcon size={34} round />
-                        </Link>
-                      </li>
-                    )}
-                    {footer?.social_twitter && (
-                      <li className="flex items-center  mr-3 transition ease-in-out duration-500">
-                        <Link
-                          href={`${footer?.social_twitter}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto text-gray-500 hover:text-white"
-                        >
-                          <XIcon size={34} round />
-                        </Link>
-                      </li>
-                    )}
-                    {footer?.social_pinterest && (
-                      <li className="flex items-center mr-3 transition ease-in-out duration-500">
-                        <Link
-                          href={`${footer?.social_pinterest}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto text-gray-500 hover:text-white"
-                        >
-                          <PinterestIcon size={34} round />
-                        </Link>
-                      </li>
-                    )}
-                    {footer?.social_linkedin && (
-                      <li className="flex items-center  mr-3 transition ease-in-out duration-500">
-                        <Link
-                          href={`${footer?.social_linkedin}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto text-gray-500 hover:text-white"
-                        >
-                          <LinkedinIcon size={34} round />
-                        </Link>
-                      </li>
-                    )}
-                    {footer?.social_whatsapp && (
-                      <li className="flex items-center  mr-3 transition ease-in-out duration-500">
-                        <Link
-                          href={`${footer?.social_whatsapp}`}
-                          aria-label="Social Link"
-                          rel="noreferrer"
-                          target="_blank"
-                          className="block text-center mx-auto text-gray-500 hover:text-white"
-                        >
-                          <WhatsappIcon size={34} round />
-                        </Link>
-                      </li>
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
-            <div className="col-span-1 text-center hidden lg:block md:block">
-              {footer?.bottom_contact_status && (
-                <div>
-                  <p className="text-base leading-7 font-medium block">
-                    Call Us
-                  </p>
-                  <h5 className="text-2xl font-bold text-emerald-500 leading-7">
-                    {/* +012345-67900 */}
-                    {footer?.bottom_contact}
-                  </h5>
-                </div>
-              )}
-            </div>
-            {footer?.payment_method_status && (
-              <div className="col-span-1 hidden lg:block md:block">
-                <ul className="lg:text-right">
-                  <li className="px-1 mb-2 md:mb-0 transition hover:opacity-80 inline-flex">
-                    <Image
-                      width={274}
-                      height={85}
-                      className="w-full"
-                      src={
-                        footer?.payment_method_img ||
-                        "/payment-method/payment-logo.png"
-                      }
-                      alt="payment method"
-                    />
-                  </li>
-                </ul>
-              </div>
-            )}
-          </div>
-        </div>
       </div>
 
       <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex justify-center py-4">

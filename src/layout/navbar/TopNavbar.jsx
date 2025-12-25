@@ -6,13 +6,13 @@ import { usePathname } from "next/navigation";
 import { FiPhoneCall } from "react-icons/fi";
 
 //internal imports
-import LogoutButton from "./LogoutButton";
-import { showingTranslateValue } from "@lib/translate";
+import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const TopNavbar = ({ storeCustomization }) => {
   const navbar = storeCustomization?.navbar;
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const { showingTranslateValue } = useUtilsFunction();
 
   // Hide top navbar on home page
   if (isHomePage) {
@@ -58,7 +58,8 @@ const TopNavbar = ({ storeCustomization }) => {
               </div>
             )}
 
-            <LogoutButton storeCustomization={storeCustomization} />
+            {/* Logout button hidden as requested */}
+            {/* <LogoutButton storeCustomization={storeCustomization} /> */}
           </div>
         </div>
       </div>

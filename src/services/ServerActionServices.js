@@ -8,7 +8,7 @@ import {
   updateProfileFormSchema,
 } from "@lib/form-schema";
 import { baseURL, handleResponse } from "@services/CommonService";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -262,6 +262,30 @@ const addShippingAddress = async (userInfo, currentState, formState) => {
   }
 };
 
+const updateCategoryOrder = async (categories, token) => {
+  try {
+    const response = await fetch(`${baseURL}/category/order/update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({ categories }),
+      cache: "no-cache",
+    });
+
+    const data = await handleResponse(response);
+    
+    // Invalidate cache so frontend shows updated order immediately
+    // This is the key fix: revalidateTag invalidates the ISR cache
+    revalidateTag("categories");
+    
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: error.message };
+  }
+};
+
 export {
   loginCustomer,
   handleLogin,
@@ -269,4 +293,5 @@ export {
   changePassword,
   updateCustomer,
   addShippingAddress,
+  updateCategoryOrder,
 };

@@ -4,7 +4,6 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { IoAdd, IoExpand, IoBagAdd, IoRemove } from "react-icons/io5";
 import { useCart } from "react-use-cart";
-import Link from "next/link";
 
 //internal import
 
@@ -67,17 +66,14 @@ const DiscountedCard = ({ product, attributes, currency }) => {
           <Discount product={product} />
         </div>
         <div className="relative w-full min-h-48 lg:h-48 xl:h-52">
-          <Link
-            href={`/product/${product?.slug}`}
-            className="relative block w-full h-full overflow-hidden bg-gray-100"
-          >
+          <div className="relative block w-full h-full overflow-hidden bg-gray-100">
             <ImageWithFallback
               fill
               sizes="100%"
               alt="product"
               src={product.image?.[0]}
             />
-          </Link>
+          </div>
           <div className="absolute lg:bottom-0 bottom-4 lg:group-hover:bottom-4 inset-x-1 opacity-100 flex justify-center lg:opacity-0 lg:invisible group-hover:opacity-100 group-hover:visible transition-all">
             <button
               aria-label="quick view"
@@ -147,12 +143,9 @@ const DiscountedCard = ({ product, attributes, currency }) => {
         </div>
         <div className="flex flex-1 flex-col space-y-2 px-4 pt-2 pb-8">
           <div className="relative mb-1">
-            <Link
-              href={`/product/${product?.slug}`}
-              className="text-sm font-medium text-gray-800 line-clamp-1 hover:text-emerald-500"
-            >
+            <div className="text-sm font-medium text-gray-800 line-clamp-1">
               {showingTranslateValue(product?.title)}
-            </Link>
+            </div>
           </div>
           <div className="flex gap-0.5 items-center">
             <Rating

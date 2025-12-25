@@ -26,9 +26,13 @@ const OTPLogin = () => {
   const [devOtp, setDevOtp] = useState(null); // For development mode
   const otpInputRefs = useRef([]);
   const phoneInputRef = useRef(null);
+  const hasCheckedAuth = useRef(false); // Guard to prevent repeated auth checks
 
-  // Check if already logged in, redirect to dashboard
+  // Check if already logged in, redirect to dashboard - only once
   useEffect(() => {
+    if (hasCheckedAuth.current) return; // Prevent multiple checks
+    hasCheckedAuth.current = true;
+
     const userInfoCookie = Cookies.get("userInfo");
     if (userInfoCookie) {
       try {
@@ -36,6 +40,7 @@ const OTPLogin = () => {
         // If user has token (logged in), redirect
         if (userInfo?.token) {
           router.replace(redirectUrl);
+          return; // Exit early if redirecting
         }
       } catch {
         // Invalid cookie, continue with login
@@ -44,7 +49,8 @@ const OTPLogin = () => {
 
     // Close cart drawer if it was open when redirected to login
     setCartDrawerOpen?.(false);
-  }, [router, redirectUrl]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run once on mount to prevent loops
 
   // Focus phone input on mount
   useEffect(() => {
@@ -134,6 +140,12 @@ const OTPLogin = () => {
   // Handle phone submission
   const handlePhoneSubmit = async (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    
+    // Prevent multiple submissions
+    if (loading) {
+      return;
+    }
     
     if (!displayPhone || displayPhone.length < 10) {
       notifyError("Please enter a valid 10-digit mobile number");
@@ -141,6 +153,10 @@ const OTPLogin = () => {
     }
 
     setLoading(true);
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'otp-login/page.jsx:149',message:'handlePhoneSubmit called',data:{phoneLength:displayPhone.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
     const formattedPhone = formatPhoneNumber(displayPhone);
     setPhone(formattedPhone);
 
@@ -229,29 +245,34 @@ const OTPLogin = () => {
       return;
     }
 
+    // Prevent multiple submissions
+    if (loading) {
+      return;
+    }
+
     setLoading(true);
+    
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'otp-login/page.jsx:238',message:'handleOTPSubmit called',data:{otpLength:otp.length,hasPhone:!!phone},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    
     try {
       // Verify OTP with backend
       const result = await verifyOTP(phone, otp);
 
-      if (result.success && result.userInfo) {
-        // Create NextAuth session using OTP provider
-        const signInResult = await signIn("otp-login", {
-          redirect: false,
-          loginType: "otp",
-          phone: result.userInfo.phone,
-          token: result.userInfo.token,
-          refreshToken: result.userInfo.refreshToken,
-          _id: result.userInfo._id,
-          name: result.userInfo.name || "",
-          email: result.userInfo.email || "",
-          address: result.userInfo.address || "",
-          image: result.userInfo.image || "",
-        });
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'otp-login/page.jsx:245',message:'OTP verification result',data:{success:result.success,hasUserInfo:!!result.userInfo},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
 
-        console.log("[OTP Login] signIn result:", signInResult);
+      if (result.success && result.userInfo) {
+        // Skip NextAuth signIn to avoid POST request loops
+        // We use cookie-based auth as primary method (no NextAuth needed)
         
-        // Even if NextAuth has issues, we use cookie-based auth as primary
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'otp-login/page.jsx:258',message:'Skipping NextAuth signIn, using cookie auth only',data:{hasToken:!!result.userInfo.token},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
+        // #endregion
+        
+        // Use cookie-based auth as primary
         // Store in userInfo cookie for middleware auth check
         const userInfoForCookie = {
           ...result.userInfo,
@@ -271,13 +292,12 @@ const OTPLogin = () => {
         
         notifySuccess("Login successful!");
         
-        // Redirect - use window.location for full reload
+        // Redirect immediately - use window.location for full reload
         const targetUrl = redirectUrl || "/user/dashboard";
         console.log("[OTP Login] Redirecting to:", targetUrl);
         
-        setTimeout(() => {
-          window.location.href = targetUrl;
-        }, 500);
+        // Immediate redirect to prevent any loops
+        window.location.href = targetUrl;
       } else {
         notifyError(result.error || "Invalid OTP. Please try again.");
         // Clear OTP inputs on error
@@ -343,7 +363,7 @@ const OTPLogin = () => {
                 </p>
               </div>
 
-              <form onSubmit={handlePhoneSubmit}>
+              <form onSubmit={handlePhoneSubmit} action="#" method="get">
                 {/* Phone Input */}
                 <div className="mb-6">
                   <label className="block text-sm font-medium text-gray-700 mb-2">

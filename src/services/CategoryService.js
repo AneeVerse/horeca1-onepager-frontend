@@ -4,7 +4,10 @@ const getShowingCategory = async () => {
   try {
     const response = await fetch(`${baseURL}/category/show`, {
       // cache: "no-cache",
-      next: { revalidate: 120 }, // revalidate every 2 minutes
+      next: { 
+        revalidate: 120, // revalidate every 2 minutes
+        tags: ["categories"], // Add cache tag for invalidation
+      },
     });
 
     const categories = await handleResponse(response);

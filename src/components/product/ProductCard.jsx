@@ -9,7 +9,6 @@ import {
 } from "react-icons/io5";
 import { useCart } from "react-use-cart";
 import { Expand } from "lucide-react";
-import Link from "next/link";
 import dynamic from "next/dynamic";
 
 //internal import
@@ -114,17 +113,14 @@ const ProductCard = ({ product, attributes }) => {
           <Discount product={product} />
         </div>
         <div className="relative w-full min-h-32 sm:min-h-40 lg:h-40 xl:h-44">
-          <Link
-            href={`/product/${product?.slug}`}
-            className="relative block w-full h-full overflow-hidden bg-gray-100"
-          >
+          <div className="relative block w-full h-full overflow-hidden bg-gray-100">
             <ImageWithFallback
               fill
               sizes="100%"
               alt="product"
               src={product.image?.[0]}
             />
-          </Link>
+          </div>
           <div className="absolute lg:bottom-0 bottom-2 sm:bottom-4 lg:group-hover:bottom-4 inset-x-1 opacity-100 flex justify-center lg:opacity-0 lg:invisible group-hover:opacity-100 group-hover:visible transition-all">
             <button
               aria-label="quick view"
@@ -158,11 +154,13 @@ const ProductCard = ({ product, attributes }) => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          updateItemQuantity(item.id, item.quantity - 1);
+                          item?.variants?.length > 0
+                            ? handleAddItem(item)
+                            : handleIncreaseQuantity(item);
                         }}
                       >
                         <span className="text-sm sm:text-lg cursor-pointer">
-                          <IoRemove />
+                          <IoAdd />
                         </span>
                       </button>
                       <p className="text-xs sm:text-sm font-semibold">
@@ -172,13 +170,11 @@ const ProductCard = ({ product, attributes }) => {
                         onClick={(e) => {
                           e.preventDefault();
                           e.stopPropagation();
-                          item?.variants?.length > 0
-                            ? handleAddItem(item)
-                            : handleIncreaseQuantity(item);
+                          updateItemQuantity(item.id, item.quantity - 1);
                         }}
                       >
                         <span className="text-sm sm:text-lg cursor-pointer">
-                          <IoAdd />
+                          <IoRemove />
                         </span>
                       </button>
                     </div>
@@ -191,12 +187,9 @@ const ProductCard = ({ product, attributes }) => {
         {/* product info start */}
         <div className="flex flex-1 flex-col px-2 sm:px-3 pt-1.5 sm:pt-2 pb-2 sm:pb-3">
           {/* Product Title */}
-          <Link
-            href={`/product/${product?.slug}`}
-            className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 hover:text-emerald-600 leading-tight sm:leading-snug mb-0.5"
-          >
+          <div className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-tight sm:leading-snug mb-0.5">
             {showingTranslateValue(product?.title)}
-          </Link>
+          </div>
           
           {/* Unit info */}
           {product?.unit && (
@@ -233,7 +226,7 @@ const ProductCard = ({ product, attributes }) => {
                       addItem(bulkItem, bulkQuantity);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.bulkPricing.bulkRate1.quantity}
                   </button>
@@ -266,7 +259,7 @@ const ProductCard = ({ product, attributes }) => {
                       addItem(bulkItem, bulkQuantity);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.bulkPricing.bulkRate2.quantity}
                   </button>
@@ -306,7 +299,7 @@ const ProductCard = ({ product, attributes }) => {
                       addItem(promoItem, promoQuantity);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.promoPricing.bulkRate1.quantity}
                   </button>
@@ -340,7 +333,7 @@ const ProductCard = ({ product, attributes }) => {
                       addItem(promoItem, promoQuantity);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-emerald-600 hover:text-emerald-700 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.promoPricing.bulkRate2.quantity}
                   </button>
@@ -391,10 +384,10 @@ const ProductCard = ({ product, attributes }) => {
                   handleAddItem(product);
                 }
               }}
-              className="flex items-center gap-0.5 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full font-semibold text-[10px] sm:text-xs transition-colors border border-emerald-500 text-emerald-600 hover:bg-emerald-50 flex-shrink-0"
+              className="flex items-center gap-0.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-[#256ff2] text-[#256ff2] hover:bg-[#256ff2]/10 flex-shrink-0 bg-white"
             >
               ADD
-              <span className="text-emerald-500 text-xs sm:text-sm leading-none">+</span>
+              <span className="text-[#256ff2] text-xs sm:text-sm leading-none">+</span>
             </button>
           </div>
         </div>

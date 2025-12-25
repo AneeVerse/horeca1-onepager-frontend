@@ -1,11 +1,8 @@
 import { Suspense } from "react";
 
 //internal import
-import Banner from "@components/banner/Banner";
-import CardTwo from "@components/cta-card/CardTwo";
 import OfferCard from "@components/offer/OfferCard";
 import StickyCart from "@components/cart/StickyCart";
-import ProductCard from "@components/product/ProductCard";
 import MainCarousel from "@components/carousel/MainCarousel";
 import CMSkeletonTwo from "@components/preloader/CMSkeleton";
 import FeatureCategory from "@components/category/FeatureCategory";
@@ -16,6 +13,7 @@ import {
   getStoreCustomizationSetting,
 } from "@services/SettingServices";
 import DiscountedCard from "@components/product/DiscountedCard";
+import ProductCard from "@components/product/ProductCard";
 
 const Home = async () => {
   const { attributes } = await getShowingAttributes();
@@ -69,31 +67,9 @@ const Home = async () => {
         </div>
       )}
 
-      {/* popular products */}
+      {/* popular products - without title/description */}
       {storeCustomizationSetting?.home?.popular_products_status && (
         <div className="bg-gray-50 dark:bg-zinc-900 lg:py-16 py-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
-          <div className="mb-10 flex justify-center">
-            <div className="text-center w-full lg:w-2/5">
-              <h2 className="text-xl lg:text-2xl mb-2  font-semibold">
-                <CMSkeletonTwo
-                  count={1}
-                  height={30}
-                  loading={false}
-                  error={storeCustomizationError}
-                  data={storeCustomizationSetting?.home?.popular_title}
-                />
-              </h2>
-              <p className="text-base font-sans text-gray-600 dark:text-gray-400 leading-6">
-                <CMSkeletonTwo
-                  count={5}
-                  height={10}
-                  loading={false}
-                  error={storeCustomizationError}
-                  data={storeCustomizationSetting?.home?.popular_description}
-                />
-              </p>
-            </div>
-          </div>
           <div className="flex">
             <div className="w-full">
               {error ? (
@@ -121,17 +97,6 @@ const Home = async () => {
                     ))}
                 </div>
               )}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* promotional banner card */}
-      {storeCustomizationSetting?.home?.delivery_status && (
-        <div className="block mx-auto max-w-screen-2xl">
-          <div className="mx-auto max-w-screen-2xl px-4 sm:px-10">
-            <div className="lg:p-16 p-6 bg-emerald-500 shadow-sm border text-black rounded-lg">
-              <CardTwo />
             </div>
           </div>
         </div>

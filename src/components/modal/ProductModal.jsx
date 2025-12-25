@@ -3,7 +3,6 @@ import {
   ArrowDown,
   ArrowUp,
   Eye,
-  Headphones,
   Minus,
   Plus,
   ShoppingCart,
@@ -17,7 +16,6 @@ import useAddToCart from "@hooks/useAddToCart";
 import Discount from "@components/common/Discount";
 import VariantList from "@components/variants/VariantList";
 import useUtilsFunction from "@hooks/useUtilsFunction";
-import Rating from "@components/common/Rating";
 import { Badge } from "@components/ui/badge";
 import { Button } from "@components/ui/button";
 import { Label } from "@components/ui/label";
@@ -26,7 +24,6 @@ import useProductAction from "@hooks/useProductAction";
 import ImageWithFallback from "@components/common/ImageWithFallBack";
 import {
   FiEye,
-  FiHeadphones,
   FiMinus,
   FiPlus,
   FiShoppingBag,
@@ -86,15 +83,8 @@ const ProductModal = ({
       >
         <div className="inline-block overflow-y-auto h-full align-middle transition-all transform">
           <div className="lg:flex flex-col lg:flex-row md:flex-row w-full max-w-4xl overflow-hidden">
-            <Link
-              href={`/product/${product.slug}`}
-              passHref
-              className="w-full lg:w-[40%]"
-            >
-              <div
-                onClick={() => setModalOpen(false)}
-                className="flex-shrink-0 flex items-center justify-center h-auto cursor-pointer"
-              >
+            <div className="w-full lg:w-[40%]">
+              <div className="flex-shrink-0 flex items-center justify-center h-auto">
                 {product.image[0] ? (
                   <Image
                     src={selectedImage || product.image[0]}
@@ -111,7 +101,7 @@ const ProductModal = ({
                   />
                 )}
               </div>
-            </Link>
+            </div>
 
             <div className="w-full lg:w-[60%] pt-6 lg:pt-0 lg:pl-7 xl:pl-10">
               <div className="mb-2 md:mb-2.5 block -mt-1.5">
@@ -122,23 +112,9 @@ const ProductModal = ({
                 >
                   <Stock In stock={stock} />
                 </div>
-                <Link href={`/product/${product.slug}`}>
-                  <h2
-                    onClick={() => setModalOpen(false)}
-                    className="text-heading text-lg md:text-xl lg:text-xl font-medium hover:text-black cursor-pointer"
-                  >
-                    {showingTranslateValue(product?.title)}
-                  </h2>
-                </Link>
-                <div className="flex gap-0.5 items-center mt-1">
-                  {/* Rating */}
-                  <Rating
-                    size="md"
-                    showReviews={true}
-                    rating={product?.average_rating}
-                    totalReviews={product?.total_reviews}
-                  />
-                </div>
+                <h2 className="text-heading text-lg md:text-xl lg:text-xl font-medium">
+                  {showingTranslateValue(product?.title)}
+                </h2>
               </div>
               <p className="text-sm leading-6 text-gray-500 md:leading-6">
                 {showingTranslateValue(product?.description)}
@@ -208,14 +184,6 @@ const ProductModal = ({
                     <FiShoppingBag className="mr-2" />
                     Add to cart
                   </button>
-                  <Link
-                    href={`/product/${product.slug}`}
-                    passHref
-                    className="w-full relative h-auto flex items-center font-semibold text-sm text-gray-600 justify-center rounded transition-colors py-2 px-4 bg-gray-100 hover:bg-gray-200"
-                  >
-                    <FiEye className="mr-2" />
-                    View details
-                  </Link>
                 </div>
               </div>
               <div className="flex items-center mt-4">
@@ -240,16 +208,6 @@ const ProductModal = ({
                     <Tags product={product} />
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center text-sm text-gray-500 border-t border-gray-100 pt-4 mt-4">
-                <FiHeadphones className="mr-1 text-gray-500 text-md" />
-                Call Us for Order
-                <a
-                  href={`tel:${globalSetting?.phone || "+099949343"}`}
-                  className="font-bold text-emerald-500 ml-1"
-                >
-                  {globalSetting?.phone || "+099949343"}
-                </a>
               </div>
             </div>
           </div>

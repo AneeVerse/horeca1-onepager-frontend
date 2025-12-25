@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import { getDynamicAuthOptions } from "./next-auth-options";
+import { cookies } from "next/headers";
 
 const getHeaders = async () => {
   const authOptions = await getDynamicAuthOptions();
@@ -17,11 +18,40 @@ const getHeaders = async () => {
 };
 
 const getUserServerSession = async () => {
-  const authOptions = await getDynamicAuthOptions();
-  const session = await getServerSession(authOptions);
+  // Check cookie-based auth first (for OTP login users) - this is faster and doesn't require NextAuth
+  try {
+    const cookieStore = await cookies();
+    const userInfoCookie = cookieStore.get("userInfo");
+    
+    if (userInfoCookie?.value) {
+      const userInfo = JSON.parse(userInfoCookie.value);
+      // Return in same format as NextAuth session.user
+      return {
+        id: userInfo.id || userInfo._id,
+        name: userInfo.name,
+        email: userInfo.email,
+        phone: userInfo.phone,
+        image: userInfo.image,
+        token: userInfo.token,
+      };
+    }
+  } catch (error) {
+    // Cookie parsing failed, continue to NextAuth check
+  }
 
-  const userInfo = session?.user || null;
-  return userInfo;
+  // Fallback to NextAuth session (for OAuth users) - only check if cookie didn't work
+  try {
+    const authOptions = await getDynamicAuthOptions();
+    const session = await getServerSession(authOptions);
+    
+    if (session?.user) {
+      return session.user;
+    }
+  } catch (error) {
+    // NextAuth session check failed
+  }
+
+  return null;
 };
 
 export { getHeaders, getUserServerSession };

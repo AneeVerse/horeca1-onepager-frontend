@@ -1,13 +1,12 @@
 // internal import
 import Sidebar from "@components/user-dashboard/Sidebar";
-import { getUserServerSession } from "@lib/auth-server";
 
 export async function generateMetadata() {
-  // You can fetch user info or page data here to make metadata dynamic
-  const user = await getUserServerSession(); // Your own function to fetch user details
+  // Use static metadata to avoid triggering getUserServerSession on every request
+  // This prevents infinite loops from NextAuth session checks
   return {
-    title: `${user?.name || "User"} - Dashboard | Horeca1`,
-    description: `Welcome back ${user?.name || "User"}!`,
+    title: "User - Dashboard | Horeca1",
+    description: "Welcome back!",
   };
 }
 
