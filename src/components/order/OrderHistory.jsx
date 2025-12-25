@@ -5,7 +5,7 @@ import { useSetting } from "@context/SettingContext";
 
 const OrderHistory = ({ order }) => {
   const { globalSetting } = useSetting();
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   return (
     <>

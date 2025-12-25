@@ -35,7 +35,7 @@ const MobileFooter = ({ globalSetting, categories, categoryError }) => {
   // Check if user is logged in
   const isLoggedIn = !!(userInfo?.email || userInfo?.phone || userInfo?.token);
 
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   return (
     <>

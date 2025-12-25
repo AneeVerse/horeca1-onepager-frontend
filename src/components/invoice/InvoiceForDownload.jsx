@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
 });
 
 const InvoicePDF = ({ data, globalSetting }) => {
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
   const getNumberTwo = (num) => (!num ? "0.00" : Number(num).toFixed(2));
   const currentDate = dayjs().format("MMMM D, YYYY");
 

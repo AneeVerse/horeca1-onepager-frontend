@@ -41,7 +41,7 @@ const Search = async ({ searchParams }) => {
   const { attributes } = await getShowingAttributes();
   const { categories } = await getShowingCategory();
   const { globalSetting } = await getGlobalSetting();
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   //   console.log("searchParams", searchParams, "query", query, "_id", _id);
 

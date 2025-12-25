@@ -36,7 +36,7 @@ const ProductCard = ({ product, attributes }) => {
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
 
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   // Check if current time is between 6pm (18:00) and 9am (09:00)
   useEffect(() => {

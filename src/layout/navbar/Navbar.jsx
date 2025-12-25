@@ -14,7 +14,7 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
   const { languages } = await getShowingLanguage();
   const { categories, error: categoryError } = await getShowingCategory();
 
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   return (
     // Navbar.jsx

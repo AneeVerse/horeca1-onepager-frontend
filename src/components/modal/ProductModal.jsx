@@ -40,7 +40,7 @@ const ProductModal = ({
   globalSetting,
 }) => {
   const { getNumberTwo, showingTranslateValue } = useUtilsFunction();
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
   const { item, setItem, totalItems, handleAddItem, handleIncreaseQuantity } =
     useAddToCart();
   const {

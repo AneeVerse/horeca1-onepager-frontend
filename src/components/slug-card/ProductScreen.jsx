@@ -31,7 +31,7 @@ import { SidebarContext } from "@context/SidebarContext";
 const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
   const { globalSetting, storeCustomization } = useSetting();
   const { showingTranslateValue } = useUtilsFunction();
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
   const { item, setItem } = useAddToCart();
   const { addItem } = useCart();
   const { setCartDrawerOpen } = useContext(SidebarContext);

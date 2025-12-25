@@ -26,7 +26,7 @@ const Home = async () => {
     });
 
   const { globalSetting } = await getGlobalSetting();
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   // console.log("storeCustomizationSetting", storeCustomizationSetting);
 

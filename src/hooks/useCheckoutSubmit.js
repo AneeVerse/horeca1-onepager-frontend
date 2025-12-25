@@ -52,7 +52,7 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
   const { globalSetting, storeSetting, storeCustomization } = useSetting();
   const { showDateFormat, showingTranslateValue } = useUtilsFunction();
 
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   // console.log("storeSetting", storeSetting);
 

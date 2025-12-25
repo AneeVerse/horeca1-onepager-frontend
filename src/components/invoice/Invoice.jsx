@@ -9,7 +9,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const Invoice = ({ data, printRef, globalSetting }) => {
   // console.log("invoice data", data);
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   const { getNumberTwo } = useUtilsFunction();
 

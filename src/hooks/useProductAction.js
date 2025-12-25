@@ -30,7 +30,7 @@ export default function useProductAction({
   const [variants, setVariants] = useState([]);
   const [isReadMore, setIsReadMore] = useState(false);
 
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   // Handle variant & price updates
   useEffect(() => {

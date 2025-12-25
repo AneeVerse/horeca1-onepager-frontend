@@ -11,7 +11,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const Coupon = async ({ couponInHome }) => {
   const { globalSetting } = await getGlobalSetting();
-  const currency = globalSetting?.default_currency || "$";
+  const currency = globalSetting?.default_currency || "₹";
 
   const { coupons, error } = await getShowingCoupons();
   const { showingTranslateValue } = useUtilsFunction();
