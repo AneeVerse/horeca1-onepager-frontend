@@ -334,12 +334,10 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
       // }
       // return setIsCheckoutSubmit(false);
 
-      if (globalSetting?.email_to_customer) {
-        // Trigger email in the background
-        sendEmailInvoiceToCustomer(updatedData).catch((emailErr) => {
-          console.error("Failed to send email invoice:", emailErr.message);
-        });
-      }
+      // Always send emails to owner and customer when order is created
+      sendEmailInvoiceToCustomer(updatedData).catch((emailErr) => {
+        console.error("Failed to send email invoice:", emailErr.message);
+      });
       // notification api call
       const { notification, error } = await addNotification(notificationInfo);
 
