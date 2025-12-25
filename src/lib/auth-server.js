@@ -3,17 +3,43 @@ import { getDynamicAuthOptions } from "./next-auth-options";
 import { cookies } from "next/headers";
 
 const getHeaders = async () => {
-  const authOptions = await getDynamicAuthOptions();
-  const session = await getServerSession(authOptions);
-  const token = session?.user?.token;
-
-  // console.log("token", token);
+  let token = null;
+  
+  // Check cookie-based auth first (for OTP login users)
+  try {
+    const cookieStore = await cookies();
+    const userInfoCookie = cookieStore.get("userInfo");
+    
+    if (userInfoCookie?.value) {
+      const userInfo = JSON.parse(userInfoCookie.value);
+      token = userInfo?.token;
+    }
+  } catch (error) {
+    // Cookie parsing failed, continue to NextAuth check
+  }
+  
+  // Fallback to NextAuth session (for OAuth users) - only check if cookie didn't work
+  if (!token) {
+    try {
+      const authOptions = await getDynamicAuthOptions();
+      const session = await getServerSession(authOptions);
+      token = session?.user?.token;
+    } catch (error) {
+      // NextAuth session check failed
+    }
+  }
 
   const header = {
     Accept: "application/json",
     "Content-Type": "application/json",
-    authorization: token ? `Bearer ${token}` : null,
+    authorization: token ? `Bearer ${token}` : undefined,
   };
+  
+  // Remove authorization if token is null/undefined to avoid sending "Bearer undefined"
+  if (!token) {
+    delete header.authorization;
+  }
+  
   return header;
 };
 

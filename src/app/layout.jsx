@@ -21,15 +21,17 @@ export const metadata = {
 };
 
 export default async function RootLayout({ children }) {
-  // Fetch settings with error handling - use defaults if API fails
-  const globalResult = await getGlobalSetting();
-  const storeResult = await getStoreSetting();
-  const customizationResult = await getStoreCustomizationSetting();
+  // Fetch settings in parallel with error handling - use defaults if API fails
+  const [globalResult, storeResult, customizationResult] = await Promise.allSettled([
+    getGlobalSetting(),
+    getStoreSetting(),
+    getStoreCustomizationSetting(),
+  ]);
 
-  const globalSetting = globalResult.globalSetting || {};
-  const storeSetting = storeResult.storeSetting || {};
-  // Merge API response with frontend defaults, ensuring continue_button uses correct value
-  const apiCustomization = customizationResult.storeCustomizationSetting || {};
+  // Extract results with fallbacks
+  const globalSetting = globalResult.status === 'fulfilled' && globalResult.value?.globalSetting ? globalResult.value.globalSetting : {};
+  const storeSetting = storeResult.status === 'fulfilled' && storeResult.value?.storeSetting ? storeResult.value.storeSetting : {};
+  const apiCustomization = customizationResult.status === 'fulfilled' && customizationResult.value?.storeCustomizationSetting ? customizationResult.value.storeCustomizationSetting : {};
   
   // Deep merge to ensure API values override defaults, especially for nested objects like home
   const storeCustomizationSetting = {
@@ -57,13 +59,6 @@ export default async function RootLayout({ children }) {
       },
     },
   };
-  
-  // #region agent log
-  const quickDeliverySubtitle = storeCustomizationSetting?.home?.quick_delivery_subtitle?.en;
-  const quickDeliveryDescription = storeCustomizationSetting?.home?.quick_delivery_description?.en;
-  console.log('[DEBUG] storeCustomizationSetting.home.quick_delivery_subtitle.en:', quickDeliverySubtitle);
-  console.log('[DEBUG] storeCustomizationSetting.home.quick_delivery_description.en:', quickDeliveryDescription);
-  // #endregion
 
   return (
     <html lang="en" className="" suppressHydrationWarning>

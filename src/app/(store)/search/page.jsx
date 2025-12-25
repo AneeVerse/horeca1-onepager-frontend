@@ -1,6 +1,7 @@
 //internal import
-
+import { Suspense } from "react";
 import SearchScreen from "@components/search/SearchScreen";
+import FeatureCategory from "@components/category/FeatureCategory";
 import { getShowingAttributes } from "@services/AttributeServices";
 import { getShowingCategory } from "@services/CategoryService";
 import { getShowingStoreProducts } from "@services/ProductServices";
@@ -47,6 +48,13 @@ const Search = async ({ searchParams }) => {
 
   return (
     <>
+      <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
+        <div className="bg-white dark:bg-zinc-900 lg:py-10 py-6">
+          <Suspense fallback={<p>Loading categories...</p>}>
+            <FeatureCategory />
+          </Suspense>
+        </div>
+      </div>
       <SearchScreen
         products={products}
         attributes={attributes}

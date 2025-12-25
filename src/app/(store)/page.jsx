@@ -16,16 +16,20 @@ import DiscountedCard from "@components/product/DiscountedCard";
 import PopularProductsCarousel from "@components/product/PopularProductsCarousel";
 
 const Home = async () => {
-  const { attributes } = await getShowingAttributes();
-  const { storeCustomizationSetting, error: storeCustomizationError } =
-    await getStoreCustomizationSetting();
-  const { popularProducts, discountedProducts, error } =
-    await getShowingStoreProducts({
-      category: "",
-      title: "",
-    });
+  // Fetch all data in parallel with error handling
+  const [attributesResult, customizationResult, productsResult, globalResult] = await Promise.allSettled([
+    getShowingAttributes(),
+    getStoreCustomizationSetting(),
+    getShowingStoreProducts({ category: "", title: "" }),
+    getGlobalSetting(),
+  ]);
 
-  const { globalSetting } = await getGlobalSetting();
+  // Extract results with fallbacks
+  const { attributes } = attributesResult.status === 'fulfilled' ? attributesResult.value : { attributes: [] };
+  const { storeCustomizationSetting, error: storeCustomizationError } = customizationResult.status === 'fulfilled' ? customizationResult.value : { storeCustomizationSetting: null, error: null };
+  const { popularProducts = [], discountedProducts = [], error } = productsResult.status === 'fulfilled' ? productsResult.value : { popularProducts: [], discountedProducts: [], error: null };
+  const { globalSetting } = globalResult.status === 'fulfilled' ? globalResult.value : { globalSetting: null };
+  
   const currency = globalSetting?.default_currency || "₹";
 
   // console.log("storeCustomizationSetting", storeCustomizationSetting);
