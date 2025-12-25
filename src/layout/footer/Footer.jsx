@@ -9,281 +9,76 @@ import CMSkeletonTwo from "@components/preloader/CMSkeleton";
 import { getUserServerSession } from "@lib/auth-server";
 
 const Footer = async ({ error, storeCustomizationSetting }) => {
-  const { showingTranslateValue } = useUtilsFunction();
   const footer = storeCustomizationSetting?.footer;
-  const userInfo = await getUserServerSession();
-
-  // console.log("userInfo", userInfo);
 
   return (
-    <div className="pb-16 lg:pb-0 xl:pb-0 bg-white">
-      <div className="mx-auto max-w-screen-2xl px-4 sm:px-10">
-        <div className="grid grid-cols-2 md:grid-cols-7 xl:grid-cols-12 gap-5 sm:gap-9 lg:gap-11 xl:gap-7 py-10 lg:py-16 justify-between">
-          {footer?.block1_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <h3 className="text-md lg:leading-7 font-medium mb-4 sm:mb-5 lg:mb-6 pb-0.5">
-                <CMSkeletonTwo
-                  count={1}
-                  height={20}
-                  // error={error}
-                  loading={false}
-                  data={footer?.block1_title}
-                />
-              </h3>
-              <ul className="text-sm flex flex-col space-y-3">
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block1_sub_link1}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block1_sub_title1}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block1_sub_link2}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block1_sub_title2}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block1_sub_link3}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    {showingTranslateValue(
-                      storeCustomizationSetting?.footer_block_one_link_three_title
-                    )}
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block1_sub_title3}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block1_sub_link4}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block1_sub_title4}
-                    />
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          )}
-          {footer?.block2_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <h3 className="text-md lg:leading-7 font-medium mb-4 sm:mb-5 lg:mb-6 pb-0.5">
-                <CMSkeletonTwo
-                  count={1}
-                  height={20}
-                  // error={error}
-                  loading={false}
-                  data={footer?.block2_title}
-                />
-              </h3>
-              <ul className="text-sm lg:text-15px flex flex-col space-y-3">
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block2_sub_link1}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block2_sub_title1}
-                    />
-                  </Link>
-                </li>
-
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block2_sub_link2}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block2_sub_title2}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block2_sub_link3}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block2_sub_title3}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${footer?.block2_sub_link4}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block2_sub_title4}
-                    />
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          )}
-          {footer?.block3_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <h3 className="text-md lg:leading-7 font-medium mb-4 sm:mb-5 lg:mb-6 pb-0.5">
-                <CMSkeletonTwo
-                  count={1}
-                  height={20}
-                  // error={error}
-                  loading={false}
-                  data={footer?.block3_title}
-                />
-              </h3>
-              <ul className="text-sm lg:text-15px flex flex-col space-y-3">
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${userInfo?.email ? footer?.block3_sub_link1 : "#"}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block3_sub_title1}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${userInfo?.email ? footer?.block3_sub_link2 : "#"}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block3_sub_title2}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${userInfo?.email ? footer?.block3_sub_link3 : "#"}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block3_sub_title3}
-                    />
-                  </Link>
-                </li>
-                <li className="flex items-baseline">
-                  <Link
-                    href={`${userInfo?.email ? footer?.block3_sub_link4 : "#"}`}
-                    className="text-gray-600 inline-block w-full hover:text-emerald-500"
-                  >
-                    <CMSkeletonTwo
-                      count={1}
-                      height={10}
-                      // error={error}
-                      loading={false}
-                      data={footer?.block3_sub_title4}
-                    />
-                  </Link>
-                </li>
-              </ul>
-            </div>
-          )}
-          {footer?.block4_status && (
-            <div className="pb-3.5 sm:pb-0 col-span-1 md:col-span-2 lg:col-span-3">
-              <Link
-                href="/"
-                className="mr-3 lg:mr-12 xl:mr-12"
-                rel="noreferrer"
-              >
-                <div className="relative w-32 h-10">
-                  <img
-                    className="h-10 w-auto"
-                    src="https://res.cloudinary.com/dezs8ma9n/image/upload/v1766484997/horecaLogo_hirtnv.png"
-                    alt="horeca1"
-                  />
-                </div>
-              </Link>
-              <p className="leading-7 font-sans text-sm text-gray-600 mt-3">
-                <CMSkeletonTwo
-                  count={1}
-                  height={10}
-                  // error={error}
-                  loading={false}
-                  data={footer?.block4_address}
-                />
-                <br />
-                <span> Tel : {footer?.block4_phone}</span>
-                <br />
-                <span> Email : {footer?.block4_email}</span>
-              </p>
-            </div>
-          )}
+    <div className="bg-gradient-to-b from-emerald-50 to-white pb-20 lg:pb-8">
+      {/* Hero Logo Section */}
+      <div className="bg-emerald-500 py-16 lg:py-20">
+        <div className="mx-auto max-w-screen-2xl px-4 sm:px-10 flex flex-col items-center justify-center text-center">
+          <div className="relative w-full max-w-md">
+            <img
+              src="https://res.cloudinary.com/dezs8ma9n/image/upload/v1766484997/horecaLogo_hirtnv.png"
+              alt="Horeca1 Large"
+              className="w-full h-auto object-contain brightness-0 invert opacity-90"
+            />
+          </div>
+          <p className="text-white/80 text-sm tracking-[0.25em] uppercase mt-4 font-medium">Hospitality Supplies Made Easy</p>
         </div>
-
-        <hr className="hr-line"></hr>
       </div>
 
-      <div className="mx-auto max-w-screen-2xl px-3 sm:px-10 flex justify-center py-4">
-        <p className="text-sm text-gray-500 leading-6">
-          Copyright {new Date().getFullYear()} @{" "}
-          <Link
-            href="https://themeforest.net/user/htmllover"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-emerald-500"
-          >
-            HtmlLover
-          </Link>
-          , All rights reserved.
-        </p>
+      {/* Footer Content */}
+      <div className="mx-auto max-w-screen-2xl px-4 sm:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 py-12 lg:py-16">
+
+          {/* Left Side - Big Bold Text */}
+          <div className="lg:col-span-5 space-y-4">
+            <h2 className="text-2xl md:text-3xl lg:text-[2rem] font-bold text-gray-900 leading-tight">
+              Horeca1 - Restaurant Supplies
+            </h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              C-003, Sanpada Station Complex,<br />
+              Navi Mumbai, Maharashtra 400705
+            </p>
+            <p className="text-gray-500 text-sm pt-2">
+              07710920002<br />
+              saket@red.org.in
+            </p>
+          </div>
+
+          {/* Right Side - Link Columns */}
+          <div className="lg:col-span-7 grid grid-cols-3 gap-6 lg:gap-8">
+            {/* Column 1 */}
+            <div className="space-y-3">
+              <Link href="/pages/payment-policy" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">Payment Policy</Link>
+              <Link href="/pages/terms-and-conditions" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">Terms & Conditions</Link>
+              <Link href="/pages/privacy-policy" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">Privacy Policy</Link>
+            </div>
+
+            {/* Column 2 */}
+            <div className="space-y-3">
+              <Link href="/user/dashboard" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">My Orders</Link>
+              <Link href="/user/dashboard" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">Customer Support</Link>
+            </div>
+
+            {/* Column 3 */}
+            <div className="space-y-3">
+              <Link href="/about-us" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">About Us</Link>
+              <Link href="/faq" className="block text-gray-700 hover:text-emerald-600 transition-colors text-sm">FAQ</Link>
+            </div>
+          </div>
+        </div>
+
+        {/* Bottom Bar */}
+        <div className="border-t border-gray-200 py-6 flex flex-col md:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+          <p>© {new Date().getFullYear()} Horeca1. All rights reserved.</p>
+          <div className="flex items-center gap-4">
+            <Link href="/pages/privacy-policy" className="hover:text-emerald-600 transition-colors">Privacy Policy</Link>
+            <span className="text-gray-300">|</span>
+            <Link href="/pages/terms-and-conditions" className="hover:text-emerald-600 transition-colors">Terms of Service</Link>
+          </div>
+          <p className="text-gray-400">Designed & Managed by <span className="text-emerald-600 font-medium">Aneeverse</span></p>
+        </div>
       </div>
     </div>
   );
