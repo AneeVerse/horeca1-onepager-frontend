@@ -42,13 +42,14 @@ const NotifyIcon = ({ currency }) => {
         )}
         <ShoppingCartIcon className="h-6 w-6" aria-hidden="true" />
       </button>
-      <button
+      {/* Notification icon - Commented out as requested (can be restored later) */}
+      {/* <button
         type="button"
         aria-label="Notification"
         className="relative flex-shrink-0 rounded-full text-gray-200 p-1 mx-2 hover:text-white focus:outline-none"
       >
         <BellIcon className="h-6 w-6" aria-hidden="true" />
-      </button>
+      </button> */}
 
       <span className="mx-4 h-6 w-px bg-gray-200 lg:mx-6" aria-hidden="true" />
     </>

@@ -174,7 +174,7 @@ const CheckoutCartScreen = () => {
 
               <div className="flex space-x-3 items-center mt-8">
                 <Link
-                  href="/products"
+                  href="/search"
                   className="relative h-auto inline-flex items-center justify-center rounded-md transition-colors text-xs sm:text-base font-medium py-2 px-3 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex-1 border border-slate-200 dark:border-slate-700 dark:focus:ring-offset-0"
                 >
                   <span className="text-xl mr-2">

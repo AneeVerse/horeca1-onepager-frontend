@@ -54,8 +54,8 @@ const MobileFooter = ({ globalSetting, categories, categoryError }) => {
         />
       </div>
       <footer className="sm:hidden fixed z-30 bottom-0 bg-emerald-500 flex items-center justify-around w-full h-16 px-2 shadow-lg">
-        {/* Home - First */}
-        <Link
+        {/* Home - First - Commented out as requested (can be restored later) */}
+        {/* <Link
           href="/"
           className="flex flex-col items-center justify-center flex-1 h-full relative focus:outline-none group"
           rel="noreferrer"
@@ -63,7 +63,7 @@ const MobileFooter = ({ globalSetting, categories, categoryError }) => {
         >
           <Home className="w-6 h-6 text-white drop-shadow-lg transition-transform duration-200 group-active:scale-110" strokeWidth={2.5} />
           <span className="text-[10px] text-white mt-0.5 font-medium">Home</span>
-        </Link>
+        </Link> */}
 
         {/* Cart - Second */}
         <button
@@ -71,9 +71,11 @@ const MobileFooter = ({ globalSetting, categories, categoryError }) => {
           className="flex flex-col items-center justify-center flex-1 h-full relative whitespace-nowrap focus:outline-none group"
           aria-label="Shopping Cart"
         >
-          <span className="absolute z-10 -top-1 right-1/4 inline-flex items-center justify-center h-5 w-5 text-xs font-bold leading-none text-white transform bg-red-500 rounded-full shadow-md">
-            {totalItems > 0 ? totalItems : ''}
-          </span>
+          {totalItems > 0 && (
+            <span className="absolute z-10 -top-1 right-1/4 inline-flex items-center justify-center h-5 w-5 text-xs font-bold leading-none text-white transform bg-red-500 rounded-full shadow-md">
+              {totalItems}
+            </span>
+          )}
           <ShoppingBag className="w-6 h-6 text-white drop-shadow-lg transition-transform duration-200 group-active:scale-110" strokeWidth={2.5} />
           <span className="text-[10px] text-white mt-0.5 font-medium">Cart</span>
         </button>
