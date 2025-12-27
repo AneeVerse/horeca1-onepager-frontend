@@ -3,31 +3,50 @@
 import { useRouter } from "next/navigation";
 import { useCart } from "react-use-cart";
 import { IoBagCheckOutline, IoClose, IoBagHandle } from "react-icons/io5";
+import { useState, useEffect } from "react";
 
 //internal import
 import CartItem from "@components/cart/CartItem";
 import { getUserSession } from "@lib/auth-client";
 import { FiShoppingCart } from "react-icons/fi";
-import Link from "next/link";
 import Image from "next/image";
 
 const Cart = ({ setOpen, currency }) => {
   const router = useRouter();
   const { isEmpty, items, cartTotal } = useCart();
+  
+  // Use state to reactively track user session
+  const [userInfo, setUserInfo] = useState(null);
 
-  const userInfo = getUserSession();
+  // Check user session on mount and periodically to catch login state changes
+  useEffect(() => {
+    const checkUserSession = () => {
+      const session = getUserSession();
+      setUserInfo(session);
+    };
+    
+    // Check immediately
+    checkUserSession();
+    
+    // Also check periodically to catch login state changes (every 1 second)
+    const interval = setInterval(checkUserSession, 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
 
-  const handleCheckout = () => {
+  const handleCheckout = (e) => {
+    e.preventDefault();
+    
     if (items?.length <= 0) {
       setOpen(false);
     } else {
-      if (!userInfo) {
-        // console.log("userInfo::", userInfo, "history");
-
-        // Redirect to login page with returnUrl query parameter
-        // router.push(`/auth/login?redirectUrl=checkout`, { scroll: true });
-        // setOpen(false);
-        router.push(`/auth/login`, { scroll: true });
+      // Re-check user session right before redirect
+      const currentUserInfo = getUserSession();
+      
+      if (!currentUserInfo) {
+        // Redirect to login with redirectUrl parameter to return to checkout after login
+        router.push(`/auth/login?redirectUrl=/checkout`, { scroll: true });
+        // Don't close cart - let it stay open so user can continue after login
       } else {
         router.push("/checkout");
         setOpen(false);
@@ -96,20 +115,13 @@ const Cart = ({ setOpen, currency }) => {
             </span>
           </p>
 
-          <div className="flex space-x-3 mt-5">
-            <Link
-              href="/checkout-cart"
-              className="relative h-auto inline-flex items-center justify-center rounded-md transition-colors text-sm sm:text-base font-medium py-2 px-3 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-800 flex-1 border border-slate-200 dark:border-slate-700 dark:focus:ring-offset-0"
-            >
-              View Cart
-            </Link>
-            <Link
-              href="/checkout"
+          <div className="flex mt-5">
+            <button
               onClick={handleCheckout}
-              className="relative h-auto inline-flex items-center justify-center rounded-md transition-colors text-sm sm:text-base font-medium py-2 px-3 bg-emerald-500 hover:bg-emerald-600 border border-emerald-500 text-white flex-1 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0 "
+              className="relative h-auto w-full inline-flex items-center justify-center rounded-md transition-colors text-sm sm:text-base font-medium py-2 px-3 bg-emerald-500 hover:bg-emerald-600 border border-emerald-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0"
             >
               Checkout
-            </Link>
+            </button>
           </div>
         </div>
       </div>
