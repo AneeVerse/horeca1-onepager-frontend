@@ -10,6 +10,7 @@ import { notifyError, notifySuccess } from "@utils/toast";
 import { UserContext } from "@context/UserContext";
 import { SidebarContext } from "@context/SidebarContext";
 import Cookies from "js-cookie";
+import { getCookieOptions } from "@utils/cookieConfig";
 
 const OTPLogin = () => {
   const router = useRouter();
@@ -23,7 +24,7 @@ const OTPLogin = () => {
   const [displayPhone, setDisplayPhone] = useState("");
   const [loading, setLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(0);
-  const [otpValues, setOtpValues] = useState(["", "", "", "", "", ""]);
+  const [otpValues, setOtpValues] = useState(["", "", "", ""]);
   const [devOtp, setDevOtp] = useState(null); // For development mode
   const otpInputRefs = useRef([]);
   const phoneInputRef = useRef(null);
@@ -73,7 +74,9 @@ const OTPLogin = () => {
           })
           .then((otp) => {
             if (otp?.code) {
-              const otpArray = otp.code.split("");
+              // Ensure we only take the first 4 digits
+              const otpCode = otp.code.slice(0, 4);
+              const otpArray = otpCode.split("");
               setOtpValues(otpArray);
               otpArray.forEach((digit, index) => {
                 if (otpInputRefs.current[index]) {
@@ -81,7 +84,7 @@ const OTPLogin = () => {
                 }
               });
               setTimeout(() => {
-                handleOTPSubmit(otp.code);
+                handleOTPSubmit(otpCode);
               }, 500);
             }
           })
@@ -199,12 +202,12 @@ const OTPLogin = () => {
     setOtpValues(newOtpValues);
 
     // Auto-focus next input
-    if (value && index < 5) {
+    if (value && index < 3) {
       otpInputRefs.current[index + 1]?.focus();
     }
 
-    // Auto-submit when all 6 digits are entered
-    if (newOtpValues.every((val) => val !== "") && newOtpValues.length === 6) {
+    // Auto-submit when all 4 digits are entered
+    if (newOtpValues.every((val) => val !== "") && newOtpValues.length === 4) {
       const otp = newOtpValues.join("");
       handleOTPSubmit(otp);
     }
@@ -221,7 +224,7 @@ const OTPLogin = () => {
   const handleOTPPaste = (e) => {
     e.preventDefault();
     const pastedData = e.clipboardData.getData("text").replace(/\D/g, "");
-    if (pastedData.length === 6) {
+    if (pastedData.length === 4) {
       const otpArray = pastedData.split("");
       setOtpValues(otpArray);
       otpArray.forEach((digit, index) => {
@@ -238,8 +241,8 @@ const OTPLogin = () => {
 
   // Handle OTP submission
   const handleOTPSubmit = async (otp) => {
-    if (!otp || otp.length !== 6) {
-      notifyError("Please enter a valid 6-digit OTP");
+    if (!otp || otp.length !== 4) {
+      notifyError("Please enter a valid 4-digit OTP");
       return;
     }
 
@@ -265,12 +268,8 @@ const OTPLogin = () => {
           id: result.userInfo._id, // Ensure id is set for auth checks
         };
         
-        // Set the cookie with proper options
-        Cookies.set("userInfo", JSON.stringify(userInfoForCookie), { 
-          expires: 7,
-          path: "/",
-          sameSite: "lax"
-        });
+        // Set the cookie with proper options (30 days to match JWT token lifetime)
+        Cookies.set("userInfo", JSON.stringify(userInfoForCookie), getCookieOptions(30));
         console.log("[OTP Login] userInfo cookie set:", userInfoForCookie);
         
         // Update context
@@ -287,12 +286,12 @@ const OTPLogin = () => {
       } else {
         notifyError(result.error || "Invalid OTP. Please try again.");
         // Clear OTP inputs on error
-        setOtpValues(["", "", "", "", "", ""]);
+        setOtpValues(["", "", "", ""]);
         otpInputRefs.current[0]?.focus();
       }
     } catch (error) {
       notifyError(error.message || "Failed to verify OTP");
-      setOtpValues(["", "", "", "", "", ""]);
+      setOtpValues(["", "", "", ""]);
       otpInputRefs.current[0]?.focus();
     } finally {
       setLoading(false);
@@ -311,7 +310,7 @@ const OTPLogin = () => {
       if (result.success) {
         notifySuccess("OTP sent again");
         setResendTimer(30);
-        setOtpValues(["", "", "", "", "", ""]);
+        setOtpValues(["", "", "", ""]);
         otpInputRefs.current[0]?.focus();
       } else {
         notifyError(result.message || "Failed to resend OTP");
@@ -414,7 +413,7 @@ const OTPLogin = () => {
               <button
                 onClick={() => {
                   setStep("phone");
-                  setOtpValues(["", "", "", "", "", ""]);
+                  setOtpValues(["", "", "", ""]);
                 }}
                 className="flex items-center text-gray-500 hover:text-gray-700 transition-colors mb-6"
               >
@@ -430,7 +429,7 @@ const OTPLogin = () => {
                   Verify OTP
                 </h2>
                 <p className="text-gray-500 text-sm mt-1">
-                  Enter the 6-digit code sent to
+                  Enter the 4-digit code sent to
                 </p>
                 <p className="text-primary-500 font-semibold mt-1">
                   {formatDisplayPhone(displayPhone)}

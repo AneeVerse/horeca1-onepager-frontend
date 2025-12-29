@@ -3,6 +3,7 @@
 import React, { useActionState, useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import Cookies from "js-cookie";
+import { getCookieOptions } from "@utils/cookieConfig";
 
 //internal import
 
@@ -117,7 +118,7 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
         email: state.user.email || userInfo?.email,
       };
       
-      Cookies.set("userInfo", JSON.stringify(updatedUserInfo), { expires: 30 });
+      Cookies.set("userInfo", JSON.stringify(updatedUserInfo), getCookieOptions(30));
       
       // Dispatch custom event to notify components (like ProfileDropDown) to refresh
       window.dispatchEvent(new Event('profileUpdated'));
