@@ -33,12 +33,14 @@ const NavbarPromo = ({ languages, categories, categoryError }) => {
   const { storeCustomization } = useSetting();
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  // Hide on auth/login pages
+  const isAuthPage = pathname?.startsWith("/auth") || pathname?.startsWith("/login");
 
   const { showingTranslateValue } = useUtilsFunction();
   const navbar = storeCustomization?.navbar;
 
-  // Hide navigation bar on home page
-  if (isHomePage) {
+  // Hide navigation bar on home page and auth pages
+  if (isHomePage || isAuthPage) {
     return null;
   }
 

@@ -8,6 +8,20 @@ const config = {
       DejaVu: ["DejaVu Sans", "Arial", "sans-serif"],
     },
     extend: {
+      colors: {
+        primary: {
+          50: '#f0f2f5',
+          100: '#d9dee6',
+          200: '#b8c1d1',
+          300: '#8d9cb3',
+          400: '#5d7092',
+          500: '#1b223a', // Main theme color
+          600: '#171d30',
+          700: '#131827',
+          800: '#0f141e',
+          900: '#0b0f16',
+        },
+      },
       height: {
         header: "560px",
       },

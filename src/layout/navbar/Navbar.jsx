@@ -8,7 +8,6 @@ import NotifyIcon from "@components/navbar/NotifyIcon";
 import ProfileDropDown from "@components/navbar/ProfileDropDown";
 import { getShowingLanguage } from "@services/SettingServices";
 import { getShowingCategory } from "@services/CategoryService";
-import MobileFooter from "@layout/footer/MobileFooter";
 
 const Navbar = async ({ globalSetting, storeCustomization }) => {
   const { languages } = await getShowingLanguage();
@@ -23,7 +22,7 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
 
       <TopNavbar storeCustomization={storeCustomization} />
 
-      <header as="header" className="bg-emerald-500 shadow">
+      <header as="header" className="bg-primary-500 shadow">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-10 lg:divide-y lg:divide-gray-200">
           <div className="relative flex h-20 justify-between">
             <div className="relative z-10 hidden sm:flex px-2 lg:px-0">
@@ -42,10 +41,14 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
                 <div className="w-full">
                   <SearchInput />
                 </div>
+                {/* Mobile cart icon - show after search on mobile */}
+                <div className="sm:hidden ml-2 flex-shrink-0 -mr-2">
+                  <NotifyIcon currency={currency} mobileOnly />
+                </div>
               </div>
             </div>
 
-            {/* notification icons */}
+            {/* notification icons - desktop only */}
             <div className="lg:relative lg:z-10 sm:flex sm:items-center hidden">
               <NotifyIcon currency={currency} />
 
@@ -62,11 +65,6 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
         languages={languages}
         categories={categories}
         categoryError={categoryError}
-      />
-      <MobileFooter
-        categories={categories}
-        categoryError={categoryError}
-        globalSetting={globalSetting}
       />
     </div>
   );
