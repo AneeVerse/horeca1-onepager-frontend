@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { FiMail, FiMapPin, FiBell } from "react-icons/fi";
+import { FiMail, FiMapPin, FiPhone } from "react-icons/fi";
 
 //internal import
 
@@ -52,99 +52,60 @@ const ContactUs = async () => {
       <div className="bg-white dark:bg-zinc-900">
         <div className="max-w-screen-2xl mx-auto lg:py-20 py-10 px-4 sm:px-10">
           {/* contact promo */}
-          <div className="grid md:grid-cols-2 gap-6 lg:grid-cols-3 xl:gap-8 ">
-            {error ? (
-              <CMSkeletonTwo
-                count={10}
-                height={20}
-                error={error}
-                loading={false}
-              />
-            ) : (
-              <div className="border p-10 rounded-lg text-center">
-                <span className="flex justify-center text-4xl text-emerald-500 mb-4">
-                  <FiMail />
-                </span>
-                <h5 className="text-xl mb-2 font-bold">
-                  {showingTranslateValue(contact_us?.email_box_title)}
-                </h5>
-                <p className="mb-0 text-base opacity-90 leading-7">
-                  <a
-                    href={`mailto:${contact_us?.email_box_email}`}
-                    className="text-emerald-500"
-                  >
-                    {showingTranslateValue(contact_us?.email_box_email)}
-                  </a>{" "}
-                  {showingTranslateValue(contact_us?.email_box_text)}
-                </p>
-              </div>
-            )}
+          <div className="grid md:grid-cols-2 gap-6 lg:grid-cols-3 xl:gap-8">
+            {/* Email */}
+            <div className="border border-gray-200 p-8 rounded-lg text-center hover:shadow-lg transition-shadow bg-white">
+              <span className="flex justify-center text-4xl text-primary-600 mb-4">
+                <FiMail />
+              </span>
+              <h5 className="text-xl mb-2 font-bold text-gray-900">
+                Email
+              </h5>
+              <p className="mb-0 text-base text-gray-600 leading-7">
+                <a
+                  href="mailto:saket@red.org.in"
+                  className="text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  saket@red.org.in
+                </a>
+              </p>
+            </div>
 
-            {error ? (
-              <CMSkeletonTwo
-                count={10}
-                height={20}
-                error={error}
-                loading={false}
-              />
-            ) : (
-              <div className="border p-10 rounded-lg text-center">
-                <span className="flex justify-center text-4xl text-emerald-500 mb-4">
-                  <FiBell />
-                </span>
-                <h5 className="text-xl mb-2 font-bold">
-                  {showingTranslateValue(contact_us?.call_box_title)}
-                </h5>
-                <p className="mb-0 text-base opacity-90 leading-7">
-                  <a
-                    href={`mailto:${contact_us?.call_box_phone}`}
-                    className="text-emerald-500"
-                  >
-                    {showingTranslateValue(contact_us?.call_box_phone)}
-                  </a>{" "}
-                  {showingTranslateValue(contact_us?.call_box_text)}
-                </p>
-              </div>
-            )}
-            {error ? (
-              <CMSkeletonTwo
-                count={10}
-                height={20}
-                error={error}
-                loading={false}
-              />
-            ) : (
-              <div className="border p-10 rounded-lg text-center">
-                <span className="flex justify-center text-4xl text-emerald-500 mb-4">
-                  <FiMapPin />
-                </span>
-                <h5 className="text-xl mb-2 font-bold">
-                  {showingTranslateValue(contact_us?.address_box_title)}
-                </h5>
-                <p className="mb-0 text-base opacity-90 leading-7">
-                  <span>
-                    {showingTranslateValue(
-                      storeCustomizationSetting?.contact_us
-                        ?.address_box_address_one
-                    )}
-                  </span>{" "}
-                  <br />
-                  {showingTranslateValue(
-                    storeCustomizationSetting?.contact_us
-                      ?.address_box_address_two
-                  )}{" "}
-                  <br />
-                  {showingTranslateValue(
-                    storeCustomizationSetting?.contact_us
-                      ?.address_box_address_three
-                  )}
-                </p>
-              </div>
-            )}
+            {/* Phone */}
+            <div className="border border-gray-200 p-8 rounded-lg text-center hover:shadow-lg transition-shadow bg-white">
+              <span className="flex justify-center text-4xl text-primary-600 mb-4">
+                <FiPhone />
+              </span>
+              <h5 className="text-xl mb-2 font-bold text-gray-900">
+                Phone
+              </h5>
+              <p className="mb-0 text-base text-gray-600 leading-7">
+                <a
+                  href="tel:07710920002"
+                  className="text-primary-600 hover:text-primary-700 font-medium"
+                >
+                  07710920002
+                </a>
+              </p>
+            </div>
+
+            {/* Address */}
+            <div className="border border-gray-200 p-8 rounded-lg text-center hover:shadow-lg transition-shadow bg-white md:col-span-2 lg:col-span-1">
+              <span className="flex justify-center text-4xl text-primary-600 mb-4">
+                <FiMapPin />
+              </span>
+              <h5 className="text-xl mb-2 font-bold text-gray-900">
+                Address
+              </h5>
+              <p className="mb-0 text-base text-gray-600 leading-7">
+                C-003, Sanpada Station Complex,<br />
+                Navi Mumbai, Maharashtra 400705
+              </p>
+            </div>
           </div>
 
           {/* contact form */}
-          <div className="px-0 pt-24 mx-auto items-center flex flex-col md:flex-row w-full justify-between">
+          <div className="px-0 pt-12 sm:pt-16 lg:pt-24 mx-auto items-center flex flex-col md:flex-row w-full justify-between">
             <div className="hidden md:w-full lg:w-5/12 lg:flex flex-col h-full">
               <Image
                 width={874}
@@ -159,24 +120,12 @@ const ContactUs = async () => {
                 // onSubmit={handleSubmit(submitHandler)}
                 className="w-full mx-auto flex flex-col justify-center"
               >
-                <div className="mb-12">
-                  <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold  mb-3">
-                    <CMSkeletonTwo
-                      count={1}
-                      height={50}
-                      error={error}
-                      loading={false}
-                      data={contact_us?.form_title}
-                    />
+                <div className="mb-8 sm:mb-12">
+                  <h3 className="text-xl md:text-2xl lg:text-3xl font-semibold text-gray-900 mb-3">
+                    Get in Touch
                   </h3>
-                  <p className="text-base opacity-90 leading-7">
-                    <CMSkeletonTwo
-                      count={2}
-                      height={20}
-                      error={error}
-                      loading={false}
-                      data={contact_us?.form_description}
-                    />
+                  <p className="text-base text-gray-600 leading-7">
+                    Have a question or need assistance? Send us a message and we'll get back to you as soon as possible.
                   </p>
                 </div>
 
@@ -188,7 +137,7 @@ const ContactUs = async () => {
                         name="name"
                         type="text"
                         placeholder="Enter Your Name"
-                        className="py-2 px-4 md:px-5 w-full appearance-none border text-sm opacity-75 text-input rounded-md placeholder-body min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-emerald-500 h-11 md:h-12"
+                        className="py-2 px-4 md:px-5 w-full appearance-none border text-sm text-gray-900 text-input rounded-md placeholder-gray-400 min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-primary-500 h-11 md:h-12"
                       />
                       {/* <Error errorName={errors.name} /> */}
                     </div>
@@ -198,7 +147,7 @@ const ContactUs = async () => {
                         name="email"
                         type="email"
                         placeholder="Enter Your Email"
-                        className="py-2 px-4 md:px-5 w-full appearance-none border text-sm opacity-75 text-input rounded-md placeholder-body min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-emerald-500 h-11 md:h-12"
+                        className="py-2 px-4 md:px-5 w-full appearance-none border text-sm text-gray-900 text-input rounded-md placeholder-gray-400 min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-primary-500 h-11 md:h-12"
                       />
                       {/* <Error errorName={errors.email} /> */}
                     </div>
@@ -209,7 +158,7 @@ const ContactUs = async () => {
                       name="subject"
                       type="text"
                       placeholder="Enter Your Subject"
-                      className="py-2 px-4 md:px-5 w-full appearance-none border text-sm opacity-75 text-input rounded-md placeholder-body min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-emerald-500 h-11 md:h-12"
+                      className="py-2 px-4 md:px-5 w-full appearance-none border text-sm text-gray-900 text-input rounded-md placeholder-gray-400 min-h-12 transition duration-200 focus:ring-0 ease-in-out bg-white border-gray-200 focus:outline-none focus:border-primary-500 h-11 md:h-12"
                     />
                     {/* <Error errorName={errors.subject} /> */}
                   </div>
@@ -220,7 +169,7 @@ const ContactUs = async () => {
                       //   required: `Message is required!`,
                       // })}
                       name="message"
-                      className="px-4 py-3 flex items-center w-full rounded appearance-none opacity-75 transition duration-300 ease-in-out text-sm focus:ring-0 bg-white border border-gray-300 focus:shadow-none focus:outline-none focus:border-gray-500 placeholder-body"
+                      className="px-4 py-3 flex items-center w-full rounded appearance-none text-gray-900 transition duration-300 ease-in-out text-sm focus:ring-0 bg-white border border-gray-300 focus:shadow-none focus:outline-none focus:border-primary-500 placeholder-gray-400"
                       autoComplete="off"
                       spellCheck="false"
                       rows="4"
@@ -231,7 +180,7 @@ const ContactUs = async () => {
                   <div className="relative">
                     <button
                       data-variant="flat"
-                      className="md:text-sm leading-4 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-emerald-500 text-white px-5 md:px-6 lg:px-8 py-3 md:py-3.5 lg:py-3 hover:text-white hover:bg-emerald-600 h-12 mt-1 text-sm lg:text-base w-full sm:w-auto"
+                      className="md:text-sm leading-4 inline-flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold text-center justify-center border-0 border-transparent rounded-md placeholder-white focus-visible:outline-none focus:outline-none bg-primary-500 text-white px-5 md:px-6 lg:px-8 py-3 md:py-3.5 lg:py-3 hover:text-white hover:bg-primary-600 h-12 mt-1 text-sm lg:text-base w-full sm:w-auto"
                     >
                       Send Message
                     </button>

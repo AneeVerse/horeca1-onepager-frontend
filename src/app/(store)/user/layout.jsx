@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }) {
         <div className="flex-shrink-0 w-full lg:w-80 mr-7 lg:mr-10 xl:mr-10">
           <Sidebar />
         </div>
-        <div className="w-full mt-4 lg:mt-0 p-4 sm:p-5 lg:p-8 overflow-hidden border-l border-gray-200">
+        <div className="w-full mt-4 lg:mt-0 p-4 sm:p-5 lg:p-8 overflow-hidden border-l border-primary-200">
           {children}
         </div>
       </div>

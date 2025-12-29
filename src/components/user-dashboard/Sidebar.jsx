@@ -13,6 +13,7 @@ import {
   Settings,
   Star,
   User,
+  PhoneIncoming,
 } from "lucide-react";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Image from "next/image";
@@ -151,6 +152,11 @@ const Sidebar = () => {
       href: "/user/change-password",
       icon: File,
     },
+    {
+      title: "Contact Us",
+      href: "/contact-us",
+      icon: PhoneIncoming,
+    },
   ];
 
   return (
@@ -173,7 +179,7 @@ const Sidebar = () => {
                     alt={userInfo?.name[0]}
                   />
                 ) : (
-                  <div className="flex items-center text-xl font-semibold justify-center text-emerald-600">
+                  <div className="flex items-center text-xl font-semibold justify-center text-primary-600">
                     {displayName?.charAt(0)?.toUpperCase() || "U"}
                   </div>
                 )}
@@ -224,7 +230,7 @@ const Sidebar = () => {
       <div className="flex flex-col lg:flex-row w-full">
         {/* Desktop Sidebar - Hidden on mobile */}
         <div className="hidden lg:block flex-shrink-0 w-80 my-10 lg:pr-6">
-          <div className="rounded-md sticky top-32">
+          <div className="rounded-lg bg-white border border-primary-200 p-4 sticky top-32 shadow-sm">
             {/* Avatar Section */}
             <div className="flex flex-row items-center mb-6">
               <div className="relative w-16 h-16">
@@ -238,7 +244,7 @@ const Sidebar = () => {
                       alt={userInfo?.name[0]}
                     />
                   ) : (
-                    <div className="flex items-center text-xl font-semibold justify-center text-emerald-600">
+                    <div className="flex items-center text-xl font-semibold justify-center text-primary-600">
                       {displayName?.charAt(0)?.toUpperCase() || "U"}
                     </div>
                   )}
@@ -263,15 +269,15 @@ const Sidebar = () => {
                 <Link
                   href={item.href}
                   key={item.title}
-                  className={`inline-flex items-center rounded-md hover:bg-gray-100 py-3 px-4 text-sm font-medium w-full mb-1 transition-colors ${
+                  className={`inline-flex items-center rounded-md hover:bg-primary-50 py-3 px-4 text-sm font-medium w-full mb-1 transition-colors ${
                     isActive
-                      ? "text-emerald-600 bg-emerald-100"
+                      ? "text-primary-600 bg-primary-100"
                       : "text-gray-600"
                   }`}
                 >
                   <item.icon
                     className={`flex-shrink-0 h-4 w-4 mr-3 ${
-                      isActive ? "text-emerald-600" : "text-gray-500"
+                      isActive ? "text-primary-600" : "text-gray-500"
                     }`}
                     aria-hidden="true"
                   />
@@ -282,11 +288,11 @@ const Sidebar = () => {
             })}
 
             {/* Logout Button */}
-            <span className="p-3 flex items-center rounded-md hover:bg-gray-50 w-full">
+            <span className="p-3 flex items-center rounded-md hover:bg-primary-50 w-full transition-colors mt-2">
               <LockOpen className="flex-shrink-0 h-4 w-4 text-gray-500" />
               <button
                 onClick={handleLogOut}
-                className="inline-flex items-center justify-between ml-2 text-sm font-medium w-full text-left cursor-pointer transition-colors text-gray-600"
+                className="inline-flex items-center justify-between ml-2 text-sm font-medium w-full text-left cursor-pointer transition-colors text-gray-600 hover:text-primary-600"
               >
                 {showingTranslateValue(storeCustomization?.navbar?.logout)}
               </button>
