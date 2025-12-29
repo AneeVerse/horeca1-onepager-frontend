@@ -37,12 +37,16 @@ const NavbarPromo = ({ languages, categories, categoryError }) => {
   const isAuthPage = pathname?.startsWith("/auth") || pathname?.startsWith("/login");
   // Hide on contact-us page
   const isContactPage = pathname === "/contact-us";
+  // Hide on user dashboard pages
+  const isUserDashboard = pathname?.startsWith("/user");
+  // Hide on search page
+  const isSearchPage = pathname?.startsWith("/search");
 
   const { showingTranslateValue } = useUtilsFunction();
   const navbar = storeCustomization?.navbar;
 
-  // Hide navigation bar on home page, auth pages, and contact-us page
-  if (isHomePage || isAuthPage || isContactPage) {
+  // Hide navigation bar on home page, auth pages, contact-us page, user dashboard, or search page
+  if (isHomePage || isAuthPage || isContactPage || isUserDashboard || isSearchPage) {
     return null;
   }
 

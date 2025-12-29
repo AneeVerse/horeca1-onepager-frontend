@@ -1,4 +1,5 @@
 import Cookies from "js-cookie";
+import { getCookieOptions } from "@utils/cookieConfig";
 import dayjs from "dayjs";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -241,7 +242,7 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
                 email: result.customer?.email || userDetails.email || userInfo?.email,
                 phone: result.customer?.phone || userInfo?.phone,
               };
-              Cookies.set("userInfo", JSON.stringify(updatedUserInfo), { expires: 30 });
+              Cookies.set("userInfo", JSON.stringify(updatedUserInfo), getCookieOptions(30));
               
               // #region agent log
               fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useCheckoutSubmit.js:236',message:'Updated userInfo cookie',data:{updatedUserInfo,result},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
@@ -623,7 +624,7 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
         setMinimumAmount(result[0]?.minimumAmount);
         setDiscountPercentage(result[0].discountType);
         dispatch({ type: "SAVE_COUPON", payload: result[0] });
-        Cookies.set("couponInfo", JSON.stringify(result[0]));
+        Cookies.set("couponInfo", JSON.stringify(result[0]), getCookieOptions(7));
       }
     } catch (error) {
       return notifyError(error.message);

@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { signOut } from "next-auth/react";
 import { FiUnlock, FiUser } from "react-icons/fi";
 import dynamic from "next/dynamic";
 import Cookies from "js-cookie";
+import { handleLogout } from "@utils/logout";
 
 //internal imports
 import useUtilsFunction from "@hooks/useUtilsFunction";
@@ -30,10 +30,9 @@ const LogoutButton = ({ storeCustomization }) => {
   // Check if user is logged in (has email OR phone OR token)
   const isLoggedIn = !!(userInfo?.email || userInfo?.phone || userInfo?.token);
 
-  // Handle logout - clear cookie and signOut
-  const handleLogout = () => {
-    Cookies.remove("userInfo");
-    signOut({ callbackUrl: "/" });
+  // Handle logout - clear all data
+  const handleLogoutClick = () => {
+    handleLogout({ redirectUrl: "/" });
   };
 
   return (
@@ -47,7 +46,7 @@ const LogoutButton = ({ storeCustomization }) => {
       <span className="mx-2">|</span>
       {isLoggedIn ? (
         <button
-          onClick={handleLogout}
+          onClick={handleLogoutClick}
           type="submit"
           className="flex items-center font-medium hover:text-emerald-600"
         >

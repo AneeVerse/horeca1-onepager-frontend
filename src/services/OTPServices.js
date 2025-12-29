@@ -36,7 +36,7 @@ export const sendOTP = async (phone) => {
 /**
  * Verify OTP and login/signup
  * @param {string} phone - Phone number with country code
- * @param {string} otp - 6-digit OTP
+ * @param {string} otp - 4-digit OTP
  * @returns {Promise<{success: boolean, userInfo?: object, message?: string, error?: string}>}
  */
 export const verifyOTP = async (phone, otp) => {
