@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useCart } from "react-use-cart";
 import { useContext } from "react";
 import { SidebarContext } from "@context/SidebarContext";
+import { useRouter, usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 
 import { notifyError, notifySuccess } from "@utils/toast";
 
@@ -9,10 +11,20 @@ const useAddToCart = () => {
   const [item, setItem] = useState(1);
   const { addItem, items, updateItemQuantity, totalItems } = useCart();
   const { setCartDrawerOpen } = useContext(SidebarContext);
+  const router = useRouter();
+  const pathname = usePathname();
   // console.log('products',products)
   // console.log("items", items);
 
   const handleAddItem = (product) => {
+    // Check if user is authenticated before adding to cart
+    const userInfoCookie = Cookies.get("userInfo");
+    if (!userInfoCookie) {
+      // Redirect to login page with current page as redirectUrl
+      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+    
     const result = items.find((i) => i.id === product.id);
     // console.log(
     //   "result in add to",

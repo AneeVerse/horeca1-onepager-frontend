@@ -4,6 +4,8 @@ import dynamic from "next/dynamic";
 import { useState } from "react";
 import { IoAdd, IoExpand, IoBagAdd, IoRemove } from "react-icons/io5";
 import { useCart } from "react-use-cart";
+import { useRouter, usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 
 //internal import
 
@@ -22,10 +24,20 @@ const DiscountedCard = ({ product, attributes, currency }) => {
   const { items, addItem, updateItemQuantity, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
+  const router = useRouter();
+  const pathname = usePathname();
 
   // console.log('attributes in product cart',attributes)
 
   const handleAddItem = (p) => {
+    // Check if user is authenticated before adding to cart
+    const userInfoCookie = Cookies.get("userInfo");
+    if (!userInfoCookie) {
+      // Redirect to login page with current page as redirectUrl
+      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
     if (p.stock < 1) return notifyError("Insufficient stock!");
 
     if (p?.variants?.length > 0) {

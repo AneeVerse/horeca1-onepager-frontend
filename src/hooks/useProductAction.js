@@ -1,9 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { SidebarContext } from "@context/SidebarContext";
 import useAddToCart from "@hooks/useAddToCart";
 import { notifyError } from "@utils/toast";
 import useUtilsFunction from "@hooks/useUtilsFunction";
+import Cookies from "js-cookie";
 
 export default function useProductAction({
   product,
@@ -12,7 +13,8 @@ export default function useProductAction({
   onCloseModal, // optional for modal flow
   withRouter = false, // if true, enable handleMoreInfo
 }) {
-  const router = withRouter ? useRouter() : null;
+  const router = useRouter();
+  const pathname = usePathname();
   const { setIsLoading, isLoading } = useContext(SidebarContext) || {};
   const { handleAddItem } = useAddToCart();
   const { getNumber, showingTranslateValue } = useUtilsFunction();
@@ -138,6 +140,14 @@ export default function useProductAction({
 
   // Add to cart
   const handleAddToCart = () => {
+    // Check if user is authenticated before adding to cart
+    const userInfoCookie = Cookies.get("userInfo");
+    if (!userInfoCookie) {
+      // Redirect to login page with current page as redirectUrl
+      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
     if (product?.variants?.length === 1 && product?.variants[0].quantity < 1)
       return notifyError("Insufficient stock");
     if (stock <= 0) return notifyError("Insufficient stock");

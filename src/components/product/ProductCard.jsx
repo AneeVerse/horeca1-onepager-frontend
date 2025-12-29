@@ -10,6 +10,8 @@ import {
 import { useCart } from "react-use-cart";
 import { Expand } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useRouter, usePathname } from "next/navigation";
+import Cookies from "js-cookie";
 
 //internal import
 import Price from "@components/common/Price";
@@ -33,6 +35,8 @@ const ProductCard = ({ product, attributes }) => {
   const [isPromoTime, setIsPromoTime] = useState(false);
   const pendingAddRef = useRef(null); // Track pending add operation
   const [quantityInputs, setQuantityInputs] = useState({}); // Track input values for each item
+  const router = useRouter();
+  const pathname = usePathname();
 
   const { items, addItem, updateItemQuantity, removeItem, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
@@ -98,6 +102,14 @@ const ProductCard = ({ product, attributes }) => {
   };
 
   const handleAddItem = (p, quantity = 1, isBulkButton = false) => {
+    // Check if user is authenticated before adding to cart
+    const userInfoCookie = Cookies.get("userInfo");
+    if (!userInfoCookie) {
+      // Redirect to login page with current page as redirectUrl
+      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
     if (p.stock < 1) return notifyError("Insufficient stock!");
 
     if (p?.variants?.length > 0) {
