@@ -3,25 +3,90 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 
 //internal import
 import useFilter from "@hooks/useFilter";
 import ProductCard from "@components/product/ProductCard";
 import { Button } from "@components/ui/button";
+import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const SearchScreen = ({ products, attributes, categories, currency }) => {
   const [visibleProduct, setVisibleProduct] = useState(18);
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
+  const { showingTranslateValue } = useUtilsFunction();
   useEffect(() => setMounted(true), []);
 
   const { setSortedField, productData } = useFilter(products);
   if (!mounted) return null; // or a skeleton loader
 
+  const categoryList = categories?.[0]?.children || [];
+
+  const handleCategoryClick = (categoryId, categoryName) => {
+    if (categoryId === null || categoryId === "all") {
+      // Clear category filter - show all products
+      router.push(`/search`);
+    } else {
+      const category_name = categoryName.toLowerCase().replace(/[^A-Z0-9]+/gi, "-");
+      router.push(`/search?category=${category_name}&_id=${categoryId}`);
+    }
+  };
+
   return (
     <div className="mx-auto max-w-screen-2xl px-3 sm:px-10">
       <div className="flex py-10 lg:py-12">
-        <div className="flex w-full">
-          <div className="w-full">
+        <div className="flex w-full gap-2">
+          {/* Mobile: Categories sidebar on left - only show on mobile */}
+          <div className="sm:hidden w-20 flex-shrink-0">
+            <div className="sticky top-20 h-[calc(100vh-6rem)] overflow-y-auto py-2">
+              <ul className="flex flex-col gap-2">
+                {/* All tab with product-header image */}
+                <li className="w-full">
+                  <div
+                    onClick={() => handleCategoryClick(null, "All")}
+                    className="flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50 rounded-md transition-colors"
+                  >
+                    <Image
+                      src="/product-header.png"
+                      alt="All Products"
+                      width={32}
+                      height={32}
+                      className="object-contain mb-1"
+                    />
+                    <span className="text-[10px] text-gray-700 font-medium leading-tight line-clamp-2 text-center hover:text-primary-600">
+                      All
+                    </span>
+                  </div>
+                </li>
+                {categoryList.map((category, i) => (
+                  <li key={i + 1} className="w-full">
+                    <div
+                      onClick={() => handleCategoryClick(category._id, showingTranslateValue(category?.name))}
+                      className="flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50 rounded-md transition-colors"
+                    >
+                      {category.icon ? (
+                        <Image
+                          src={category.icon}
+                          alt={category.name || "category"}
+                          width={32}
+                          height={32}
+                          className="object-contain mb-1"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 bg-gray-100 rounded-full mb-1" />
+                      )}
+                      <span className="text-[10px] text-gray-700 font-medium leading-tight line-clamp-2 text-center hover:text-primary-600">
+                        {showingTranslateValue(category?.name)}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          
+          <div className="flex-1 min-w-0">
             {productData?.length === 0 ? (
               <div className="mx-auto p-5 my-5">
                 <Image

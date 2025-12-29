@@ -19,11 +19,11 @@ const CouponCodeButton = ({ coupon }) => {
     >
       <button className="block w-full">
         {copied && coupon.couponCode === copiedCode ? (
-          <span className="text-emerald-600 text-sm leading-7 font-semibold">
+          <span className="text-primary-600 text-sm leading-7 font-semibold">
             Copied!
           </span>
         ) : (
-          <span className="uppercase  font-semibold text-sm leading-7 text-emerald-600">
+          <span className="uppercase  font-semibold text-sm leading-7 text-primary-600">
             {coupon.couponCode}{" "}
           </span>
         )}

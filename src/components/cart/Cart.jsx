@@ -101,7 +101,7 @@ const Cart = ({ setOpen, currency }) => {
             <CartItem key={i + 1} item={item} currency={currency} />
           ))}
         </div>
-        <div className="bg-neutral-50 dark:bg-slate-900 p-5">
+        <div className="bg-neutral-50 dark:bg-slate-900 p-5 pb-20 sm:pb-5">
           <p className="flex justify-between font-semibold text-slate-900 dark:text-slate-100">
             <span>
               <span>Subtotal</span>
@@ -118,7 +118,7 @@ const Cart = ({ setOpen, currency }) => {
           <div className="flex mt-5">
             <button
               onClick={handleCheckout}
-              className="relative h-auto w-full inline-flex items-center justify-center rounded-md transition-colors text-sm sm:text-base font-medium py-2 px-3 bg-emerald-500 hover:bg-emerald-600 border border-emerald-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-6000 dark:focus:ring-offset-0"
+              className="relative h-auto w-full inline-flex items-center justify-center rounded-md transition-colors text-sm sm:text-base font-medium py-2 px-3 bg-primary-500 hover:bg-primary-600 border border-primary-500 text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-600 dark:focus:ring-offset-0"
             >
               Checkout
             </button>

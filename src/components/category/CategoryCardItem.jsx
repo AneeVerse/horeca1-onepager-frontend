@@ -47,7 +47,7 @@ const CategoryCardItem = ({ category }) => {
         )}
       </div>
       {/* Text Below - No box, just text */}
-      <h3 className="text-xs sm:text-sm text-gray-800 font-medium leading-tight line-clamp-2 text-center hover:text-emerald-600">
+      <h3 className="text-xs sm:text-sm text-gray-800 font-medium leading-tight line-clamp-2 text-center hover:text-primary-600">
         {showingTranslateValue(category?.name)}
       </h3>
     </div>

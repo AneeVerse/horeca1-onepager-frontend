@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import React, { useRef } from "react";
 import { IoChevronBackOutline, IoChevronForward } from "react-icons/io5";
 import { Navigation } from "swiper";
@@ -18,40 +19,34 @@ const PopularProductsCarousel = ({ products, attributes, currency }) => {
     <div className="w-full">
       {/* Header Section */}
       <div className="flex items-center justify-between mb-6">
-        <div>
-          <h2 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
-            Your Menu Add-ons
-          </h2>
-          <p className="text-sm text-gray-600">custom food solutions</p>
+        <div className="flex items-center gap-3">
+          <Image
+            src="/product-header.png"
+            alt="Product header"
+            width={56}
+            height={56}
+            className="w-14 h-14 lg:w-12 lg:h-12 object-contain flex-shrink-0"
+          />
+          <div>
+            <h2 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
+              Your Menu Add-ons
+            </h2>
+            <p className="text-sm text-gray-600">custom food solutions</p>
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <Link
             href="/search"
-            className="text-emerald-600 hover:text-emerald-700 font-medium text-sm"
+            className="text-primary-500 hover:text-primary-600 font-medium text-sm"
           >
             See all
           </Link>
-          <div className="flex gap-2">
-            <button
-              ref={prevRef}
-              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="Previous products"
-            >
-              <IoChevronBackOutline className="w-5 h-5 text-emerald-600" />
-            </button>
-            <button
-              ref={nextRef}
-              className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-50 transition-colors"
-              aria-label="Next products"
-            >
-              <IoChevronForward className="w-5 h-5 text-emerald-600" />
-            </button>
-          </div>
         </div>
       </div>
 
-      {/* Swiper Carousel */}
-      <Swiper
+      {/* Swiper Carousel with Navigation Buttons */}
+      <div className="relative">
+        <Swiper
         onInit={(swiper) => {
           swiper.params.navigation.prevEl = prevRef.current;
           swiper.params.navigation.nextEl = nextRef.current;
@@ -100,6 +95,23 @@ const PopularProductsCarousel = ({ products, attributes, currency }) => {
           </SwiperSlide>
         ))}
       </Swiper>
+      
+      {/* Navigation Buttons - Positioned on Left and Right */}
+      <button
+        ref={prevRef}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors -translate-x-2 lg:-translate-x-4"
+        aria-label="Previous products"
+      >
+                <IoChevronBackOutline className="w-5 h-5 text-primary-500" />
+              </button>
+              <button
+                ref={nextRef}
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white shadow-lg flex items-center justify-center hover:bg-gray-50 transition-colors translate-x-2 lg:translate-x-4"
+                aria-label="Next products"
+              >
+                <IoChevronForward className="w-5 h-5 text-primary-500" />
+      </button>
+      </div>
     </div>
   );
 };

@@ -71,47 +71,47 @@ const PromoTimerCard = () => {
   if (isPromoTime) {
     // Show Promo Active Card - Clean, well-aligned design
     return (
-      <div className="w-full h-full min-h-[300px] lg:min-h-0">
-        <div className="bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500 h-full min-h-[300px] lg:min-h-0 rounded-xl shadow-md overflow-hidden relative">
-          <div className="relative z-10 p-6 h-full flex flex-col">
+      <div className="w-full h-[90px] lg:h-[180px] flex">
+        <div className="bg-gradient-to-br from-primary-600 via-primary-500 to-primary-400 w-full h-[90px] lg:h-[180px] rounded-xl shadow-md overflow-hidden relative flex flex-col">
+          <div className="relative z-10 p-1.5 lg:p-5 flex-1 flex flex-col min-h-0">
             {/* Title Section - Perfectly aligned */}
-            <div className="mb-6">
-              <div className="flex items-start gap-3">
-                <div className="p-2 bg-white/20 rounded-lg flex-shrink-0 backdrop-blur-sm mt-0.5">
-                  <Moon className="w-5 h-5 text-white" />
+            <div className="mb-1 lg:mb-4 flex-shrink-0">
+              <div className="flex items-center gap-1 lg:gap-2">
+                <div className="p-0.5 lg:p-1.5 bg-white/20 rounded flex-shrink-0 backdrop-blur-sm">
+                  <Moon className="w-2.5 h-2.5 lg:w-4 lg:h-4 text-white" />
                 </div>
-                <div className="flex-1">
-                  <h2 className="text-lg font-bold text-white leading-tight mb-1.5">Happy Hour Discount</h2>
-                  <span className="text-white/80 text-sm font-medium">6:00Am to 9:00Pm</span>
+                <div className="flex-1 min-w-0">
+                  <h2 className="text-[9px] lg:text-base font-bold text-white leading-none mb-0.5 lg:mb-1">Happy Hour Discount</h2>
+                  <span className="text-white/80 text-[8px] lg:text-xs font-medium leading-none">6:00Am to 9:00Pm</span>
                 </div>
               </div>
             </div>
 
             {/* Timer Section - Well-spaced and aligned */}
-            <div className="flex-1 flex flex-col justify-center">
-              <div className="bg-white/15 backdrop-blur-sm rounded-lg p-4 border border-white/20">
-                <div className="flex items-center gap-1.5 mb-3">
-                  <Clock className="w-3.5 h-3.5 text-white" />
-                  <p className="text-white/90 text-xs font-medium">Ends in</p>
+            <div className="flex-1 flex flex-col justify-center min-h-0">
+              <div className="bg-white/15 backdrop-blur-sm rounded p-0.5 lg:p-2.5 border border-white/20 flex-shrink-0">
+                <div className="flex items-center gap-0.5 lg:gap-1 mb-0.5 lg:mb-1.5">
+                  <Clock className="w-1.5 h-1.5 lg:w-3 lg:h-3 text-white flex-shrink-0" />
+                  <p className="text-white/90 text-[7px] lg:text-[10px] font-medium leading-none">Ends in</p>
                 </div>
-                <div className="flex gap-2">
-                  <div className="flex-1 bg-white/20 rounded-lg py-3 px-2 text-center border border-white/30">
-                    <span className="text-2xl font-bold text-white block leading-none">
+                <div className="flex gap-0.5 lg:gap-1.5">
+                  <div className="flex-1 bg-white/20 rounded py-0.5 lg:py-2 px-0.5 lg:px-1.5 text-center border border-white/30">
+                    <span className="text-[9px] lg:text-xl font-bold text-white block leading-none">
                       {timeRemaining.hours.toString().padStart(2, "0")}
                     </span>
-                    <p className="text-white/80 text-xs mt-1.5 font-medium">Hours</p>
+                    <p className="text-white/80 text-[6px] lg:text-[10px] mt-0 lg:mt-0.5 font-medium leading-none">Hours</p>
                   </div>
-                  <div className="flex-1 bg-white/20 rounded-lg py-3 px-2 text-center border border-white/30">
-                    <span className="text-2xl font-bold text-white block leading-none">
+                  <div className="flex-1 bg-white/20 rounded py-0.5 lg:py-2 px-0.5 lg:px-1.5 text-center border border-white/30">
+                    <span className="text-[9px] lg:text-xl font-bold text-white block leading-none">
                       {timeRemaining.minutes.toString().padStart(2, "0")}
                     </span>
-                    <p className="text-white/80 text-xs mt-1.5 font-medium">Mins</p>
+                    <p className="text-white/80 text-[6px] lg:text-[10px] mt-0 lg:mt-0.5 font-medium leading-none">Mins</p>
                   </div>
-                  <div className="flex-1 bg-white/20 rounded-lg py-3 px-2 text-center border border-white/30">
-                    <span className="text-2xl font-bold text-white block leading-none">
+                  <div className="flex-1 bg-white/20 rounded py-0.5 lg:py-2 px-0.5 lg:px-1.5 text-center border border-white/30">
+                    <span className="text-[9px] lg:text-xl font-bold text-white block leading-none">
                       {timeRemaining.seconds.toString().padStart(2, "0")}
                     </span>
-                    <p className="text-white/80 text-xs mt-1.5 font-medium">Secs</p>
+                    <p className="text-white/80 text-[6px] lg:text-[10px] mt-0 lg:mt-0.5 font-medium leading-none">Secs</p>
                   </div>
                 </div>
               </div>
@@ -124,47 +124,47 @@ const PromoTimerCard = () => {
 
   // Show "Promo Starting Soon" Card - Clean, well-aligned design
   return (
-    <div className="w-full h-full min-h-[300px] lg:min-h-0">
-      <div className="bg-gradient-to-br from-emerald-50 via-teal-50 to-green-50 h-full min-h-[300px] lg:min-h-0 rounded-xl shadow-md border border-emerald-200 overflow-hidden relative">
-        <div className="relative z-10 p-6 h-full flex flex-col">
+    <div className="w-full h-[90px] lg:h-[180px] flex">
+      <div className="bg-gradient-to-br from-primary-50 via-primary-100 to-primary-100 w-full h-[90px] lg:h-[180px] rounded-xl shadow-md border border-primary-200 overflow-hidden relative flex flex-col">
+        <div className="relative z-10 p-1.5 lg:p-5 flex-1 flex flex-col min-h-0">
           {/* Title Section - Perfectly aligned */}
-          <div className="mb-6">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-emerald-100 rounded-lg flex-shrink-0 mt-0.5">
-                <Moon className="w-5 h-5 text-emerald-600" />
+          <div className="mb-1 lg:mb-4 flex-shrink-0">
+            <div className="flex items-center gap-1 lg:gap-2">
+              <div className="p-0.5 lg:p-1.5 bg-primary-100 rounded flex-shrink-0">
+                <Moon className="w-2.5 h-2.5 lg:w-4 lg:h-4 text-primary-600" />
               </div>
-              <div className="flex-1">
-                <h2 className="text-lg font-bold text-gray-800 leading-tight mb-1.5">Happy Hour Discount</h2>
-                <span className="text-gray-600 text-sm font-medium">6:00Am to 9:00Pm</span>
+              <div className="flex-1 min-w-0">
+                <h2 className="text-[9px] lg:text-base font-bold text-gray-800 leading-none mb-0.5 lg:mb-1">Happy Hour Discount</h2>
+                <span className="text-gray-600 text-[8px] lg:text-xs font-medium leading-none">6:00Am to 9:00Pm</span>
               </div>
             </div>
           </div>
 
           {/* Timer Section - Well-spaced and aligned */}
-          <div className="flex-1 flex flex-col justify-center">
-            <div className="bg-white rounded-lg p-4 border border-emerald-100 shadow-sm">
-              <div className="flex items-center gap-1.5 mb-3">
-                <Clock className="w-3.5 h-3.5 text-emerald-600" />
-                <p className="text-gray-600 text-xs font-medium">Starts in</p>
+          <div className="flex-1 flex flex-col justify-center min-h-0">
+            <div className="bg-white rounded p-0.5 lg:p-2.5 border border-primary-100 shadow-sm flex-shrink-0">
+              <div className="flex items-center gap-0.5 lg:gap-1 mb-0.5 lg:mb-1.5">
+                <Clock className="w-1.5 h-1.5 lg:w-3 lg:h-3 text-primary-600 flex-shrink-0" />
+                <p className="text-gray-600 text-[7px] lg:text-[10px] font-medium leading-none">Starts in</p>
               </div>
-              <div className="flex gap-2">
-                <div className="flex-1 bg-emerald-500 rounded-lg py-3 px-2 text-center border border-emerald-600 shadow-sm">
-                  <span className="text-2xl font-bold text-white block leading-none">
+              <div className="flex gap-0.5 lg:gap-1.5">
+                <div className="flex-1 bg-primary-500 rounded py-0.5 lg:py-2 px-0.5 lg:px-1.5 text-center border border-primary-600 shadow-sm">
+                  <span className="text-[9px] lg:text-xl font-bold text-white block leading-none">
                     {timeRemaining.hours.toString().padStart(2, "0")}
                   </span>
-                  <p className="text-white text-xs mt-1.5 font-medium">Hours</p>
+                  <p className="text-white text-[6px] lg:text-[10px] mt-0 lg:mt-0.5 font-medium leading-none">Hours</p>
                 </div>
-                <div className="flex-1 bg-emerald-500 rounded-lg py-3 px-2 text-center border border-emerald-600 shadow-sm">
-                  <span className="text-2xl font-bold text-white block leading-none">
+                <div className="flex-1 bg-primary-500 rounded py-0.5 lg:py-2 px-0.5 lg:px-1.5 text-center border border-primary-600 shadow-sm">
+                  <span className="text-[9px] lg:text-xl font-bold text-white block leading-none">
                     {timeRemaining.minutes.toString().padStart(2, "0")}
                   </span>
-                  <p className="text-white text-xs mt-1.5 font-medium">Mins</p>
+                  <p className="text-white text-[6px] lg:text-[10px] mt-0 lg:mt-0.5 font-medium leading-none">Mins</p>
                 </div>
-                <div className="flex-1 bg-emerald-500 rounded-lg py-3 px-2 text-center border border-emerald-600 shadow-sm">
-                  <span className="text-2xl font-bold text-white block leading-none">
+                <div className="flex-1 bg-primary-500 rounded py-0.5 lg:py-2 px-0.5 lg:px-1.5 text-center border border-primary-600 shadow-sm">
+                  <span className="text-[9px] lg:text-xl font-bold text-white block leading-none">
                     {timeRemaining.seconds.toString().padStart(2, "0")}
                   </span>
-                  <p className="text-white text-xs mt-1.5 font-medium">Secs</p>
+                  <p className="text-white text-[6px] lg:text-[10px] mt-0 lg:mt-0.5 font-medium leading-none">Secs</p>
                 </div>
               </div>
             </div>

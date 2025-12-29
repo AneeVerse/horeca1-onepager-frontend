@@ -57,7 +57,7 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
         {/* ✅ Clicking name = search */}
         <div
           onClick={() => handleSearch(id, title)}
-          className="ml-3 text-sm font-medium flex-1 cursor-pointer hover:text-emerald-600"
+          className="ml-3 text-sm font-medium flex-1 cursor-pointer hover:text-primary-600"
         >
           {title}
         </div>
@@ -66,7 +66,7 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
         {nested?.length > 0 && (
           <span
             onClick={toggleExpand}
-            className="cursor-pointer text-gray-400 hover:text-emerald-600"
+            className="cursor-pointer text-gray-400 hover:text-primary-600"
           >
             {show ? <IoChevronDownOutline /> : <IoChevronForwardOutline />}
           </span>
@@ -90,13 +90,13 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
                         showingTranslateValue(children.name)
                       )
                     }
-                    className="flex-1 text-sm text-gray-600 hover:text-emerald-600 cursor-pointer"
+                    className="flex-1 text-sm text-gray-600 hover:text-primary-600 cursor-pointer"
                   >
                     {showingTranslateValue(children.name)}
                   </div>
                   <span
                     onClick={() => handleSubNestedToggle(children._id)}
-                    className="cursor-pointer text-gray-400 hover:text-emerald-600"
+                    className="cursor-pointer text-gray-400 hover:text-primary-600"
                   >
                     {showSubCategory.id === children._id &&
                     showSubCategory.show ? (
@@ -114,7 +114,7 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
                       showingTranslateValue(children.name)
                     )
                   }
-                  className="flex items-center py-1 text-sm text-gray-600 hover:text-emerald-600 cursor-pointer"
+                  className="flex items-center py-1 text-sm text-gray-600 hover:text-primary-600 cursor-pointer"
                 >
                   <span className="text-xs text-gray-500 pr-2">
                     <IoRemoveSharp />
@@ -135,7 +135,7 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
                           showingTranslateValue(subChildren.name)
                         )
                       }
-                      className="flex items-center py-1 text-sm text-gray-600 hover:text-emerald-600 cursor-pointer"
+                      className="flex items-center py-1 text-sm text-gray-600 hover:text-primary-600 cursor-pointer"
                     >
                       <span className="text-xs text-gray-500 pr-2">
                         <IoRemoveSharp />

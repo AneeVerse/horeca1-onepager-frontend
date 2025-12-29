@@ -36,30 +36,30 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
     >
       {sliderData?.map((item, i) => (
         <SwiperSlide
-          className="h-full relative rounded-lg overflow-hidden dark:bg-zinc-900"
+          className="h-[90px] lg:h-[180px] relative rounded-lg overflow-hidden dark:bg-zinc-900"
           key={i + 1}
         >
-          <div className="text-sm text-gray-600 hover:text-emerald-dark dark:bg-zinc-900">
+          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900">
             <Image
               width={950}
-              height={400}
+              height={180}
               src={item.image}
               alt={item.title}
-              className="object-cover"
+              className="object-cover w-full h-[90px] lg:h-[180px]"
               priority
             />
           </div>
           <div className="absolute top-0 left-0 z-10 p-r-16 flex-col flex w-full h-full place-items-start justify-center">
-            <div className="pl-4 pr-12 sm:pl-10 sm:pr-16 w-10/12 lg:w-8/12 xl:w-7/12">
-              <h1 className="mb-2  text-xl sm:text-lg md:text-2xl line-clamp-1 md:line-clamp-none  lg:line-clamp-none  lg:text-3xl font-bold text-gray-800">
+            <div className="pl-2 pr-8 sm:pl-6 sm:pr-10 lg:pl-10 lg:pr-16 w-10/12 lg:w-8/12 xl:w-7/12">
+              <h1 className="mb-0.5 lg:mb-2 text-xs sm:text-sm md:text-base line-clamp-1 md:line-clamp-none lg:line-clamp-none lg:text-xl xl:text-2xl font-bold text-gray-800">
                 {item.title}
               </h1>
-              <p className="text-base leading-6 text-gray-600 font-sans line-clamp-1  md:line-clamp-none lg:line-clamp-none">
+              <p className="text-[10px] sm:text-xs leading-4 lg:leading-6 text-gray-600 font-sans line-clamp-1 md:line-clamp-none lg:line-clamp-none">
                 {item.info}
               </p>
               <Link
                 href={item.url}
-                className="hidden sm:inline-block lg:inline-block text-sm leading-6  font-medium mt-6 px-6 py-2 bg-emerald-500 text-center rounded-md text-white hover:bg-emerald-600"
+                className="hidden sm:inline-block lg:inline-block text-[10px] lg:text-sm leading-4 lg:leading-6 font-medium mt-2 lg:mt-6 px-3 lg:px-6 py-1 lg:py-2 bg-primary-500 text-center rounded-md text-white hover:bg-primary-600"
               >
                 {item.buttonName}
               </Link>

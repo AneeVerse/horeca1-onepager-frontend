@@ -17,7 +17,7 @@ const CheckoutButton = ({ stripe, isEmpty, storeCustomizationSetting }) => {
     <button
       type="submit"
       disabled={isEmpty || pending}
-      className="bg-emerald-500 hover:bg-emerald-600 border cursor-pointer border-emerald-500 transition-all rounded py-3 text-center text-sm font-medium text-white flex justify-center w-full"
+      className="bg-primary-500 hover:bg-primary-600 border cursor-pointer border-primary-500 transition-all rounded py-3 text-center text-sm font-medium text-white flex justify-center w-full"
     >
       {pending ? (
         <span className="flex justify-center text-center">

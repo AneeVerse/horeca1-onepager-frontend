@@ -48,7 +48,7 @@ const Price = ({ product, price, card, originalPrice, currency, showUnit = false
       </div>
 
       {/* {discountAmount > 0 && !card && (
-        <p className="text-xs text-emerald-600">
+        <p className="text-xs text-primary-600">
           Save {currency}
           {getNumberTwo(discountAmount)} ({discountPercent}% off)
         </p>
