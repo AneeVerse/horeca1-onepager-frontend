@@ -20,7 +20,7 @@ export default function AdminLogin() {
 
     try {
       const { data, error: loginError } = await loginAdmin(email, password);
-      
+
       if (loginError) {
         setError(loginError);
       } else if (data) {
@@ -35,25 +35,25 @@ export default function AdminLogin() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-white to-teal-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#e6f5ef] via-white to-[#d4f5e5] py-12 px-4 sm:px-6 lg:px-8">
       {/* Background Pattern */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-emerald-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-teal-200 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#a8ebd0] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
+        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-[#b3d9dc] rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
       </div>
 
       <div className="relative max-w-md w-full">
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-gray-100">
           {/* Header Section with Gradient */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-8 py-10 text-center">
+          <div className="bg-gradient-to-r from-[#018549] to-[#025155] px-8 py-10 text-center">
             <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-4 backdrop-blur-sm">
               <LockClosedIcon className="w-8 h-8 text-white" />
             </div>
             <h2 className="text-3xl font-bold text-white mb-2">
               Admin Panel
             </h2>
-            <p className="text-emerald-100 text-sm">
+            <p className="text-[#e6f5ef] text-sm">
               Sign in to manage your store
             </p>
           </div>
@@ -93,7 +93,7 @@ export default function AdminLogin() {
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-400 sm:text-sm"
+                    className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549] transition-colors text-gray-900 placeholder-gray-400 sm:text-sm"
                     placeholder="admin@example.com"
                   />
                 </div>
@@ -116,7 +116,7 @@ export default function AdminLogin() {
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-colors text-gray-900 placeholder-gray-400 sm:text-sm"
+                    className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549] transition-colors text-gray-900 placeholder-gray-400 sm:text-sm"
                     placeholder="Enter your password"
                   />
                   <button
@@ -141,7 +141,7 @@ export default function AdminLogin() {
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:from-emerald-600 disabled:hover:to-teal-600"
+                  className="w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-[#018549] hover:bg-[#016d3b] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#018549] transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
                     <>
@@ -174,7 +174,7 @@ export default function AdminLogin() {
         <div className="mt-6 text-center">
           <p className="text-sm text-gray-600">
             Need help?{" "}
-            <a href="/contact" className="font-medium text-emerald-600 hover:text-emerald-500">
+            <a href="/contact" className="font-medium text-[#018549] hover:text-[#018549]">
               Contact Support
             </a>
           </p>
@@ -206,3 +206,4 @@ export default function AdminLogin() {
     </div>
   );
 }
+

@@ -21,3 +21,4 @@ const SubmitButton = ({ title }) => {
 };
 
 export default SubmitButton;
+

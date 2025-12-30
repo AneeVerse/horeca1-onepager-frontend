@@ -23,10 +23,10 @@ const CategoryNavigateButton = ({ category, className = "", showChildren = true,
   const getTextStyle = () => {
     if (textOnly) {
       // Blinkit style - plain text below image, no box
-      return "text-xs sm:text-sm text-gray-800 font-medium leading-tight line-clamp-2 cursor-pointer hover:text-emerald-600";
+      return "text-xs sm:text-sm text-gray-800 font-medium leading-tight line-clamp-2 cursor-pointer hover:text-[#018549]";
     }
     if (showChildren) {
-      return "text-sm text-gray-700 dark:text-gray-200 hover:text-emerald-600 font-semibold leading-tight line-clamp-1 cursor-pointer";
+      return "text-sm text-gray-700 dark:text-gray-200 hover:text-[#018549] font-semibold leading-tight line-clamp-1 cursor-pointer";
     }
     return "text-xs text-gray-800 font-medium leading-tight line-clamp-2 cursor-pointer bg-white rounded-md px-2 py-1.5 w-full shadow-sm border border-gray-100";
   };
@@ -73,3 +73,4 @@ const CategoryNavigateButton = ({ category, className = "", showChildren = true,
 };
 
 export default CategoryNavigateButton;
+

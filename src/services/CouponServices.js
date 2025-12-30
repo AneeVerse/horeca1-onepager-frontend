@@ -27,3 +27,4 @@ const getShowingCoupons = async () => {
 };
 
 export { getAllCoupons, getShowingCoupons };
+

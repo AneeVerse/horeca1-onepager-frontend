@@ -37,3 +37,4 @@ const Footer = async ({ error, storeCustomizationSetting }) => {
 };
 
 export default Footer;
+

@@ -41,7 +41,7 @@ const VariantList = ({
           onValueChange={handleChangeVariant}
           value={selectVariant[att] || ""}
         >
-          <SelectTrigger className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-600 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-emerald-600 sm:text-sm/6">
+          <SelectTrigger className="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base text-gray-600 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-[#018549] sm:text-sm/6">
             <SelectValue placeholder="Select Variant" />
           </SelectTrigger>
           <SelectContent>
@@ -77,11 +77,10 @@ const VariantList = ({
                           ? "active"
                           : "outline"
                       }
-                      className={`h-7 text-xs ${
-                        Object?.values(selectVariant).includes(vl[att])
-                          ? "cursor-pointer inline-flex items-center rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-700"
-                          : "cursor-pointer inline-flex items-center rounded-full bg-white hover:bg-emerald-100 hover:shadow-md px-3 py-1 text-xs font-medium text-gray-600 hover:text-green-700"
-                      }`}
+                      className={`h-7 text-xs ${Object?.values(selectVariant).includes(vl[att])
+                        ? "cursor-pointer inline-flex items-center rounded-full bg-[#e6f5ef] px-3 py-1 text-xs font-medium text-[#016d3b]"
+                        : "cursor-pointer inline-flex items-center rounded-full bg-white hover:bg-[#e6f5ef] hover:shadow-md px-3 py-1 text-xs font-medium text-gray-600 hover:text-[#016d3b]"
+                        }`}
                     >
                       {showingTranslateValue(el.name)}
                     </Button>
@@ -96,3 +95,4 @@ const VariantList = ({
 };
 
 export default VariantList;
+

@@ -65,7 +65,7 @@ export default function OrdersPage() {
       // Categories use: ${baseURL}/category/all
       // Orders should use: ${baseURL}/orders/
       const url = `${baseURL}/orders/?${params.toString()}`;
-      
+
       console.log("[Admin Orders] ========== Fetch Start ==========");
       console.log("[Admin Orders] baseURL from CommonService:", baseURL);
       console.log("[Admin Orders] Final URL:", url);
@@ -105,7 +105,7 @@ export default function OrdersPage() {
       console.log("[Admin Orders] Orders count:", data.orders?.length || 0);
       console.log("[Admin Orders] Total docs:", data.totalDoc);
       console.log("[Admin Orders] ========== Fetch End ==========");
-      
+
       setOrders(data.orders || []);
       setTotalPages(Math.ceil((data.totalDoc || 0) / 10));
     } catch (error) {
@@ -126,7 +126,7 @@ export default function OrdersPage() {
     setUpdating(true);
     try {
       const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
-      
+
       if (!token) {
         console.error("[Admin Orders] No token available for update");
         setUpdating(false);
@@ -135,7 +135,7 @@ export default function OrdersPage() {
 
       // Use same pattern as fetchOrders: ${baseURL}/orders/
       const url = `${baseURL}/orders/${orderId}`;
-      
+
       console.log("[Admin Orders] Updating order:", orderId, "to status:", newStatus);
       console.log("[Admin Orders] Update URL:", url);
 
@@ -156,7 +156,7 @@ export default function OrdersPage() {
 
       const updatedOrder = await res.json();
       console.log("[Admin Orders] Order updated successfully:", updatedOrder);
-      
+
       fetchOrders();
       if (selectedOrder?._id === orderId) {
         setSelectedOrder((prev) => ({ ...prev, status: newStatus }));
@@ -176,13 +176,13 @@ export default function OrdersPage() {
       <div className="fixed inset-0 z-50 overflow-y-auto bg-black bg-opacity-50 flex items-center justify-center p-4">
         <div className="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
           {/* Header */}
-          <div className="bg-gradient-to-r from-emerald-600 to-teal-600 px-6 py-4 rounded-t-xl">
+          <div className="bg-gradient-to-r from-[#018549] to-[#025155] px-6 py-4 rounded-t-xl">
             <div className="flex justify-between items-center">
               <div>
                 <h2 className="text-xl font-bold text-white">
                   Order #{order.invoice}
                 </h2>
-                <p className="text-emerald-100 text-sm">
+                <p className="text-[#e6f5ef] text-sm">
                   {dayjs(order.createdAt).format("MMMM Do, YYYY [at] h:mm A")}
                 </p>
               </div>
@@ -201,9 +201,8 @@ export default function OrdersPage() {
               <h3 className="font-semibold text-gray-700 mb-3">Order Status</h3>
               <div className="flex items-center gap-4 flex-wrap">
                 <span
-                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
-                    statusColors[order.status]
-                  }`}
+                  className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${statusColors[order.status]
+                    }`}
                 >
                   <StatusIcon className="h-5 w-5" />
                   {order.status?.charAt(0).toUpperCase() + order.status?.slice(1)}
@@ -214,11 +213,10 @@ export default function OrdersPage() {
                       key={status}
                       onClick={() => updateOrderStatus(order._id, status)}
                       disabled={updating || order.status === status}
-                      className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${
-                        order.status === status
+                      className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-colors ${order.status === status
                           ? "bg-gray-200 text-gray-500 cursor-not-allowed"
                           : "bg-white border border-gray-300 hover:bg-gray-50 text-gray-700"
-                      }`}
+                        }`}
                     >
                       {status.charAt(0).toUpperCase() + status.slice(1)}
                     </button>
@@ -267,7 +265,7 @@ export default function OrdersPage() {
                   <tbody className="divide-y divide-gray-200">
                     {(() => {
                       // #region agent log
-                      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'admin/orders/page.jsx:268',message:'Rendering order cart items',data:{orderId:order._id,cartLength:order.cart?.length,cartItems:order.cart?.map(i=>({id:i.id,title:i.title,sku:i.sku,hsn:i.hsn,unit:i.unit,brand:i.brand}))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
+                      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'admin/orders/page.jsx:268', message: 'Rendering order cart items', data: { orderId: order._id, cartLength: order.cart?.length, cartItems: order.cart?.map(i => ({ id: i.id, title: i.title, sku: i.sku, hsn: i.hsn, unit: i.unit, brand: i.brand })) }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'E' }) }).catch(() => { });
                       // #endregion
                       return order.cart?.map((item, idx) => (
                         <tr key={idx}>
@@ -314,7 +312,7 @@ export default function OrdersPage() {
                 </div>
                 <div className="flex justify-between border-t pt-2 font-bold text-base">
                   <span>Total</span>
-                  <span className="text-emerald-600">₹{order.total?.toFixed(2)}</span>
+                  <span className="text-[#018549]">₹{order.total?.toFixed(2)}</span>
                 </div>
               </div>
             </div>
@@ -346,7 +344,7 @@ export default function OrdersPage() {
               setStatusFilter(e.target.value);
               setPage(1);
             }}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-emerald-500 focus:border-emerald-500"
+            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-[#018549] focus:border-[#018549]"
           >
             <option value="">All Status</option>
             <option value="pending">Pending</option>
@@ -356,7 +354,7 @@ export default function OrdersPage() {
           </select>
           <button
             onClick={fetchOrders}
-            className="px-4 py-2 bg-emerald-600 text-white rounded-lg text-sm font-medium hover:bg-emerald-700"
+            className="px-4 py-2 bg-[#016d3b] text-white rounded-lg text-sm font-medium hover:bg-[#018549]"
           >
             Refresh
           </button>
@@ -367,7 +365,7 @@ export default function OrdersPage() {
       <div className="bg-white rounded-xl shadow overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#018549] mx-auto"></div>
             <p className="mt-4 text-gray-500">Loading orders...</p>
           </div>
         ) : orders.length === 0 ? (
@@ -408,7 +406,7 @@ export default function OrdersPage() {
                   return (
                     <tr key={order._id} className="hover:bg-gray-50">
                       <td className="px-6 py-4 whitespace-nowrap">
-                        <span className="text-sm font-medium text-emerald-600">
+                        <span className="text-sm font-medium text-[#018549]">
                           #{order.invoice}
                         </span>
                       </td>
@@ -438,9 +436,8 @@ export default function OrdersPage() {
                           value={order.status}
                           onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                           disabled={updating}
-                          className={`text-xs font-medium rounded-lg px-3 py-1.5 border focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 ${
-                            statusColors[order.status]
-                          } border-transparent`}
+                          className={`text-xs font-medium rounded-lg px-3 py-1.5 border focus:ring-2 focus:ring-[#018549] focus:border-[#018549] ${statusColors[order.status]
+                            } border-transparent`}
                         >
                           <option value="pending">Pending</option>
                           <option value="processing">Processing</option>
@@ -451,7 +448,7 @@ export default function OrdersPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-center">
                         <button
                           onClick={() => setSelectedOrder(order)}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-[#018549] hover:text-[#016d3b] hover:bg-[#d4f5e5] rounded-lg transition-colors"
                           title="View Order Details"
                         >
                           <EyeIcon className="h-4 w-4" />
@@ -502,3 +499,4 @@ export default function OrdersPage() {
     </div>
   );
 }
+

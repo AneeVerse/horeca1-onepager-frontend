@@ -31,3 +31,4 @@ const MainModal = ({ children, modalOpen, handleCloseModal }) => {
 };
 
 export default MainModal;
+

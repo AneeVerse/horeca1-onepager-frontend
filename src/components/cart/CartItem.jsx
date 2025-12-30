@@ -217,3 +217,4 @@ const CartItem = ({ item, currency }) => {
 };
 
 export default CartItem;
+

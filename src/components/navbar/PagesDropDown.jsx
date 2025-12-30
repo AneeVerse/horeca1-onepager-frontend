@@ -16,7 +16,7 @@ const PagesDropDown = () => {
           Pages
         </span>
         <FiChevronDown
-          className="ml-1 h-3 w-3 group-hover:text-emerald-600"
+          className="ml-1 h-3 w-3 group-hover:text-[#018549]"
           aria-hidden="true"
         />
       </Menu.Button>
@@ -53,3 +53,4 @@ const PagesDropDown = () => {
 };
 
 export default PagesDropDown;
+

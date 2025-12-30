@@ -19,3 +19,4 @@ const MyReviews = async ({ searchParams }) => {
 };
 
 export default MyReviews;
+

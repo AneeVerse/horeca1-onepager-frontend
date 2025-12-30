@@ -68,3 +68,4 @@ const BottomNavigation = ({ or, route, desc, pageName, loginTitle }) => {
 };
 
 export default BottomNavigation;
+

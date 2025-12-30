@@ -871,3 +871,4 @@ export const storeCustomization = {
     meta_url: "https://Horeca1-store-nine.vercel.app/",
   },
 };
+

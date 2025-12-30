@@ -19,3 +19,4 @@ const Banner = async ({}) => {
 };
 
 export default Banner;
+

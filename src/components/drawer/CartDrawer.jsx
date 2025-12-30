@@ -50,3 +50,4 @@ const CartDrawer = ({ open, setOpen, currency }) => {
 };
 
 export default CartDrawer;
+

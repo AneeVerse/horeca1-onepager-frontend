@@ -82,3 +82,4 @@ const checkBackendConnection = async () => {
 };
 
 export { baseURL, handleResponse, checkBackendConnection };
+

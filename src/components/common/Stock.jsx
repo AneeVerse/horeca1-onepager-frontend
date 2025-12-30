@@ -26,3 +26,4 @@ const Stock = ({ stock, card }) => {
 };
 
 export default Stock;
+

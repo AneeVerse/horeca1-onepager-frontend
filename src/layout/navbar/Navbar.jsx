@@ -71,3 +71,4 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
 };
 
 export default Navbar;
+

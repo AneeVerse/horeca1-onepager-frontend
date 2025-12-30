@@ -140,7 +140,7 @@ const Cart = ({ setOpen, currency }) => {
                     <span className="text-gray-400 line-through text-xs">
                       {currency}{pricingBreakdown.standardDeliveryCharge}
                     </span>
-                    <span className="text-emerald-600 font-bold text-sm">
+                    <span className="text-[#018549] font-bold text-sm">
                       FREE
                     </span>
                   </>
@@ -179,7 +179,7 @@ const Cart = ({ setOpen, currency }) => {
           <div className="flex mt-4">
             <button
               onClick={handleCheckout}
-              className="relative h-12 w-full inline-flex items-center justify-center rounded-lg transition-all text-sm sm:text-base font-bold py-2 px-3 bg-emerald-500 hover:bg-emerald-600 text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500"
+              className="relative h-12 w-full inline-flex items-center justify-center rounded-lg transition-all text-sm sm:text-base font-bold py-2 px-3 bg-[#018549] hover:bg-[#016d3b] text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#018549]"
             >
               Checkout
               <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -194,4 +194,5 @@ const Cart = ({ setOpen, currency }) => {
 };
 
 export default Cart;
+
 

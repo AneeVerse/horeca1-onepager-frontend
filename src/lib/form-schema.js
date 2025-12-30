@@ -48,23 +48,32 @@ const updateProfileFormSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email." }).trim(),
   image: z
     .string()
-    .url()
+    .optional()
     .refine(
       (url) => {
-        // Check for common image file extensions
-        const commonImageExtensions = /\.(jpeg|jpg|gif|png|webp|bmp)$/i.test(
-          url
-        );
-        // Check for Google user content URLs
-        const googleImage = /lh3\.googleusercontent\.com/.test(url);
-        // Check for Facebook user content URLs
-        const facebookImage = /fbcdn\.net/.test(url);
-        // Check for GitHub user content URLs
-        const githubImage = /avatars\.githubusercontent\.com/.test(url);
+        if (!url) return true; // Allow empty string or undefined
+        try {
+          // Validate basic URL structure first
+          const parsed = new URL(url);
+          // Check for common image file extensions
+          const commonImageExtensions = /\.(jpeg|jpg|gif|png|webp|bmp)$/i.test(
+            url
+          );
+          // Check for Google user content URLs
+          const googleImage = /lh3\.googleusercontent\.com/.test(url);
+          // Check for Facebook user content URLs
+          const facebookImage = /fbcdn\.net/.test(url);
+          // Check for GitHub user content URLs
+          const githubImage = /avatars\.githubusercontent\.com/.test(url);
+          // Check for Cloudinary URLs (since we use it)
+          const cloudinaryImage = /cloudinary\.com/.test(url);
 
-        return (
-          commonImageExtensions || googleImage || facebookImage || githubImage
-        );
+          return (
+            commonImageExtensions || googleImage || facebookImage || githubImage || cloudinaryImage
+          );
+        } catch {
+          return false;
+        }
       },
       {
         message: "Invalid image URL. The URL must point to a valid image.",
@@ -164,3 +173,4 @@ export {
   checkoutFormSchema,
   shippingAddressFormSchema,
 };
+

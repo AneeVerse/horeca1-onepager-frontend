@@ -4,6 +4,7 @@ import Image from "next/image";
 import CMSkeletonTwo from "@components/preloader/CMSkeleton";
 import { getShowingCategory } from "@services/CategoryService";
 import CategoryCardItem from "@components/category/CategoryCardItem";
+import AllCategoryItem from "@components/category/AllCategoryItem";
 
 const FeatureCategory = async () => {
   const { categories, error } = await getShowingCategory();
@@ -15,6 +16,9 @@ const FeatureCategory = async () => {
       ) : (
         <div className="flex justify-center w-full">
           <ul className="flex flex-wrap justify-center gap-2 md:gap-3 lg:gap-4">
+            <li className="group flex-shrink-0">
+              <AllCategoryItem />
+            </li>
             {(categories[0]?.children || []).map((category, i) => (
               <li className="group flex-shrink-0" key={i + 1}>
                 <CategoryCardItem category={category} />
@@ -28,3 +32,4 @@ const FeatureCategory = async () => {
 };
 
 export default FeatureCategory;
+

@@ -15,3 +15,4 @@ const UpdateProfileRoot = async () => {
 };
 
 export default UpdateProfileRoot;
+

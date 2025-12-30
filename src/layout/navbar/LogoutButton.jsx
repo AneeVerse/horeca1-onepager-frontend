@@ -39,7 +39,7 @@ const LogoutButton = ({ storeCustomization }) => {
     <>
       <Link
         href={isLoggedIn ? "/user/my-account" : "/auth/otp-login?redirectUrl=/user/my-account"}
-        className="font-medium hover:text-emerald-600"
+        className="font-medium hover:text-[#018549]"
       >
         {showingTranslateValue(storeCustomization?.navbar?.my_account)}
       </Link>
@@ -48,7 +48,7 @@ const LogoutButton = ({ storeCustomization }) => {
         <button
           onClick={handleLogoutClick}
           type="submit"
-          className="flex items-center font-medium hover:text-emerald-600"
+          className="flex items-center font-medium hover:text-[#018549]"
         >
           <span className="mr-1">
             <FiUnlock />
@@ -58,7 +58,7 @@ const LogoutButton = ({ storeCustomization }) => {
       ) : (
         <Link
           href="/auth/otp-login"
-          className="flex items-center font-medium hover:text-emerald-600"
+          className="flex items-center font-medium hover:text-[#018549]"
         >
           <span className="mr-1">
             <FiUser />
@@ -72,3 +72,4 @@ const LogoutButton = ({ storeCustomization }) => {
 };
 
 export default dynamic(() => Promise.resolve(LogoutButton), { ssr: false });
+

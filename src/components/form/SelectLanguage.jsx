@@ -75,3 +75,4 @@ const SelectLanguage = ({ data }) => {
 };
 
 export default SelectLanguage;
+

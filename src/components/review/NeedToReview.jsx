@@ -57,7 +57,7 @@ const NeedToReview = ({ reviews, error }) => {
                     </h3>
                     <button
                       onClick={() => openModal(item)}
-                      className="flex-1 min-w-min px-2 py-1 text-xs font-semibold bg-emerald-500 text-white rounded hover:bg-emerald-600"
+                      className="flex-1 min-w-min px-2 py-1 text-xs font-semibold bg-[#018549] text-white rounded hover:bg-[#016d3b]"
                     >
                       Write Review
                     </button>
@@ -90,3 +90,4 @@ const NeedToReview = ({ reviews, error }) => {
 };
 
 export default NeedToReview;
+

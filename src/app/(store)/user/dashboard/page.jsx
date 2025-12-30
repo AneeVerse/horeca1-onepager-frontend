@@ -57,7 +57,7 @@ const Dashboard = async ({ searchParams }) => {
             title={showingTranslateValue(dashboard?.complete_order)}
             Icon={FiCheck}
             quantity={data?.delivered}
-            className="text-emerald-600 bg-emerald-200"
+            className="text-[#018549] bg-[#d4f5e5]"
           />
         </div>
         <RecentOrder
@@ -71,3 +71,4 @@ const Dashboard = async ({ searchParams }) => {
 };
 
 export default Dashboard;
+

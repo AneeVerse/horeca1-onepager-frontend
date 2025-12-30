@@ -14,3 +14,4 @@ const ChangePasswordRoot = async () => {
 };
 
 export default ChangePasswordRoot;
+

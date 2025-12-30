@@ -113,7 +113,7 @@ const CategoryCarousel = ({ categories }) => {
                   />
                 </div>
 
-                <h3 className="text-xs text-gray-600 mt-2  group-hover:text-emerald-500">
+                <h3 className="text-xs text-gray-600 mt-2  group-hover:text-[#018549]">
                   {showingTranslateValue(category?.name)}
                 </h3>
               </div>
@@ -133,3 +133,4 @@ const CategoryCarousel = ({ categories }) => {
 };
 
 export default React.memo(CategoryCarousel);
+

@@ -20,3 +20,4 @@ const Tags = ({ product }) => {
 };
 
 export default Tags;
+

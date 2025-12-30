@@ -26,8 +26,8 @@ const buttonVariants = cva(
         active:
           "border bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
         create:
-          "bg-teal-500 text-white hover:bg-teal-600 dark:bg-teal-600 dark:hover:bg-teal-700",
-        add: "bg-lime-500 text-white hover:bg-lime-600 dark:bg-lime-600 dark:hover:bg-lime-700",
+          "bg-[#018549] text-white hover:bg-[#016d3b] dark:bg-[#018549] dark:hover:bg-[#016d3b]",
+        add: "bg-[#018549] text-white hover:bg-[#016d3b] dark:bg-[#018549] dark:hover:bg-[#016d3b]",
         delete:
           "bg-rose-500 text-white hover:bg-rose-600 dark:bg-rose-600 dark:hover:bg-rose-700",
         bulkAction:
@@ -36,7 +36,7 @@ const buttonVariants = cva(
         import:
           "bg-sky-500 text-white hover:bg-sky-600 dark:bg-sky-600 dark:hover:bg-sky-700",
         export:
-          "bg-green-500 text-white hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700",
+          "bg-[#018549] text-white hover:bg-[#016d3b] dark:bg-[#018549] dark:hover:bg-[#016d3b]",
         download:
           "bg-purple-500 text-white hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700",
         print:
@@ -83,3 +83,4 @@ function Button({
 }
 
 export { Button, buttonVariants };
+

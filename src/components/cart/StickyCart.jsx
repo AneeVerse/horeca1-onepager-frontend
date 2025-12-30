@@ -18,7 +18,7 @@ const StickyCart = ({ currency }) => {
   const [dragging, setDragging] = useState(false);
   const dragMovedRef = useRef(false);
   const offsetRef = useRef({ x: 0, y: 0 });
-  
+
   // Animation state
   const [isAnimating, setIsAnimating] = useState(false);
   const prevTotalItemsRef = useRef(totalItems);
@@ -97,22 +97,22 @@ const StickyCart = ({ currency }) => {
               if (dragging || dragMovedRef.current) return;
               setCartDrawerOpen(true);
             }}
-            className="cursor-grab active:cursor-grabbing shadow-lg rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="cursor-grab active:cursor-grabbing shadow-lg rounded-2xl overflow-hidden focus:outline-none focus:ring-2 focus:ring-[#018549]"
             style={
               isAnimating
                 ? {
-                    animation: "pop 0.6s ease-in-out",
-                  }
+                  animation: "pop 0.6s ease-in-out",
+                }
                 : undefined
             }
           >
             <div className="flex flex-col items-center justify-center bg-indigo-50 p-2 text-gray-700">
-              <span className="text-2xl mb-1 text-emerald-600">
+              <span className="text-2xl mb-1 text-[#018549]">
                 <IoBagHandleOutline />
               </span>
               <span className="px-2 text-sm font-medium">{totalItems} Items</span>
             </div>
-            <div className="flex flex-col items-center justify-center bg-emerald-700 p-2 text-white text-base font-medium">
+            <div className="flex flex-col items-center justify-center bg-[#018549] p-2 text-white text-base font-medium">
               {currency}
               {cartTotal.toFixed(2)}
             </div>
@@ -124,3 +124,4 @@ const StickyCart = ({ currency }) => {
 };
 
 export default dynamic(() => Promise.resolve(StickyCart), { ssr: false });
+

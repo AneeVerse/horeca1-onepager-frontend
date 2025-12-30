@@ -48,3 +48,4 @@ const OrderTable = ({ data, currency, drawer }) => {
 };
 
 export default OrderTable;
+

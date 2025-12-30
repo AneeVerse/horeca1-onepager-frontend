@@ -11,7 +11,7 @@ const FooterTop = async ({ error, storeCustomizationSetting }) => {
   return (
     <div
       id="downloadApp"
-      className="bg-emerald-950 py-16 lg:py-24 text-white"
+      className="bg-primary-500 py-16 lg:py-24 text-white"
     >
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-10 text-center">
         <div className="max-w-3xl mx-auto">
@@ -24,7 +24,7 @@ const FooterTop = async ({ error, storeCustomizationSetting }) => {
               data={home?.daily_need_title || "Experience the fresh revolution"}
             />
           </h3>
-          <p className="text-lg md:text-xl text-emerald-100/80 leading-relaxed mb-10">
+          <p className="text-lg md:text-xl text-primary-100/80 leading-relaxed mb-10">
             <CMSkeletonTwo
               count={2}
               height={20}
@@ -36,7 +36,7 @@ const FooterTop = async ({ error, storeCustomizationSetting }) => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link
               href={`${home?.daily_need_app_link || "#"}`}
-              className="bg-white text-emerald-950 px-8 py-4 rounded-full font-semibold transition-all hover:bg-emerald-50 hover:scale-105 active:scale-95 shadow-xl"
+              className="bg-white text-primary-800 px-8 py-4 rounded-full font-semibold transition-all hover:bg-primary-50 hover:scale-105 active:scale-95 shadow-xl"
               target="_blank"
               rel="noreferrer"
             >
@@ -76,3 +76,4 @@ const FooterTop = async ({ error, storeCustomizationSetting }) => {
 };
 
 export default FooterTop;
+

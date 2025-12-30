@@ -59,3 +59,4 @@ const SwitchToggle = ({ id, title, handleProcess, processOption }) => {
 };
 
 export default SwitchToggle;
+

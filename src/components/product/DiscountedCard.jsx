@@ -73,7 +73,7 @@ const DiscountedCard = ({ product, attributes, currency }) => {
         />
       )}
 
-      <div className="group relative flex flex-col overflow-hidden rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-emerald-500 ">
+      <div className="group relative flex flex-col overflow-hidden rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-[#018549] ">
         <div className="w-full flex justify-between">
           <Discount product={product} />
         </div>
@@ -98,13 +98,13 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                   )} product modal`
                 );
               }}
-              className="relative h-auto inline-flex items-center cursor-pointer justify-center rounded-full transition-colors text-xs py-2 px-4 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:text-emerald-500 hover:bg-gray-100 dark:hover:bg-slate-800 shadow-lg focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-emerald-600 dark:focus:ring-offset-0"
+              className="relative h-auto inline-flex items-center cursor-pointer justify-center rounded-full transition-colors text-xs py-2 px-4 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:text-[#018549] hover:bg-gray-100 dark:hover:bg-slate-800 shadow-lg focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-[#018549] dark:focus:ring-offset-0"
             >
               <IoExpand />
               <span className="ms-1 hidden xl:block lg:block">Quick View</span>
             </button>
           </div>
-          <div className="absolute bottom-3 right-3 z-10 flex items-center justify-center rounded-full bg-white text-gray-700 shadow-lg transition-all duration-300 ease-in-out hover:bg-gray-100 hover:text-emerald-500">
+          <div className="absolute bottom-3 right-3 z-10 flex items-center justify-center rounded-full bg-white text-gray-700 shadow-lg transition-all duration-300 ease-in-out hover:bg-gray-100 hover:text-[#018549]">
             {inCart(product._id) ? (
               <div>
                 {items.map(
@@ -112,7 +112,7 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                     item.id === product._id && (
                       <div
                         key={item.id}
-                        className="flex flex-col w-11 h-22 items-center p-1 justify-between bg-emerald-500 text-white ring-2 ring-white rounded-full"
+                        className="flex flex-col w-11 h-22 items-center p-1 justify-between bg-[#018549] text-white ring-2 ring-white rounded-full"
                       >
                         <button
                           onClick={() =>
@@ -145,7 +145,7 @@ const DiscountedCard = ({ product, attributes, currency }) => {
               <button
                 onClick={() => handleAddItem(product)}
                 aria-label="cart"
-                className="w-11 h-11 flex items-center justify-center rounded-full cursor-pointer border-2 bg-emerald-500 text-white border-gray-10 font-medium transition-colors duration-300 hover:border-accent hover:bg-emerald-600 hover:border-emerald-600 hover:text-gray-50 focus:border-emerald-500 focus:bg-emerald-500 focus:text-gray-50"
+                className="w-11 h-11 flex items-center justify-center rounded-full cursor-pointer border-2 bg-[#018549] text-white border-gray-10 font-medium transition-colors duration-300 hover:border-accent hover:bg-[#016d3b] hover:border-[#018549] hover:text-gray-50 focus:border-[#018549] focus:bg-[#018549] focus:text-gray-50"
               >
                 {" "}
                 <IoBagAdd className="text-xl" />
@@ -192,3 +192,4 @@ const DiscountedCard = ({ product, attributes, currency }) => {
 export default dynamic(() => Promise.resolve(DiscountedCard), {
   ssr: false,
 });
+

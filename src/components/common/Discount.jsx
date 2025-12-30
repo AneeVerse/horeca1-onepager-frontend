@@ -50,3 +50,4 @@ const Discount = ({ discount, product, slug, modal }) => {
 };
 
 export default Discount;
+

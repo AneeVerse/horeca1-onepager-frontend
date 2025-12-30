@@ -10,14 +10,14 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 const LogoutButton = ({ storeCustomizationSetting }) => {
   const { showingTranslateValue } = useUtilsFunction();
   return (
-    <span className="p-2 flex items-center rounded-md hover:bg-gray-50 w-full hover:text-emerald-600">
+    <span className="p-2 flex items-center rounded-md hover:bg-gray-50 w-full hover:text-[#018549]">
       <span className="mr-2">
         <FiUnlock />
       </span>{" "}
       <button
         onClick={() => handleLogout({ redirectUrl: "/" })}
         type="submit"
-        className="inline-flex items-center justify-between text-sm font-medium w-full hover:text-emerald-600"
+        className="inline-flex items-center justify-between text-sm font-medium w-full hover:text-[#018549]"
       >
         {showingTranslateValue(storeCustomizationSetting?.navbar?.logout)}
       </button>
@@ -26,3 +26,4 @@ const LogoutButton = ({ storeCustomizationSetting }) => {
 };
 
 export default LogoutButton;
+

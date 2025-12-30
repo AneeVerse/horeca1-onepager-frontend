@@ -24,3 +24,4 @@ const Error = ({ error, reset }) => {
 };
 
 export default Error;
+

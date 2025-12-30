@@ -11,3 +11,4 @@ const Error = ({ errorMessage, errorName }) => {
 };
 
 export default Error;
+

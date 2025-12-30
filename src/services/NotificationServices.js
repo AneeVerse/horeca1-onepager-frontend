@@ -21,3 +21,4 @@ const addNotification = async (notificationData) => {
 };
 
 export { addNotification };
+

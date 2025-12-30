@@ -58,3 +58,4 @@ const Price = ({ product, price, card, originalPrice, currency, showUnit = false
 };
 
 export default Price;
+

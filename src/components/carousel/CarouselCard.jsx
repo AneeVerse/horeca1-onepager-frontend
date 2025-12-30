@@ -59,7 +59,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
               </p>
               <Link
                 href={item.url}
-                className="hidden sm:inline-block lg:inline-block text-[10px] lg:text-sm leading-4 lg:leading-6 font-medium mt-2 lg:mt-6 px-3 lg:px-6 py-1 lg:py-2 bg-primary-500 text-center rounded-md text-white hover:bg-primary-600"
+                className="hidden sm:inline-block lg:inline-block text-[10px] lg:text-sm leading-4 lg:leading-6 font-medium mt-2 lg:mt-6 px-3 lg:px-6 py-1 lg:py-2 bg-[#018549] text-center rounded-md text-white hover:bg-[#016d3b]"
               >
                 {item.buttonName}
               </Link>
@@ -72,3 +72,4 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
 };
 
 export default CarouselCard;
+

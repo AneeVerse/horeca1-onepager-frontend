@@ -31,3 +31,4 @@ const Category = ({ categories, categoryError, onClose }) => {
 };
 
 export default Category;
+

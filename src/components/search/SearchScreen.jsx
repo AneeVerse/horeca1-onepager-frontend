@@ -153,3 +153,4 @@ const SearchScreen = ({ products, attributes, categories, currency }) => {
 };
 
 export default dynamic(() => Promise.resolve(SearchScreen), { ssr: false });
+

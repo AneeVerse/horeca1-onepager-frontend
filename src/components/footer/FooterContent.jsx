@@ -82,3 +82,4 @@ const FooterContent = ({ storeCustomizationSetting }) => {
 
 export default FooterContent;
 
+

@@ -110,9 +110,9 @@ function SortableRow({ category, onEdit, onDelete, onToggleStatus, getLanguageVa
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
         <button
           onClick={() => onToggleStatus(category._id, category.status)}
-          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 ${
+          className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-[#018549] focus:ring-offset-2 ${
             category.status === "show"
-              ? "bg-emerald-600"
+              ? "bg-[#016d3b]"
               : "bg-gray-200"
           }`}
         >
@@ -345,7 +345,7 @@ export default function CategoriesPage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => handleOpenModal()}
-            className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500"
+            className="inline-flex items-center gap-2 rounded-md bg-[#016d3b] px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#018549]"
           >
             <PlusIcon className="h-5 w-5" />
             Add Category
@@ -364,12 +364,12 @@ export default function CategoriesPage() {
                 placeholder="Search by Category name"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
               />
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <button className="inline-flex items-center gap-2 rounded-md bg-emerald-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-emerald-500">
+            <button className="inline-flex items-center gap-2 rounded-md bg-[#016d3b] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#018549]">
               <FunnelIcon className="h-5 w-5" />
               Filter
             </button>
@@ -501,7 +501,7 @@ export default function CategoriesPage() {
                           })
                         }
                         placeholder="Category title"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                       />
                     </div>
 
@@ -522,7 +522,7 @@ export default function CategoriesPage() {
                           })
                         }
                         placeholder="Category Description"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                       />
                     </div>
 
@@ -551,7 +551,7 @@ export default function CategoriesPage() {
                         onChange={(e) =>
                           setFormData({ ...formData, status: e.target.value })
                         }
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                       >
                         <option value="show">Yes</option>
                         <option value="hide">No</option>
@@ -563,7 +563,7 @@ export default function CategoriesPage() {
                 <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                   <button
                     type="submit"
-                    className="inline-flex w-full justify-center rounded-md bg-emerald-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 sm:ml-3 sm:w-auto"
+                    className="inline-flex w-full justify-center rounded-md bg-[#016d3b] px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-[#018549] sm:ml-3 sm:w-auto"
                   >
                     {editingCategory ? "Update Category" : "Add Category"}
                   </button>
@@ -583,3 +583,4 @@ export default function CategoriesPage() {
     </div>
   );
 }
+

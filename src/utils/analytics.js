@@ -28,3 +28,4 @@ export const logException = (description = "", fatal = false) => {
     });
   }
 };
+

@@ -111,3 +111,4 @@ const ImageCarousel = ({ images, handleChangeImage }) => {
 };
 
 export default dynamic(() => Promise.resolve(ImageCarousel), { ssr: false });
+

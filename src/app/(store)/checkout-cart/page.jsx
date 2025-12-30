@@ -32,3 +32,4 @@ const CheckoutCart = async () => {
 };
 
 export default CheckoutCart;
+

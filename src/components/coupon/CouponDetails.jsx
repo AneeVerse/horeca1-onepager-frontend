@@ -82,7 +82,7 @@ const CouponDetails = ({ coupon }) => {
                         Inactive
                       </span>
                     ) : (
-                      <span className="text-emerald-600 inline-block">
+                      <span className="text-[#018549] inline-block">
                         Active
                       </span>
                     )}
@@ -96,11 +96,11 @@ const CouponDetails = ({ coupon }) => {
                   >
                     <button className="block w-full">
                       {copied && coupon.couponCode === copiedCode ? (
-                        <span className="text-emerald-600 text-base leading-7 font-semibold">
+                        <span className="text-[#018549] text-base leading-7 font-semibold">
                           Copied!
                         </span>
                       ) : (
-                        <span className="uppercase font-serif font-semibold text-base leading-7 text-emerald-600">
+                        <span className="uppercase font-serif font-semibold text-base leading-7 text-[#018549]">
                           {coupon.couponCode}{" "}
                         </span>
                       )}
@@ -124,3 +124,4 @@ const CouponDetails = ({ coupon }) => {
 };
 
 export default CouponDetails;
+

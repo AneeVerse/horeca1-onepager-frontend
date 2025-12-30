@@ -37,7 +37,7 @@ const DownloadPrintButton = ({ data }) => {
       <div className="bg-emerald-100 rounded-md mb-5 px-4 py-3">
         <label>
           {showingTranslateValue(dashboard?.invoice_message_first)}{" "}
-          <span className="font-bold text-emerald-600">
+          <span className="font-bold text-[#018549]">
             {data?.user_info?.name},
           </span>{" "}
           {showingTranslateValue(dashboard?.invoice_message_last)}
@@ -81,3 +81,4 @@ const DownloadPrintButton = ({ data }) => {
 export default dynamic(() => Promise.resolve(DownloadPrintButton), {
   ssr: false,
 });
+

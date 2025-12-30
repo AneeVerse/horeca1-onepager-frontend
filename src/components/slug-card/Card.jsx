@@ -42,3 +42,4 @@ const Card = ({ storeCustomization }) => {
 };
 
 export default Card;
+

@@ -46,3 +46,4 @@ const Offers = async () => {
 };
 
 export default Offers;
+

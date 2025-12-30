@@ -19,11 +19,11 @@ import SubmitButton from "@components/user-dashboard/SubmitButton";
 import { updateCustomer } from "@services/ServerActionServices";
 
 const UpdateProfile = ({ storeCustomizationSetting }) => {
-  const [imageUrl, setImageUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState(null); // Initialize as null to track "untouched" state
   const { showingTranslateValue } = useUtilsFunction();
   const userInfo = getUserSession();
   const { data: session, update } = useSession();
-  
+
   // State to store fresh customer data from database
   const [customerData, setCustomerData] = useState(null);
   const [isLoadingCustomer, setIsLoadingCustomer] = useState(true);
@@ -70,17 +70,18 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
 
   // Use customer data from database if available, otherwise fall back to userInfo from cookie
   const displayUserInfo = customerData || userInfo;
-  
+
   // Extract address: prefer customer.address, fallback to shippingAddress.address
   const displayAddress = customerData?.address || customerData?.shippingAddress?.address || userInfo?.address || "";
 
-  const defaultImg = imageUrl ? imageUrl : displayUserInfo?.image;
+  // Logic: If imageUrl is not null (user changed it), use it. Otherwise use DB image.
+  const defaultImg = imageUrl !== null ? imageUrl : displayUserInfo?.image;
 
   const { formRef } = useCustomToast(state);
 
   // Sync imageUrl with hidden form field
   useEffect(() => {
-    if (formRef?.current && imageUrl) {
+    if (formRef?.current && imageUrl !== null) {
       const imageUrlInput = formRef.current.querySelector('input[name="imageUrl"]');
       if (imageUrlInput) {
         imageUrlInput.value = imageUrl;
@@ -93,21 +94,23 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
   useEffect(() => {
     if (state?.user) {
       // console.log("update session");
-      update({
-        ...session,
-        user: {
-          ...session.user,
-          name: state.user.name,
-          address: state.user.address,
-          phone: state.user.phone,
-          image: state.user.image,
-        },
-      });
+      if (session) {
+        update({
+          ...session,
+          user: {
+            ...session?.user,
+            name: state.user.name,
+            address: state.user.address,
+            phone: state.user.phone,
+            image: state.user.image,
+          },
+        });
+      }
       // Update imageUrl state when profile is successfully updated
       if (state.user.image) {
         setImageUrl(state.user.image);
       }
-      
+
       // Update userInfo cookie with fresh data
       const updatedUserInfo = {
         ...userInfo,
@@ -117,12 +120,12 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
         image: state.user.image,
         email: state.user.email || userInfo?.email,
       };
-      
+
       Cookies.set("userInfo", JSON.stringify(updatedUserInfo), getCookieOptions(30));
-      
+
       // Dispatch custom event to notify components (like ProfileDropDown) to refresh
       window.dispatchEvent(new Event('profileUpdated'));
-      
+
       formRef?.current?.reset();
     }
   }, [state?.user, update, session, formRef, setImageUrl, userInfo]);
@@ -165,7 +168,7 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
                       label="imageUrl"
                       name="imageUrl"
                       type="text"
-                      defaultValue={imageUrl || defaultImg || ""}
+                      defaultValue={defaultImg || ""}
                       placeholder="imageUrl"
                       readOnly={true}
                     />
@@ -270,3 +273,4 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
 };
 
 export default UpdateProfile;
+

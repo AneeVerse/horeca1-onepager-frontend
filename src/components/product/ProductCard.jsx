@@ -89,7 +89,7 @@ const ProductCard = ({ product, attributes }) => {
         return p.promoPricing.singleUnit;
       }
     }
-    
+
     // Regular bulk pricing tiers (highest quantity tier first)
     if (p?.bulkPricing?.bulkRate2?.quantity > 0 && totalQuantity >= p.bulkPricing.bulkRate2.quantity) {
       return p.bulkPricing.bulkRate2.pricePerUnit;
@@ -118,13 +118,13 @@ const ProductCard = ({ product, attributes }) => {
     }
     const { slug, variants, categories, description, ...updatedProduct } =
       product;
-    
+
     // Use base product ID (no suffixes) so same product always uses same ID
     const baseProductId = p._id;
-    
+
     // Check if this product already exists in cart
     const existingItem = items.find((item) => item.id === baseProductId);
-    
+
     // Calculate total quantity
     // - If bulk button clicked, ADD to existing (e.g., "Add 12" means add 12 more)
     // - If regular add (quantity = 1), ADD 1 to existing
@@ -139,10 +139,10 @@ const ProductCard = ({ product, attributes }) => {
         totalQuantity = existingItem.quantity + quantity;
       }
     }
-    
+
     // Determine the correct price based on TOTAL quantity (bulk pricing is only for price calculation)
     const calculatedPrice = getPriceForQuantity(p, totalQuantity);
-    
+
     const newItem = {
       ...updatedProduct,
       title: showingTranslateValue(p?.title),
@@ -159,14 +159,14 @@ const ProductCard = ({ product, attributes }) => {
       unit: product.unit,
       brand: product.brand,
     };
-    
+
     if (existingItem) {
       // Product exists - update quantity and recalculate price based on new total
       const newPrice = getPriceForQuantity(p, totalQuantity);
-      
+
       // Compare prices with a tolerance to handle floating point precision issues
       const priceChanged = Math.abs(existingItem.price - newPrice) > 0.01;
-      
+
       if (priceChanged) {
         // Price changed - remove and re-add with new price and quantity
         // Store the item to add in a ref, then remove
@@ -192,7 +192,7 @@ const ProductCard = ({ product, attributes }) => {
     }
     const newQuantity = cartItem.quantity + 1;
     const newPrice = getPriceForQuantity(product, newQuantity);
-    
+
     // If price changed, need to remove and re-add with new price
     if (cartItem.price !== newPrice) {
       removeItem(cartItem.id);
@@ -228,10 +228,10 @@ const ProductCard = ({ product, attributes }) => {
       removeItem(cartItem.id);
       return;
     }
-    
+
     const newQuantity = cartItem.quantity - 1;
     const newPrice = getPriceForQuantity(product, newQuantity);
-    
+
     // If price changed, need to remove and re-add with new price
     // Use setTimeout to ensure remove completes before add
     if (cartItem.price !== newPrice) {
@@ -277,7 +277,7 @@ const ProductCard = ({ product, attributes }) => {
   const handleQuantityInputBlur = (cartItem) => {
     const inputValue = quantityInputs[cartItem.id] || cartItem.quantity.toString();
     const newQuantity = parseInt(inputValue, 10);
-    
+
     if (isNaN(newQuantity) || newQuantity < 1) {
       // Reset to current quantity if invalid
       setQuantityInputs(prev => ({ ...prev, [cartItem.id]: cartItem.quantity.toString() }));
@@ -288,9 +288,9 @@ const ProductCard = ({ product, attributes }) => {
       setQuantityInputs(prev => ({ ...prev, [cartItem.id]: cartItem.quantity.toString() }));
       return;
     }
-    
+
     const newPrice = getPriceForQuantity(product, newQuantity);
-    
+
     // If price changed, need to remove and re-add with new price
     if (cartItem.price !== newPrice) {
       removeItem(cartItem.id);
@@ -398,7 +398,7 @@ const ProductCard = ({ product, attributes }) => {
                   item.id === product._id && (
                     <div
                       key={item.id}
-                      className="flex flex-col w-8 h-16 sm:w-10 sm:h-20 items-center p-0.5 sm:p-1 justify-between bg-primary-500 text-white ring-1 sm:ring-2 ring-white rounded-full shadow-lg"
+                      className="flex flex-col w-8 h-16 sm:w-10 sm:h-20 items-center p-0.5 sm:p-1 justify-between bg-[#018549] text-white ring-1 sm:ring-2 ring-white rounded-full shadow-lg"
                     >
                       <button
                         onClick={(e) => {
@@ -461,12 +461,12 @@ const ProductCard = ({ product, attributes }) => {
           <div className="text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-tight sm:leading-snug mb-0.5">
             {showingTranslateValue(product?.title)}
           </div>
-          
+
           {/* Unit info */}
           {product?.unit && (
             <span className="text-[10px] sm:text-xs text-gray-400 mb-1 sm:mb-1.5">1 {product.unit}</span>
           )}
-          
+
           {/* Bulk Pricing Display - Only show when NOT promo time */}
           {!isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0) && (
             <div className="bg-gray-50 rounded-md p-1.5 sm:p-2.5 mb-1.5 sm:mb-2 space-y-1 sm:space-y-1.5">
@@ -484,7 +484,7 @@ const ProductCard = ({ product, attributes }) => {
                       handleAddItem(product, product.bulkPricing.bulkRate1.quantity, true);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.bulkPricing.bulkRate1.quantity}
                   </button>
@@ -503,7 +503,7 @@ const ProductCard = ({ product, attributes }) => {
                       // Bulk button: ADD the bulk quantity to cart (additive, not replacement)
                       handleAddItem(product, product.bulkPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.bulkPricing.bulkRate2.quantity}
                   </button>
@@ -511,7 +511,7 @@ const ProductCard = ({ product, attributes }) => {
               )}
             </div>
           )}
-          
+
           {/* Promo Bulk Pricing Display (6pm-9am) - Only show during promo time */}
           {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
             <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-md p-1.5 sm:p-2.5 mb-1.5 sm:mb-2 space-y-1 sm:space-y-1.5 border border-primary-200/50">
@@ -529,7 +529,7 @@ const ProductCard = ({ product, attributes }) => {
                       handleAddItem(product, product.promoPricing.bulkRate1.quantity, true);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.promoPricing.bulkRate1.quantity}
                   </button>
@@ -548,7 +548,7 @@ const ProductCard = ({ product, attributes }) => {
                       // Bulk button: ADD the bulk quantity to cart (additive, not replacement)
                       handleAddItem(product, product.promoPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#256ff2] hover:text-[#256ff2]/80 transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
                   >
                     Add {product.promoPricing.bulkRate2.quantity}
                   </button>
@@ -556,7 +556,7 @@ const ProductCard = ({ product, attributes }) => {
               )}
             </div>
           )}
-          
+
           {/* Price and Add Button Row */}
           <div className="flex items-center justify-between mt-auto pt-1 sm:pt-1.5 gap-2">
             <div className="flex flex-col min-w-0 flex-1">
@@ -577,7 +577,7 @@ const ProductCard = ({ product, attributes }) => {
                 </span>
               )}
             </div>
-            
+
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -585,10 +585,10 @@ const ProductCard = ({ product, attributes }) => {
                 // Regular add button: always adds 1 (promo pricing handled by price calculation)
                 handleAddItem(product, 1, false);
               }}
-              className="flex items-center gap-0.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-[#256ff2] text-[#256ff2] hover:bg-[#256ff2]/10 flex-shrink-0 bg-white"
+              className="flex items-center gap-0.5 px-3 sm:px-4 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-transparent bg-[#018549] text-white hover:bg-[#016d3b] flex-shrink-0"
             >
               ADD
-              <span className="text-[#256ff2] text-xs sm:text-sm leading-none">+</span>
+              <span className="text-white text-xs sm:text-sm leading-none">+</span>
             </button>
           </div>
         </div>
@@ -599,3 +599,4 @@ const ProductCard = ({ product, attributes }) => {
 };
 
 export default dynamic(() => Promise.resolve(ProductCard), { ssr: false });
+

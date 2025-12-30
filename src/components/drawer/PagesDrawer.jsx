@@ -146,3 +146,4 @@ const PagesDrawer = ({ open, setOpen, categories, categoryError }) => {
 };
 
 export default PagesDrawer;
+

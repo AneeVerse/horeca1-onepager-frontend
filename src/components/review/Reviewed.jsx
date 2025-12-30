@@ -69,7 +69,7 @@ const Reviewed = ({ reviews, error }) => {
                 {/* Review Button */}
                 <button
                   onClick={() => openModal(item)}
-                  className="mt-auto px-4 py-1 text-sm font-medium 0 text-emerald-500 rounded hover:text-emerald-600 w-full"
+                  className="mt-auto px-4 py-1 text-sm font-medium 0 text-[#018549] rounded hover:text-[#018549] w-full"
                 >
                   Edit Review
                 </button>
@@ -101,3 +101,4 @@ const Reviewed = ({ reviews, error }) => {
 };
 
 export default Reviewed;
+

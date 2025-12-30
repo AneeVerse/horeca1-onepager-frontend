@@ -18,7 +18,7 @@ const OTPLogin = () => {
   const redirectUrl = searchParams.get("redirectUrl") || "/user/dashboard";
   const { dispatch } = useContext(UserContext);
   const { setCartDrawerOpen } = useContext(SidebarContext);
-  
+
   const [step, setStep] = useState("phone"); // "phone" or "otp"
   const [phone, setPhone] = useState("");
   const [displayPhone, setDisplayPhone] = useState("");
@@ -145,35 +145,35 @@ const OTPLogin = () => {
   const handlePhoneSubmit = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    
+
     // Prevent multiple submissions
     if (loading) {
       return;
     }
-    
+
     if (!displayPhone || displayPhone.length < 10) {
       notifyError("Please enter a valid 10-digit mobile number");
       return;
     }
 
     setLoading(true);
-    
+
     const formattedPhone = formatPhoneNumber(displayPhone);
     setPhone(formattedPhone);
 
     try {
       const result = await sendOTP(formattedPhone);
-      
+
       if (result.success) {
         notifySuccess("OTP sent to your mobile");
         setStep("otp");
         setResendTimer(30); // 30 seconds cooldown
-        
+
         // For development mode - if OTP is returned, show it
         if (result.otp) {
           setDevOtp(result.otp);
         }
-        
+
         // Focus first OTP input
         setTimeout(() => {
           if (otpInputRefs.current[0]) {
@@ -252,7 +252,7 @@ const OTPLogin = () => {
     }
 
     setLoading(true);
-    
+
     try {
       // Verify OTP with backend
       const result = await verifyOTP(phone, otp);
@@ -260,27 +260,27 @@ const OTPLogin = () => {
       if (result.success && result.userInfo) {
         // Skip NextAuth signIn to avoid POST request loops
         // We use cookie-based auth as primary method (no NextAuth needed)
-        
+
         // Use cookie-based auth as primary
         // Store in userInfo cookie for middleware auth check
         const userInfoForCookie = {
           ...result.userInfo,
           id: result.userInfo._id, // Ensure id is set for auth checks
         };
-        
+
         // Set the cookie with proper options (30 days to match JWT token lifetime)
         Cookies.set("userInfo", JSON.stringify(userInfoForCookie), getCookieOptions(30));
         console.log("[OTP Login] userInfo cookie set:", userInfoForCookie);
-        
+
         // Update context
         dispatch({ type: "USER_LOGIN", payload: userInfoForCookie });
-        
+
         notifySuccess("Login successful!");
-        
+
         // Redirect immediately - use window.location for full reload
         const targetUrl = redirectUrl || "/user/dashboard";
         console.log("[OTP Login] Redirecting to:", targetUrl);
-        
+
         // Immediate redirect to prevent any loops
         window.location.href = targetUrl;
       } else {
@@ -434,7 +434,7 @@ const OTPLogin = () => {
                 <p className="text-primary-500 font-semibold mt-1">
                   {formatDisplayPhone(displayPhone)}
                 </p>
-                
+
                 {/* Dev mode OTP display */}
                 {devOtp && (
                   <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
@@ -467,7 +467,7 @@ const OTPLogin = () => {
               <button
                 onClick={() => handleOTPSubmit(otpValues.join(""))}
                 disabled={loading || otpValues.some((val) => !val)}
-                className="w-full py-4 px-6 bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-semibold rounded-xl hover:from-emerald-600 hover:to-teal-700 focus:ring-4 focus:ring-emerald-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mb-4"
+                className="w-full py-4 px-6 bg-[#018549] text-white font-semibold rounded-xl hover:bg-[#016d3b] focus:ring-4 focus:ring-[#018549]/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2 mb-4"
               >
                 {loading ? (
                   <>
@@ -513,3 +513,4 @@ const OTPLogin = () => {
 };
 
 export default OTPLogin;
+

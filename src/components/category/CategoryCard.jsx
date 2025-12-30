@@ -154,3 +154,4 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
 };
 
 export default CategoryCard;
+

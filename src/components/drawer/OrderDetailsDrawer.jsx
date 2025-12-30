@@ -96,7 +96,7 @@ const OrderDetailsDrawer = ({ data }) => {
             <div className="bg-emerald-100 rounded-md mb-5 px-4 py-3 hidden">
               <label>
                 {showingTranslateValue(dashboard?.invoice_message_first)}{" "}
-                <span className="font-bold text-emerald-600">
+                <span className="font-bold text-[#018549]">
                   {data?.user_info?.name},
                 </span>{" "}
                 {showingTranslateValue(dashboard?.invoice_message_last)}
@@ -207,3 +207,4 @@ const OrderDetailsDrawer = ({ data }) => {
 export default dynamic(() => Promise.resolve(OrderDetailsDrawer), {
   ssr: false,
 });
+

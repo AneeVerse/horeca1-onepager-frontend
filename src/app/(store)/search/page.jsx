@@ -60,3 +60,4 @@ const Search = async ({ searchParams }) => {
 };
 
 export default Search;
+

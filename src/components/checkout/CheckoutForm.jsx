@@ -198,7 +198,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 type="submit"
                 disabled={isEmpty || isCheckoutSubmit}
                 isLoading={isCheckoutSubmit}
-                className="w-full h-12 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white font-bold shadow-md hover:shadow-lg"
+                className="w-full h-12 rounded-lg bg-[#018549] hover:bg-[#016d3b] text-white font-bold shadow-md hover:shadow-lg"
               >
                 {isCheckoutSubmit ? (
                   "Processing..."
@@ -245,14 +245,14 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
             <div className="py-3 border-t border-gray-100">
               <form className="w-full">
                 {couponInfo.couponCode ? (
-                  <div className="bg-emerald-50 px-4 py-3 rounded-lg flex justify-between items-center border border-emerald-200">
+                  <div className="bg-[#e6f5ef] px-4 py-3 rounded-lg flex justify-between items-center border border-[#018549]/30">
                     <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-[#018549]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <span className="text-emerald-700 font-medium text-sm">Coupon Applied</span>
+                      <span className="text-[#016d3b] font-medium text-sm">Coupon Applied</span>
                     </div>
-                    <span className="text-emerald-800 font-bold text-sm">
+                    <span className="text-[#025155] font-bold text-sm">
                       {couponInfo.couponCode}
                     </span>
                   </div>
@@ -262,7 +262,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                       ref={couponRef}
                       type="text"
                       placeholder="Coupon Code"
-                      className="px-4 py-2 h-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 flex-1"
+                      className="px-4 py-2 h-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#018549] focus:border-[#018549] flex-1"
                     />
                     <Button
                       onClick={handleCouponCode}
@@ -322,7 +322,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                       <span className="text-gray-400 line-through text-xs">
                         {currency}{pricingBreakdown.standardDeliveryCharge}
                       </span>
-                      <span className="text-emerald-600 font-bold flex items-center gap-1">
+                      <span className="text-[#018549] font-bold flex items-center gap-1">
                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                         </svg>
@@ -369,4 +369,5 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
 };
 
 export default CheckoutForm;
+
 

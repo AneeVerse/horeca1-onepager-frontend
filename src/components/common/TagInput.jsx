@@ -29,3 +29,4 @@ const TagInput = ({ notes, addNote, removeNote }) => {
 };
 
 export default TagInput;
+

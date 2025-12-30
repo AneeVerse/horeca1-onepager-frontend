@@ -81,3 +81,4 @@ const NotifyIcon = ({ currency, mobileOnly = false }) => {
 };
 
 export default NotifyIcon;
+

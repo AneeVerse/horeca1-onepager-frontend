@@ -40,3 +40,4 @@ const CheckoutButton = ({ stripe, isEmpty, storeCustomizationSetting }) => {
 };
 
 export default CheckoutButton;
+

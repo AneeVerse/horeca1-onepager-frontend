@@ -179,7 +179,7 @@ const ProductModal = ({
                   <button
                     onClick={() => handleAddToCart(product)}
                     disabled={product.quantity < 1}
-                    className="w-full text-sm flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none text-white py-2 px-4 hover:text-white bg-emerald-500 hover:bg-emerald-600"
+                    className="w-full text-sm flex items-center cursor-pointer transition ease-in-out duration-300 font-semibold text-center justify-center border-0 border-transparent rounded-md focus-visible:outline-none focus:outline-none text-white py-2 px-4 hover:text-white bg-[#018549] hover:bg-[#016d3b]"
                   >
                     <FiShoppingBag className="mr-2" />
                     Add to cart
@@ -218,3 +218,4 @@ const ProductModal = ({
 };
 
 export default ProductModal;
+

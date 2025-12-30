@@ -68,3 +68,4 @@ export const SidebarProvider = ({ children }) => {
     <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>
   );
 };
+

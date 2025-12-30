@@ -98,7 +98,7 @@ export default function PincodesPage() {
                     </div>
                     <button
                         onClick={() => setShowAddModal(true)}
-                        className="inline-flex items-center gap-2 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium"
+                        className="inline-flex items-center gap-2 px-4 py-2 bg-[#018549] text-white rounded-lg hover:bg-[#016d3b] transition-colors font-medium"
                     >
                         <PlusIcon className="w-5 h-5" />
                         Add PIN Code
@@ -116,11 +116,11 @@ export default function PincodesPage() {
                             placeholder="Search by PIN code, area, or city..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
                         />
                     </div>
                     <div className="text-sm text-gray-600">
-                        <span className="font-semibold text-emerald-600">{pincodes.length}</span> PIN codes active
+                        <span className="font-semibold text-[#018549]">{pincodes.length}</span> PIN codes active
                     </div>
                 </div>
             </div>
@@ -206,7 +206,7 @@ export default function PincodesPage() {
                                     value={newPincode.pincode}
                                     onChange={(e) => setNewPincode(prev => ({ ...prev, pincode: e.target.value.replace(/\D/g, "") }))}
                                     placeholder="Enter 6-digit PIN"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
                                 />
                             </div>
 
@@ -219,7 +219,7 @@ export default function PincodesPage() {
                                     value={newPincode.area}
                                     onChange={(e) => setNewPincode(prev => ({ ...prev, area: e.target.value }))}
                                     placeholder="e.g., Vashi, Kharghar"
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
                                 />
                             </div>
 
@@ -233,7 +233,7 @@ export default function PincodesPage() {
                                         value={newPincode.city}
                                         onChange={(e) => setNewPincode(prev => ({ ...prev, city: e.target.value }))}
                                         placeholder="City name"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
                                     />
                                 </div>
                                 <div>
@@ -245,7 +245,7 @@ export default function PincodesPage() {
                                         value={newPincode.state}
                                         onChange={(e) => setNewPincode(prev => ({ ...prev, state: e.target.value }))}
                                         placeholder="State"
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
                                     />
                                 </div>
                             </div>
@@ -260,7 +260,7 @@ export default function PincodesPage() {
                             </button>
                             <button
                                 onClick={handleAddPincode}
-                                className="flex-1 px-4 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 font-medium"
+                                className="flex-1 px-4 py-2 bg-[#018549] text-white rounded-lg hover:bg-[#016d3b] font-medium"
                             >
                                 Add PIN Code
                             </button>
@@ -271,3 +271,4 @@ export default function PincodesPage() {
         </div>
     );
 }
+

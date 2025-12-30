@@ -38,3 +38,4 @@ export const cookieConfig = {
   language: getCookieOptions(365),
 };
 
+

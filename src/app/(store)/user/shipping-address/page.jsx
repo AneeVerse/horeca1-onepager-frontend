@@ -20,3 +20,4 @@ const Shipping = async ({ searchParams }) => {
 };
 
 export default Shipping;
+

@@ -10,16 +10,16 @@ const config = {
     extend: {
       colors: {
         primary: {
-          50: '#f0f2f5',
-          100: '#d9dee6',
-          200: '#b8c1d1',
-          300: '#8d9cb3',
-          400: '#5d7092',
-          500: '#1b223a', // Main theme color
-          600: '#171d30',
-          700: '#131827',
-          800: '#0f141e',
-          900: '#0b0f16',
+          50: '#e6f2f3',
+          100: '#b3d9dc',
+          200: '#80c0c5',
+          300: '#4da7ae',
+          400: '#268e97',
+          500: '#025155', // Main theme color - deep teal
+          600: '#024a4d',
+          700: '#024245',
+          800: '#0d4043', // Secondary accent - darker teal
+          900: '#012d2f',
         },
       },
       height: {

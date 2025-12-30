@@ -90,3 +90,4 @@ const ChangePassword = ({ storeCustomizationSetting }) => {
 };
 
 export default ChangePassword;
+

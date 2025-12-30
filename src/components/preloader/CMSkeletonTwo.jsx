@@ -25,3 +25,4 @@ const CMSkeletonTwo = ({
 };
 
 export default CMSkeletonTwo;
+

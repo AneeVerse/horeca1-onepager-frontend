@@ -140,14 +140,14 @@ const CheckoutCartScreen = () => {
               {/* Coupon Section */}
               <form className="w-full mb-6">
                 {couponInfo.couponCode ? (
-                  <span className="bg-emerald-50 px-4 py-3 leading-tight w-full rounded-lg flex justify-between items-center border border-emerald-200">
+                  <span className="bg-[#e6f5ef] px-4 py-3 leading-tight w-full rounded-lg flex justify-between items-center border border-[#018549]/30">
                     <div className="flex items-center gap-2">
-                      <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg className="w-5 h-5 text-[#018549]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      <p className="text-emerald-700 font-medium">Coupon Applied</p>
+                      <p className="text-[#016d3b] font-medium">Coupon Applied</p>
                     </div>
-                    <span className="text-emerald-800 font-bold">
+                    <span className="text-[#025155] font-bold">
                       {couponInfo.couponCode}
                     </span>
                   </span>
@@ -157,7 +157,7 @@ const CheckoutCartScreen = () => {
                       ref={couponRef}
                       type="text"
                       placeholder="Coupon Code"
-                      className="px-4 py-2 h-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500"
+                      className="px-4 py-2 h-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#018549] focus:border-[#018549]"
                     />
                     <Button
                       onClick={handleCouponCode}
@@ -184,7 +184,7 @@ const CheckoutCartScreen = () => {
                 {pricingBreakdown.productDiscount > 0 && (
                   <div className="flex justify-between items-center">
                     <span className="text-gray-700 font-medium">Product discount</span>
-                    <span className="text-teal-600 font-semibold">
+                    <span className="text-[#018549] font-semibold">
                       - {currency}{pricingBreakdown.productDiscount.toFixed(2)}
                     </span>
                   </div>
@@ -216,7 +216,7 @@ const CheckoutCartScreen = () => {
                         <span className="text-gray-400 line-through text-sm">
                           {currency}{pricingBreakdown.standardDeliveryCharge}
                         </span>
-                        <span className="text-emerald-600 font-bold flex items-center gap-1">
+                        <span className="text-[#018549] font-bold flex items-center gap-1">
                           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
                           </svg>
@@ -265,7 +265,7 @@ const CheckoutCartScreen = () => {
                 <Link
                   href="/checkout"
                   onClick={handleCheckout}
-                  className="flex-1 h-12 inline-flex items-center justify-center rounded-lg transition-colors text-sm font-bold bg-emerald-500 hover:bg-emerald-600 text-white shadow-md hover:shadow-lg"
+                  className="flex-1 h-12 inline-flex items-center justify-center rounded-lg transition-colors text-sm font-bold bg-[#018549] hover:bg-[#016d3b] text-white shadow-md hover:shadow-lg"
                 >
                   Checkout
                   <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -284,4 +284,5 @@ const CheckoutCartScreen = () => {
 export default dynamic(() => Promise.resolve(CheckoutCartScreen), {
   ssr: false,
 });
+
 

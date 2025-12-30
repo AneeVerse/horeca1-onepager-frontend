@@ -81,14 +81,14 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
         <div className="container mx-auto px-3 sm:px-10 max-w-screen-2xl">
           <div className="flex items-center py-6 lg:py-8">
             <ol className="flex items-center w-full overflow-hidden ">
-              <li className="text-sm pr-1 transition duration-200 ease-in cursor-pointer hover:text-emerald-500 font-semibold">
+              <li className="text-sm pr-1 transition duration-200 ease-in cursor-pointer hover:text-[#018549] font-semibold">
                 <Link href="/">Home</Link>
               </li>
               <li className="text-sm mt-[1px]">
                 {" "}
                 <FiChevronRight />{" "}
               </li>
-              <li className="text-sm pl-1 transition duration-200 ease-in cursor-pointer hover:text-emerald-500 font-semibold ">
+              <li className="text-sm pl-1 transition duration-200 ease-in cursor-pointer hover:text-[#018549] font-semibold ">
                 <Link
                   href={`/search?category=${category_name}&_id=${product?.category?._id}`}
                 >
@@ -171,9 +171,9 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                         <span className="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span>
                         PROMO ACTIVE
                       </span>
-                      <span className="text-2xl lg:text-3xl font-bold text-emerald-600">
+                      <span className="text-2xl lg:text-3xl font-bold text-[#018549]">
                         {currency}{product.promoPricing.singleUnit}
-                        {product?.unit && <span className="text-sm font-normal text-emerald-500">/{product.unit}</span>}
+                        {product?.unit && <span className="text-sm font-normal text-[#018549]">/{product.unit}</span>}
                       </span>
                     </div>
                   ) : (
@@ -198,7 +198,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                 <div className="mb-6 bg-gray-50 rounded-xl p-4 space-y-3">
                   {product?.bulkPricing?.bulkRate1?.quantity > 0 && product?.bulkPricing?.bulkRate1?.pricePerUnit > 0 && (
                     <div className="flex items-center justify-between">
-                      <span className="text-base text-emerald-600 font-medium">
+                      <span className="text-base text-[#018549] font-medium">
                         {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.bulkPricing.bulkRate1.quantity} {product.unit ? `${product.unit}s` : "units"}+
                       </span>
                       <button
@@ -219,7 +219,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                           };
                           addItem(bulkItem, bulkQuantity);
                         }}
-                        className="text-base font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                        className="text-base font-semibold text-[#018549] hover:text-[#016d3b] transition-colors"
                       >
                         Add {product.bulkPricing.bulkRate1.quantity}
                       </button>
@@ -227,7 +227,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                   )}
                   {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
                     <div className="flex items-center justify-between">
-                      <span className="text-base text-emerald-600 font-medium">
+                      <span className="text-base text-[#018549] font-medium">
                         {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.bulkPricing.bulkRate2.quantity} {product.unit ? `${product.unit}s` : "units"}+
                       </span>
                       <button
@@ -249,7 +249,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                           addItem(bulkItem, bulkQuantity);
                           // Cart drawer should only open when user clicks cart icon in navbar
                         }}
-                        className="text-base font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                        className="text-base font-semibold text-[#018549] hover:text-[#016d3b] transition-colors"
                       >
                         Add {product.bulkPricing.bulkRate2.quantity}
                       </button>
@@ -262,13 +262,13 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
               {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
                 <div className="mb-6 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-200/50 shadow-sm">
                   <div className="flex items-center gap-2 mb-4">
-                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span className="text-sm font-semibold text-emerald-800">Night Special Bulk Rates</span>
+                    <div className="w-2 h-2 bg-[#018549] rounded-full animate-pulse"></div>
+                    <span className="text-sm font-semibold text-[#025155]">Night Special Bulk Rates</span>
                   </div>
                   <div className="space-y-2">
                     {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
                       <div className="flex items-center justify-between bg-white/60 rounded-lg px-3 py-2">
-                        <span className="text-sm text-emerald-700 font-medium">
+                        <span className="text-sm text-[#016d3b] font-medium">
                           {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+
                         </span>
                         <button
@@ -291,7 +291,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             addItem(promoItem, promoQuantity);
                             // Cart drawer should only open when user clicks cart icon in navbar
                           }}
-                          className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
+                          className="text-sm font-semibold text-[#018549] hover:text-[#016d3b] px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
                         >
                           Add {product.promoPricing.bulkRate1.quantity}
                         </button>
@@ -299,7 +299,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                     )}
                     {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
                       <div className="flex items-center justify-between bg-white/60 rounded-lg px-3 py-2">
-                        <span className="text-sm text-emerald-700 font-medium">
+                        <span className="text-sm text-[#016d3b] font-medium">
                           {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+
                         </span>
                         <button
@@ -322,7 +322,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                             addItem(promoItem, promoQuantity);
                             // Cart drawer should only open when user clicks cart icon in navbar
                           }}
-                          className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
+                          className="text-sm font-semibold text-[#018549] hover:text-[#016d3b] px-3 py-1 bg-emerald-100 hover:bg-emerald-200 rounded-full transition-colors"
                         >
                           Add {product.promoPricing.bulkRate2.quantity}
                         </button>
@@ -445,7 +445,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                   Call Us for Order
                   <a
                     href={`tel:${globalSetting?.phone || "+099949343"}`}
-                    className="font-bold text-emerald-500 ml-1"
+                    className="font-bold text-[#018549] ml-1"
                   >
                     {globalSetting?.phone || "+099949343"}
                   </a>
@@ -542,11 +542,11 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
               <TabGroup>
                 <div className="border-b border-gray-200">
                   <TabList className="-mb-px flex space-x-8">
-                    <Tab className="cursor-pointer border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-gray-700 hover:border-gray-300 focus:outline-0 hover:text-gray-800 data-selected:border-emerald-600 data-selected:text-emerald-600">
+                    <Tab className="cursor-pointer border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-gray-700 hover:border-gray-300 focus:outline-0 hover:text-gray-800 data-selected:border-emerald-600 data-selected:text-[#018549]">
                       Customer Reviews
                     </Tab>
 
-                    <Tab className="cursor-pointer border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-gray-700 hover:border-gray-300 focus:outline-0 hover:text-gray-800 data-selected:border-emerald-600 data-selected:text-emerald-600">
+                    <Tab className="cursor-pointer border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-gray-700 hover:border-gray-300 focus:outline-0 hover:text-gray-800 data-selected:border-emerald-600 data-selected:text-[#018549]">
                       Description
                     </Tab>
                   </TabList>
@@ -600,3 +600,4 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
 };
 
 export default ProductScreen;
+

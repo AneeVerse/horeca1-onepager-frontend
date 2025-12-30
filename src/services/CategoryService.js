@@ -18,3 +18,4 @@ const getShowingCategory = async () => {
 };
 
 export { getShowingCategory };
+

@@ -32,3 +32,4 @@ const PageHeader = async ({ title, headerBg }) => {
 };
 
 export default PageHeader;
+

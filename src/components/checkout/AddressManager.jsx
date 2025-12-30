@@ -255,7 +255,7 @@ const AddressManager = ({
                     <button
                         type="button"
                         onClick={openAddModal}
-                        className="text-sm text-emerald-600 hover:text-emerald-700 font-medium flex items-center gap-1"
+                        className="text-sm text-[#018549] hover:text-[#016d3b] font-medium flex items-center gap-1"
                     >
                         <IoAdd className="w-4 h-4" />
                         Add New
@@ -271,7 +271,7 @@ const AddressManager = ({
                             key={address.id}
                             onClick={() => handleSelectAddress(address)}
                             className={`relative p-4 rounded-lg border cursor-pointer transition-all ${selectedAddress?.id === address.id
-                                ? "border-emerald-500 bg-emerald-50/50"
+                                ? "border-[#018549] bg-emerald-50/50"
                                 : "border-gray-200 hover:border-gray-300 bg-white"
                                 }`}
                         >
@@ -281,7 +281,7 @@ const AddressManager = ({
                                     <div className="flex items-center gap-2 mb-1">
                                         <p className="font-medium text-gray-900 text-sm">{address.name}</p>
                                         {address.isDefault && (
-                                            <span className="bg-emerald-100 text-emerald-700 text-[10px] font-medium px-1.5 py-0.5 rounded">
+                                            <span className="bg-emerald-100 text-[#016d3b] text-[10px] font-medium px-1.5 py-0.5 rounded">
                                                 Default
                                             </span>
                                         )}
@@ -296,7 +296,7 @@ const AddressManager = ({
 
                                 {/* Selection Indicator */}
                                 {selectedAddress?.id === address.id && (
-                                    <IoCheckmarkCircle className="w-5 h-5 text-emerald-500 flex-shrink-0" />
+                                    <IoCheckmarkCircle className="w-5 h-5 text-[#018549] flex-shrink-0" />
                                 )}
                             </div>
 
@@ -308,7 +308,7 @@ const AddressManager = ({
                                         e.stopPropagation();
                                         openEditModal(address);
                                     }}
-                                    className="text-xs text-gray-600 hover:text-emerald-600 font-medium"
+                                    className="text-xs text-gray-600 hover:text-[#018549] font-medium"
                                 >
                                     Edit
                                 </button>
@@ -320,7 +320,7 @@ const AddressManager = ({
                                                 e.stopPropagation();
                                                 handleSetDefault(address.id);
                                             }}
-                                            className="text-xs text-gray-600 hover:text-emerald-600 font-medium"
+                                            className="text-xs text-gray-600 hover:text-[#018549] font-medium"
                                         >
                                             Set as Default
                                         </button>
@@ -349,7 +349,7 @@ const AddressManager = ({
                         className="w-full p-6 border-2 border-dashed border-gray-300 rounded-xl hover:border-emerald-400 hover:bg-emerald-50 transition-all flex flex-col items-center justify-center gap-2 group"
                     >
                         <div className="w-12 h-12 rounded-full bg-emerald-100 flex items-center justify-center group-hover:bg-emerald-200 transition-colors">
-                            <IoAdd className="w-6 h-6 text-emerald-600" />
+                            <IoAdd className="w-6 h-6 text-[#018549]" />
                         </div>
                         <span className="text-gray-700 font-medium">Add Delivery Address</span>
                         <span className="text-gray-500 text-sm">Click to add your first address</span>
@@ -473,7 +473,7 @@ const AddressManager = ({
                                                     />
                                                     {pincodeLoading && (
                                                         <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                                                            <svg className="animate-spin h-4 w-4 text-emerald-500" viewBox="0 0 24 24">
+                                                            <svg className="animate-spin h-4 w-4 text-[#018549]" viewBox="0 0 24 24">
                                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
                                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
                                                             </svg>
@@ -516,7 +516,7 @@ const AddressManager = ({
                                                 onChange={(e) => setAddressForm(prev => ({ ...prev, address: e.target.value }))}
                                                 placeholder="House/Flat No., Building, Street, Landmark"
                                                 rows={3}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-sm"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#018549] focus:border-[#018549] text-sm"
                                             />
                                         </div>
 
@@ -527,7 +527,7 @@ const AddressManager = ({
                                                 id="isDefault"
                                                 checked={addressForm.isDefault}
                                                 onChange={(e) => setAddressForm(prev => ({ ...prev, isDefault: e.target.checked }))}
-                                                className="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                                                className="w-4 h-4 text-[#018549] border-gray-300 rounded focus:ring-[#018549]"
                                             />
                                             <label htmlFor="isDefault" className="text-sm text-gray-700">
                                                 Set as default address
@@ -547,7 +547,7 @@ const AddressManager = ({
                                         <Button
                                             type="button"
                                             onClick={handleSaveAddress}
-                                            className="flex-1 h-11 bg-emerald-500 hover:bg-emerald-600 text-white"
+                                            className="flex-1 h-11 bg-[#018549] hover:bg-[#016d3b] text-white"
                                         >
                                             {isEditing ? "Update Address" : "Save Address"}
                                         </Button>
@@ -563,3 +563,4 @@ const AddressManager = ({
 };
 
 export default AddressManager;
+

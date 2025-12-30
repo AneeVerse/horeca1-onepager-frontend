@@ -211,3 +211,4 @@ const MobileNavbar = ({ open, setOpen }) => {
 };
 
 export default MobileNavbar;
+

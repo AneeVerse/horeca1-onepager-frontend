@@ -30,7 +30,7 @@ const TopNavbar = ({ storeCustomization }) => {
   //           {showingTranslateValue(navbar?.help_text)}
   //           <a
   //             href={`tel:${navbar?.phone_number || "+099949343"}`}
-  //             className="font-bold text-emerald-500 ml-1"
+  //             className="font-bold text-[#018549] ml-1"
   //           >
   //             {navbar?.phone_number || "+099949343"}
   //           </a>
@@ -41,7 +41,7 @@ const TopNavbar = ({ storeCustomization }) => {
   //             <div>
   //               <Link
   //                 href="/about-us"
-  //                 className="font-medium hover:text-emerald-600"
+  //                 className="font-medium hover:text-[#018549]"
   //               >
   //                 {showingTranslateValue(navbar?.about_us)}
   //               </Link>
@@ -52,7 +52,7 @@ const TopNavbar = ({ storeCustomization }) => {
   //             <div>
   //               <Link
   //                 href="/contact-us"
-  //                 className="font-medium hover:text-emerald-600"
+  //                 className="font-medium hover:text-[#018549]"
   //               >
   //                 {showingTranslateValue(navbar?.contact_us)}
   //               </Link>
@@ -70,3 +70,4 @@ const TopNavbar = ({ storeCustomization }) => {
 };
 
 export default TopNavbar;
+

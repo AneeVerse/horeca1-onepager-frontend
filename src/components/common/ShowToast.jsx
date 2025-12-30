@@ -17,3 +17,4 @@ const ShowToast = ({ success, error }) => {
 };
 
 export default ShowToast;
+

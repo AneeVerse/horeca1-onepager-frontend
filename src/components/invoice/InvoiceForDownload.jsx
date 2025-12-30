@@ -317,3 +317,4 @@ const InvoicePDF = ({ data, globalSetting }) => {
 };
 
 export default InvoicePDF;
+

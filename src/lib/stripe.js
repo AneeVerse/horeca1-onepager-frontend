@@ -9,3 +9,4 @@ const getStripe = (stripeKey) => {
 };
 
 export default getStripe;
+

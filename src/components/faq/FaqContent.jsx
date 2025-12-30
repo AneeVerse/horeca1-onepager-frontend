@@ -44,3 +44,4 @@ const FaqContent = ({ faq }) => {
 };
 
 export default FaqContent;
+

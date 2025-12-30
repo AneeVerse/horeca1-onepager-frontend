@@ -120,7 +120,7 @@ const CouponSection = () => {
 
   return (
     <div className="w-full h-full">
-      <div className="bg-gray-50 h-full border-2 border-orange-500 transition duration-150 ease-linear hover:border-emerald-500 rounded-xl shadow overflow-hidden">
+      <div className="bg-gray-50 h-full border-2 border-orange-500 transition duration-150 ease-linear hover:border-[#018549] rounded-xl shadow overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-r from-orange-100 to-amber-100 px-4 py-3 border-b border-orange-200">
           <div className="flex items-center justify-center gap-2">
@@ -174,7 +174,7 @@ const CouponSection = () => {
                           className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                             isExpired
                               ? "bg-red-100 text-red-600"
-                              : "bg-emerald-100 text-emerald-600"
+                              : "bg-emerald-100 text-[#018549]"
                           }`}
                         >
                           {isExpired ? "Expired" : "Upcoming"}
@@ -191,7 +191,7 @@ const CouponSection = () => {
                       {/* Coupon Code */}
                       <div className="flex items-center gap-2">
                         <div className="flex-1 bg-emerald-50 border border-dashed border-emerald-300 rounded px-2 py-1">
-                          <code className="text-sm font-semibold text-emerald-700">
+                          <code className="text-sm font-semibold text-[#016d3b]">
                             {coupon.couponCode}
                           </code>
                         </div>
@@ -199,7 +199,7 @@ const CouponSection = () => {
                           onClick={() => {
                             navigator.clipboard.writeText(coupon.couponCode);
                           }}
-                          className="text-xs px-2 py-1 bg-emerald-500 text-white rounded hover:bg-emerald-600 transition-colors"
+                          className="text-xs px-2 py-1 bg-[#018549] text-white rounded hover:bg-[#016d3b] transition-colors"
                         >
                           Copy
                         </button>
@@ -221,6 +221,7 @@ const CouponSection = () => {
 };
 
 export default CouponSection;
+
 
 
 

@@ -14,7 +14,7 @@ import { userNavigation } from "@utils/data";
 const ProfileDropDown = () => {
   // Check userInfo from cookie (for OTP login users who may not have email)
   const [userInfo, setUserInfo] = useState(null);
-  
+
   useEffect(() => {
     const loadUserInfo = async () => {
       const userInfoCookie = Cookies.get("userInfo");
@@ -22,14 +22,14 @@ const ProfileDropDown = () => {
         try {
           const parsed = JSON.parse(userInfoCookie);
           setUserInfo(parsed);
-          
+
           // Fetch fresh customer data from database to get latest image
           const customerId = parsed.id || parsed._id;
           if (customerId) {
             try {
               const { baseURL } = await import("@services/CommonService");
               const token = parsed.token;
-              
+
               const response = await fetch(`${baseURL}/customer/${customerId}`, {
                 cache: "no-store",
                 headers: {
@@ -37,10 +37,10 @@ const ProfileDropDown = () => {
                   ...(token && { Authorization: `Bearer ${token}` }),
                 },
               });
-              
+
               if (response.ok) {
                 const customer = await response.json();
-                
+
                 // Update userInfo with fresh data (prioritize image from database)
                 const freshUserInfo = {
                   ...parsed,
@@ -49,9 +49,9 @@ const ProfileDropDown = () => {
                   email: customer.email || parsed.email,
                   phone: customer.phone || parsed.phone,
                 };
-                
+
                 setUserInfo(freshUserInfo);
-                
+
                 // Update cookie with fresh data
                 Cookies.set("userInfo", JSON.stringify(freshUserInfo), getCookieOptions(30));
               }
@@ -64,20 +64,20 @@ const ProfileDropDown = () => {
         }
       }
     };
-    
+
     // Load initially
     loadUserInfo();
-    
+
     // Listen for custom event when profile is updated
     const handleProfileUpdate = () => {
       loadUserInfo();
     };
-    
+
     window.addEventListener('profileUpdated', handleProfileUpdate);
-    
+
     // Also poll every 5 seconds to refresh data
     const interval = setInterval(loadUserInfo, 5000);
-    
+
     return () => {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
       clearInterval(interval);
@@ -103,8 +103,8 @@ const ProfileDropDown = () => {
                 alt={userInfo?.name?.[0] || "U"}
               />
             ) : (
-              <div className="flex items-center justify-center h-8 w-8 rounded-full dark:bg-zinc-700 bg-emerald-500 text-xl font-bold text-center text-white">
-                {userInfo?.name?.charAt(0) || userInfo?.phone?.slice(-2) || "U"}
+              <div className="flex items-center justify-center h-8 w-8 rounded-full dark:bg-zinc-700 bg-primary-500 text-white">
+                <FiUser className="h-5 w-5" />
               </div>
             )}
           </Link>
@@ -168,3 +168,4 @@ const ProfileDropDown = () => {
 };
 
 export default ProfileDropDown;
+

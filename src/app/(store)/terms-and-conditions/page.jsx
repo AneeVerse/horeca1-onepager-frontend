@@ -63,3 +63,4 @@ const TermsAndConditions = async () => {
 };
 
 export default TermsAndConditions;
+

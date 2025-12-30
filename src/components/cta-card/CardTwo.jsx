@@ -53,7 +53,7 @@ const CardTwo = async ({}) => {
           </p>
           <Link
             href={`${home?.quick_delivery_link}`}
-            className="lg:w-1/3  text-xs  font-medium inline-block mt-5 px-8 py-3 bg-emerald-500 text-center text-white rounded-full hover:text-white contact-btn"
+            className="lg:w-1/3  text-xs  font-medium inline-block mt-5 px-8 py-3 bg-[#018549] text-center text-white rounded-full hover:text-white contact-btn"
             target="_blank"
           >
             {showingTranslateValue(home?.quick_delivery_button)}
@@ -74,3 +74,4 @@ const CardTwo = async ({}) => {
 };
 
 export default CardTwo;
+

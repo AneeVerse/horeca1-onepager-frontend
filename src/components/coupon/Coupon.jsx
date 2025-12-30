@@ -58,7 +58,7 @@ const Coupon = async ({ couponInHome }) => {
                         Inactive
                       </span>
                     ) : (
-                      <span className="text-emerald-600 inline-block px-4 py-1 rounded-full font-medium text-xs bg-emerald-100">
+                      <span className="text-[#018549] inline-block px-4 py-1 rounded-full font-medium text-xs bg-emerald-100">
                         Active
                       </span>
                     )}
@@ -191,7 +191,7 @@ const Coupon = async ({ couponInHome }) => {
                             Inactive
                           </span>
                         ) : (
-                          <span className="text-emerald-600 inline-block">
+                          <span className="text-[#018549] inline-block">
                             Active
                           </span>
                         )}
@@ -220,3 +220,4 @@ const Coupon = async ({ couponInHome }) => {
 };
 
 export default Coupon;
+

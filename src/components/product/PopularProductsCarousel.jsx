@@ -118,3 +118,4 @@ const PopularProductsCarousel = ({ products, attributes, currency }) => {
 
 export default PopularProductsCarousel;
 
+

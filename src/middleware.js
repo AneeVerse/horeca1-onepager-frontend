@@ -60,3 +60,4 @@ export const config = {
   // Only run middleware on protected paths to reduce edge crashes/timeouts
   matcher: ["/user/:path*", "/order/:path*", "/checkout/:path*"],
 };
+

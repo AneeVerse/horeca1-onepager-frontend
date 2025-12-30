@@ -41,7 +41,7 @@ const RecentOrder = ({ data, error, link, title }) => {
             </h2>
           ) : data?.orders?.length === 0 ? (
             <div className="text-center">
-              <span className="flex justify-center my-30 pt-16 text-emerald-500 font-semibold text-6xl">
+              <span className="flex justify-center my-30 pt-16 text-[#018549] font-semibold text-6xl">
                 <IoBagHandle />
               </span>
               <h2 className="font-medium text-md my-4 text-gray-600">
@@ -125,7 +125,7 @@ const RecentOrder = ({ data, error, link, title }) => {
                                 <td className="px-4 text-sm whitespace-nowrap text-end">
                                   {link ? (
                                     <Link href={`/order/${order._id}`}>
-                                      <span className="text-emerald-500 text-end cursor-pointer hover:text-emerald-700 transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5">
+                                      <span className="text-[#018549] text-end cursor-pointer hover:text-[#016d3b] transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5">
                                         <Eye className="h-4 w-4" />
                                       </span>
                                     </Link>
@@ -135,7 +135,7 @@ const RecentOrder = ({ data, error, link, title }) => {
                                         handleOrderDetails(order);
                                         setDrawerOpen(true);
                                       }}
-                                      className="text-emerald-500 text-end cursor-pointer hover:text-emerald-700 transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5"
+                                      className="text-[#018549] text-end cursor-pointer hover:text-[#016d3b] transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5"
                                     >
                                       <Eye className="h-4 w-4" />
                                     </span>
@@ -167,3 +167,4 @@ const RecentOrder = ({ data, error, link, title }) => {
 };
 
 export default RecentOrder;
+

@@ -61,3 +61,4 @@ const PrivacyPolicy = async () => {
 };
 
 export default PrivacyPolicy;
+

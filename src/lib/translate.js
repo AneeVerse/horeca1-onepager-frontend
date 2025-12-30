@@ -16,3 +16,4 @@ const showingTranslateValue = async (data) => {
 };
 
 export { showingTranslateValue };
+

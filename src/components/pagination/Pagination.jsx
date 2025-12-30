@@ -26,7 +26,7 @@ export const PageButton = function PageButton({ page, isActive, onClick }) {
       onClick={onClick}
       className={`${
         isActive
-          ? "bg-emerald-600 text-white dark:text-zinc-900 dark:hover:text-gray-300 font-normal hover:text-gray-800"
+          ? "bg-[#016d3b] text-white dark:text-zinc-900 dark:hover:text-gray-300 font-normal hover:text-gray-800"
           : "text-gray-900 dark:text-gray-300"
       } align-bottom inline-flex items-center justify-center cursor-pointer leading-5 transition-colors duration-150 font-medium px-3 py-1 rounded-md text-xs text-gray-600 focus:outline-none border border-transparent active:bg-transparent hover:bg-gray-100 dark:hover:bg-zinc-600`}
     >
@@ -166,3 +166,4 @@ const Pagination = React.forwardRef(function Pagination(props, ref) {
 });
 
 export default Pagination;
+

@@ -264,7 +264,7 @@ export default function AddProductPage() {
                     })
                   }
                   placeholder="Product title"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                 />
               </div>
 
@@ -285,7 +285,7 @@ export default function AddProductPage() {
                     })
                   }
                   placeholder="Product description"
-                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                 />
               </div>
 
@@ -301,7 +301,7 @@ export default function AddProductPage() {
                       setFormData({ ...formData, slug: e.target.value })
                     }
                     placeholder="product-slug"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                   <p className="mt-1 text-xs text-gray-500">
                     Auto-generated from name if empty
@@ -318,7 +318,7 @@ export default function AddProductPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, category: e.target.value })
                     }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   >
                     <option value="">Select Category</option>
                     {categories.map((cat) => (
@@ -349,7 +349,7 @@ export default function AddProductPage() {
                       setFormData({ ...formData, sku: e.target.value })
                     }
                     placeholder="Z0008"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
 
@@ -365,7 +365,7 @@ export default function AddProductPage() {
                       setFormData({ ...formData, hsn: e.target.value })
                     }
                     placeholder="04061000"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
 
@@ -379,7 +379,7 @@ export default function AddProductPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, unit: e.target.value })
                     }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   >
                     <option value="">Select Unit</option>
                     <option value="kg">kg</option>
@@ -405,7 +405,7 @@ export default function AddProductPage() {
                       setFormData({ ...formData, brand: e.target.value })
                     }
                     placeholder="Qualita"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
               </div>
@@ -460,7 +460,7 @@ export default function AddProductPage() {
                       })
                     }
                     placeholder="361.90"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
 
@@ -482,7 +482,7 @@ export default function AddProductPage() {
                       })
                     }
                     placeholder="5"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
 
@@ -506,7 +506,7 @@ export default function AddProductPage() {
                       })
                     }
                     placeholder="380.00"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
               </div>
@@ -530,7 +530,7 @@ export default function AddProductPage() {
                         },
                       })
                     }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
 
@@ -552,7 +552,7 @@ export default function AddProductPage() {
                         },
                       })
                     }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
               </div>
@@ -585,15 +585,15 @@ export default function AddProductPage() {
               </div>
 
               {/* Promo Single Unit Price - Always visible at top */}
-              <div className="mb-6 bg-gradient-to-r from-emerald-50 to-teal-50 border border-emerald-200 rounded-xl p-5">
+              <div className="mb-6 bg-gradient-to-r from-[#e6f5ef] to-[#d4f5e5] border border-[#018549]/30 rounded-xl p-5">
                 <div className="flex items-center justify-between mb-3">
-                  <h5 className="text-sm font-bold text-emerald-900 flex items-center gap-2">
+                  <h5 className="text-sm font-bold text-[#025155] flex items-center gap-2">
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     Promo Single Unit Price (6pm - 9am)
                   </h5>
-                  <span className="px-3 py-1 bg-emerald-100 text-emerald-700 text-xs font-medium rounded-full">
+                  <span className="px-3 py-1 bg-[#d4f5e5] text-[#016d3b] text-xs font-medium rounded-full">
                     Time-based
                   </span>
                 </div>
@@ -613,10 +613,10 @@ export default function AddProductPage() {
                       })
                     }
                     placeholder="Enter promo price"
-                    className="w-full rounded-lg border-emerald-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm px-4 py-2.5 border bg-white"
+                    className="w-full rounded-lg border-[#018549]/40 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-4 py-2.5 border bg-white"
                   />
                   {formData.promoPricing.singleUnit > 0 && (
-                    <p className="text-xs text-emerald-700 mt-2 flex items-center gap-1">
+                    <p className="text-xs text-[#016d3b] mt-2 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
@@ -709,13 +709,13 @@ export default function AddProductPage() {
                       </div>
 
                       {/* Right - Promo Bulk Pricing (6pm-9am) */}
-                      <div className="p-5 bg-gradient-to-br from-emerald-50/50 to-teal-50/50">
+                      <div className="p-5 bg-gradient-to-br from-[#e6f5ef]/50 to-[#d4f5e5]/50">
                         <div className="flex items-center gap-2 mb-4">
-                          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
-                          <h6 className="text-xs font-bold text-emerald-900 uppercase tracking-wide">
+                          <div className="w-2 h-2 rounded-full bg-[#018549]"></div>
+                          <h6 className="text-xs font-bold text-[#025155] uppercase tracking-wide">
                             6pm - 9am Promo Bulk
                           </h6>
-                          <span className="ml-auto px-2 py-0.5 bg-emerald-100 text-emerald-600 text-[10px] font-semibold rounded-full">
+                          <span className="ml-auto px-2 py-0.5 bg-[#d4f5e5] text-[#018549] text-[10px] font-semibold rounded-full">
                             PROMO
                           </span>
                         </div>
@@ -732,7 +732,7 @@ export default function AddProductPage() {
                                 updateBulkTier(tier.id, "promoQuantity", parseInt(e.target.value) || 0)
                               }
                               placeholder="0"
-                              className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm px-3 py-2.5 border bg-white"
+                              className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-3 py-2.5 border bg-white"
                             />
                           </div>
                           <div>
@@ -750,13 +750,13 @@ export default function AddProductPage() {
                                   updateBulkTier(tier.id, "promoPricePerUnit", parseFloat(e.target.value) || 0)
                                 }
                                 placeholder="0.00"
-                                className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 text-sm pl-7 pr-3 py-2.5 border bg-white"
+                                className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm pl-7 pr-3 py-2.5 border bg-white"
                               />
                             </div>
                           </div>
                         </div>
                         {tier.promoQuantity > 0 && tier.promoPricePerUnit > 0 && (
-                          <p className="text-xs text-emerald-700 mt-3 bg-emerald-100/50 px-3 py-2 rounded-lg">
+                          <p className="text-xs text-[#016d3b] mt-3 bg-[#d4f5e5]/50 px-3 py-2 rounded-lg">
                             ₹{tier.promoPricePerUnit} per {formData.unit || "unit"} for {tier.promoQuantity}+ {formData.unit ? `${formData.unit}s` : "units"}
                           </p>
                         )}
@@ -822,7 +822,7 @@ export default function AddProductPage() {
                         stock: parseInt(e.target.value) || 0,
                       })
                     }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
 
@@ -835,7 +835,7 @@ export default function AddProductPage() {
                     onChange={(e) =>
                       setFormData({ ...formData, status: e.target.value })
                     }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm px-3 py-2 border"
+                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   >
                     <option value="show">Yes</option>
                     <option value="hide">No</option>
@@ -858,7 +858,7 @@ export default function AddProductPage() {
               disabled={submitting}
               className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm ${submitting
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-emerald-600 hover:bg-emerald-500"
+                : "bg-[#016d3b] hover:bg-[#018549]"
                 }`}
             >
               {submitting ? (
@@ -876,4 +876,5 @@ export default function AddProductPage() {
     </div>
   );
 }
+
 

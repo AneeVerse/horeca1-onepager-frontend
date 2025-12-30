@@ -83,3 +83,4 @@ const Price = ({ product, price, card, currency, originalPrice }) => {
 };
 
 export default Price;
+

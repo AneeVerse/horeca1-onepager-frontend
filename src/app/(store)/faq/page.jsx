@@ -131,3 +131,4 @@ const Faq = async () => {
 };
 
 export default Faq;
+
