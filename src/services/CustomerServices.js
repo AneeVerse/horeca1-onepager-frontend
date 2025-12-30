@@ -127,6 +127,21 @@ const getCustomerById = async (customerId) => {
   }
 };
 
+const getAllCustomers = async () => {
+  try {
+    const headers = await getHeaders();
+    const response = await fetch(`${baseURL}/customer`, {
+      cache: "no-store",
+      headers,
+    });
+
+    const customers = await handleResponse(response);
+    return { customers, error: null };
+  } catch (error) {
+    return { customers: [], error: error.message };
+  }
+};
+
 export {
   loginCustomer,
   registerCustomer,
@@ -135,5 +150,6 @@ export {
   resetPassword,
   getShippingAddress,
   getCustomerById,
+  getAllCustomers,
 };
 

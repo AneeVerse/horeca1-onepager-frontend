@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { getAllCategories } from "@services/AdminCategoryService";
 import { getAllProducts } from "@services/AdminProductService";
+import { getAllCustomers } from "@services/CustomerServices";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState({
@@ -19,7 +20,6 @@ export default function AdminDashboard() {
     products: 0,
     orders: 0,
     customers: 0,
-    coupons: 0,
     loading: true,
   });
 
@@ -28,8 +28,8 @@ export default function AdminDashboard() {
       try {
         const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
         const { baseURL } = await import("@services/CommonService");
-        
-        const [categoriesRes, productsRes, ordersRes] = await Promise.all([
+
+        const [categoriesRes, productsRes, ordersRes, customersRes] = await Promise.all([
           getAllCategories(),
           getAllProducts(),
           fetch(`${baseURL}/orders/dashboard-count`, {
@@ -38,14 +38,21 @@ export default function AdminDashboard() {
               ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
           }).then(res => res.ok ? res.json() : { totalOrder: 0 }).catch(() => ({ totalOrder: 0 })),
+          getAllCustomers(),
         ]);
+
+        // Helper to get count from different customer response structures
+        const customerList = customersRes.customers ? (
+          Array.isArray(customersRes.customers) ? customersRes.customers :
+            customersRes.customers.users ? customersRes.customers.users :
+              customersRes.customers.data ? customersRes.customers.data : []
+        ) : [];
 
         setStats({
           categories: categoriesRes.categories?.length || 0,
           products: productsRes.products?.products?.length || productsRes.products?.length || 0,
           orders: ordersRes.totalOrder || 0,
-          customers: 0, // TODO: Add customers API
-          coupons: 0, // TODO: Add coupons API
+          customers: customerList.length || 0,
           loading: false,
         });
       } catch (error) {
@@ -90,14 +97,6 @@ export default function AdminDashboard() {
       color: "bg-yellow-500",
       textColor: "text-yellow-600",
     },
-    {
-      name: "Coupons",
-      value: stats.coupons,
-      icon: TicketIcon,
-      href: "/admin/coupons",
-      color: "bg-pink-500",
-      textColor: "text-pink-600",
-    },
   ];
 
   return (
@@ -110,7 +109,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {statCards.map((stat) => (
           <Link
             key={stat.name}
