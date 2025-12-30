@@ -10,7 +10,7 @@ import {
 const MainDrawer = ({ open, onClose, children }) => {
   return (
     <Transition show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-40" onClose={onClose}>
+      <Dialog as="div" className="relative z-[100]" onClose={onClose}>
         {/* Overlay with opacity transition */}
         <TransitionChild
           as={Fragment}
@@ -24,11 +24,31 @@ const MainDrawer = ({ open, onClose, children }) => {
           <div className="fixed inset-0 bg-black/50" />
         </TransitionChild>
 
-        {/* Drawer container */}
-        <div className="fixed inset-0 overflow-hidden">
+        {/* Mobile: Bottom sheet */}
+        <div className="fixed inset-0 overflow-hidden sm:hidden">
+          <div className="absolute inset-0 overflow-hidden">
+            <div className="pointer-events-none fixed inset-x-0 bottom-0 flex justify-center">
+              <TransitionChild
+                as={Fragment}
+                enter="transform transition ease-in-out duration-300"
+                enterFrom="translate-y-full"
+                enterTo="translate-y-0"
+                leave="transform transition ease-in-out duration-300"
+                leaveFrom="translate-y-0"
+                leaveTo="translate-y-full"
+              >
+                <DialogPanel className="pointer-events-auto w-full max-h-[90vh] bg-white shadow-xl flex flex-col rounded-t-2xl overflow-hidden">
+                  {children}
+                </DialogPanel>
+              </TransitionChild>
+            </div>
+          </div>
+        </div>
+
+        {/* Desktop: Right side drawer */}
+        <div className="fixed inset-0 overflow-hidden hidden sm:block">
           <div className="absolute inset-0 overflow-hidden">
             <div className="pointer-events-none fixed inset-y-0 right-0 flex">
-              {/* Drawer slide animation */}
               <TransitionChild
                 as={Fragment}
                 enter="transform transition ease-in-out duration-300"
@@ -38,7 +58,7 @@ const MainDrawer = ({ open, onClose, children }) => {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <DialogPanel className="pointer-events-auto w-[45vw] max-w-none bg-white shadow-xl flex flex-col h-full">
+                <DialogPanel className="pointer-events-auto w-[80vw] md:w-[60vw] lg:w-[45vw] max-w-none bg-white shadow-xl flex flex-col h-full">
                   {children}
                 </DialogPanel>
               </TransitionChild>
@@ -51,4 +71,3 @@ const MainDrawer = ({ open, onClose, children }) => {
 };
 
 export default MainDrawer;
-

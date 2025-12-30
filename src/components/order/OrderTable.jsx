@@ -15,19 +15,18 @@ const OrderTable = ({ data, currency, drawer }) => {
           <th className="px-6 py-2 text-sm font-normal text-gray-500 text-left">
             {i + 1}{" "}
           </th>
-          {drawer && (
-            <td className="px-6 py-2 text-sm font-normal text-gray-500">
-              <ImageWithFallback
-                img
-                width={40}
-                height={40}
-                src={item?.image}
-                alt={item.title}
-              />
-            </td>
-          )}
           <td className="px-6 py-2 text-sm font-normal text-gray-500">
-            {item.title}
+            <div className="flex items-center justify-start gap-3">
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-md border border-gray-200">
+                <ImageWithFallback
+                  img
+                  src={item.image}
+                  alt={item.title}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <span className="font-medium text-gray-700">{item.title}</span>
+            </div>
           </td>
           <td className="px-6 py-2 text-sm text-center text-gray-500">
             {item.quantity}{" "}

@@ -1,10 +1,11 @@
 "use client";
 
 import { Eye } from "lucide-react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IoBagHandle } from "react-icons/io5";
+import Cookies from "js-cookie";
 
 //internal import
 import OrderHistory from "./OrderHistory";
@@ -12,6 +13,25 @@ import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Pagination from "@components/pagination/Pagination";
 import OrderDetailsDrawer from "@components/drawer/OrderDetailsDrawer";
+
+// JWT Expired Handler Component
+const JWTExpiredHandler = () => {
+  useEffect(() => {
+    // Clear user cookies
+    Cookies.remove("userInfo");
+    Cookies.remove("couponInfo");
+    // Redirect to login
+    window.location.href = "/auth/otp-login?redirectUrl=/user/dashboard";
+  }, []);
+
+  return (
+    <div className="text-center my-10 mx-auto w-11/12">
+      <div className="animate-spin h-8 w-8 border-4 border-[#018549] border-t-transparent rounded-full mx-auto mb-4"></div>
+      <p className="text-gray-600">Session expired, redirecting to login...</p>
+    </div>
+  );
+};
+
 
 const RecentOrder = ({ data, error, link, title }) => {
   const router = useRouter();
@@ -36,9 +56,13 @@ const RecentOrder = ({ data, error, link, title }) => {
       <div className="max-w-screen-2xl mx-auto">
         <div className="rounded-md">
           {error ? (
-            <h2 className="text-xl text-center my-10 mx-auto w-11/12 text-red-400">
-              {error}
-            </h2>
+            error.toLowerCase().includes('jwt') || error.toLowerCase().includes('expired') || error.toLowerCase().includes('unauthorized') ? (
+              <JWTExpiredHandler />
+            ) : (
+              <h2 className="text-xl text-center my-10 mx-auto w-11/12 text-red-400">
+                {error}
+              </h2>
+            )
           ) : data?.orders?.length === 0 ? (
             <div className="text-center">
               <span className="flex justify-center my-30 pt-16 text-[#018549] font-semibold text-6xl">
