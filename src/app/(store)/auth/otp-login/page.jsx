@@ -323,7 +323,7 @@ const OTPLogin = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary flex items-start justify-center px-4 pt-8 pb-4">
+    <div className="min-h-screen bg-[#025155] flex items-start justify-center px-4 pt-8 pb-4">
       <div className="w-full max-w-md">
         {/* Logo/Brand */}
         <div className="text-center mb-6">

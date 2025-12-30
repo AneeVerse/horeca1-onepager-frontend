@@ -119,8 +119,8 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
               <h2 className="font-semibold text-base text-gray-700 pb-3">
                 01. Contact Details
               </h2>
-              <div className="grid grid-cols-6 gap-6">
-                <div className="col-span-6 sm:col-span-3">
+              <div className="grid grid-cols-6 gap-4 sm:gap-6">
+                <div className="col-span-3">
                   <InputArea
                     register={register}
                     label="First Name"
@@ -131,7 +131,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                   <Error errorMessage={errors.firstName} />
                 </div>
 
-                <div className="col-span-6 sm:col-span-3">
+                <div className="col-span-3">
                   <InputArea
                     register={register}
                     label="Last Name"

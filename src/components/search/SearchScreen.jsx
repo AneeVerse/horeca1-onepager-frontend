@@ -85,7 +85,7 @@ const SearchScreen = ({ products, attributes, categories, currency }) => {
               </ul>
             </div>
           </div>
-          
+
           <div className="flex-1 min-w-0">
             {productData?.length === 0 ? (
               <div className="mx-auto p-5 my-5">
@@ -106,18 +106,18 @@ const SearchScreen = ({ products, attributes, categories, currency }) => {
                   Total <span className="font-bold text-primary-600">{productData?.length}</span>{" "}
                   Items Found
                 </h6>
-                <span className="text-sm">
+                <span className="text-[10px]">
                   <select
                     onChange={(e) => setSortedField(e.target.value)}
-                    className="py-2 px-4 text-sm font-medium block w-full rounded-lg border border-primary-300 bg-white text-gray-700 pr-10 cursor-pointer focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors hover:border-primary-400"
+                    className="py-1 px-2 text-[10px] font-medium block w-full rounded border border-primary-300 bg-white text-gray-700 pr-5 cursor-pointer focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors hover:border-primary-400"
                   >
-                    <option className="px-3" value="All" defaultValue hidden>
-                      Sort By Price
+                    <option className="px-2" value="All" defaultValue hidden>
+                      Sort By
                     </option>
-                    <option className="px-3" value="Low">
+                    <option className="px-2" value="Low">
                       Low to High
                     </option>
-                    <option className="px-3" value="High">
+                    <option className="px-2" value="High">
                       High to Low
                     </option>
                   </select>

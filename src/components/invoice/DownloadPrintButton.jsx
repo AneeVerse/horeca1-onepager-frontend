@@ -1,9 +1,8 @@
 "use client";
 
-import { useRef, useState, useEffect } from "react";
-import { useReactToPrint } from "react-to-print";
+import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
-import { Download, Printer } from "lucide-react";
+import { Download } from "lucide-react";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 
 // internal imports
@@ -18,11 +17,6 @@ const DownloadPrintButton = ({ data }) => {
   const targetRef = useRef(null);
   const { showingTranslateValue } = useUtilsFunction();
   const dashboard = storeCustomization?.dashboard;
-
-  const handlePrintInvoice = useReactToPrint({
-    contentRef: targetRef,
-    documentTitle: `Invoice-${data?.invoice}`,
-  });
 
   // Flag to only render PDFDownloadLink after client mount
   const [isClient, setIsClient] = useState(false);
@@ -48,7 +42,7 @@ const DownloadPrintButton = ({ data }) => {
 
       <div className="bg-white rounded-lg shadow-sm">
         <div className="bg-white p-8 rounded-b-xl">
-          <div className="flex lg:flex-row md:flex-row sm:flex-row flex-col justify-between invoice-btn">
+          <div className="flex justify-center invoice-btn">
             {isClient && (
               <PDFDownloadLink
                 document={
@@ -57,20 +51,13 @@ const DownloadPrintButton = ({ data }) => {
                 fileName={`Invoice-${data.invoice}.pdf`}
               >
                 {({ loading }) => (
-                  <Button variant="create">
-                    {loading ? "Generating..." : "Download PDF"}{" "}
-                    <Download className="ml-2" />
+                  <Button variant="create" className="px-8 py-3 text-base font-semibold">
+                    {loading ? "Generating..." : "Download Invoice"}{" "}
+                    <Download className="ml-2 w-5 h-5" />
                   </Button>
                 )}
               </PDFDownloadLink>
             )}
-
-            <Button onClick={handlePrintInvoice} variant="import">
-              {showingTranslateValue(dashboard?.print_button)}{" "}
-              <span className="ml-2">
-                <Printer />
-              </span>
-            </Button>
           </div>
         </div>
       </div>
