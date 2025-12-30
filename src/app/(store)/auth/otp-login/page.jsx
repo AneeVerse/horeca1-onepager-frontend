@@ -378,7 +378,7 @@ const OTPLogin = () => {
                 <button
                   type="submit"
                   disabled={loading || displayPhone.length < 10}
-                  className="w-full py-4 px-6 bg-primary-500 text-white font-semibold rounded-xl hover:bg-primary-600 focus:ring-4 focus:ring-primary-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
+                  className="w-full py-4 px-6 bg-[#018549] text-white font-semibold rounded-xl hover:bg-[#016d3b] focus:ring-4 focus:ring-[#018549]/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                 >
                   {loading ? (
                     <>
