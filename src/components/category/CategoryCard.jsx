@@ -50,27 +50,27 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
         onClick={() => handleSearch(id, title)}
         className="flex flex-col items-center justify-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group w-full"
       >
-        <div className="w-12 h-12 flex items-center justify-center bg-gray-50 rounded-full mb-2 group-hover:bg-white group-hover:shadow-sm transition-all overflow-hidden border border-gray-100">
+        <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center bg-slate-100 rounded-2xl mb-2 group-hover:bg-white group-hover:shadow-md transition-all overflow-hidden border border-gray-100">
           {icon ? (
             <Image
               src={icon}
-              width={40}
-              height={40}
+              width={100}
+              height={100}
               alt={title}
               className="object-contain p-1"
             />
           ) : (
             <Image
               src="https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
-              width={40}
-              height={40}
+              width={100}
+              height={100}
               alt="category"
               className="object-contain p-1 opacity-50"
             />
           )}
         </div>
 
-        <div className="text-[10px] sm:text-xs font-semibold text-gray-700 text-center leading-tight line-clamp-2 max-w-full group-hover:text-primary-600 transition-colors">
+        <div className="text-xs sm:text-sm font-medium text-gray-800 text-center leading-tight line-clamp-2 max-w-full group-hover:text-primary-600 transition-colors">
           {title}
         </div>
       </div>
