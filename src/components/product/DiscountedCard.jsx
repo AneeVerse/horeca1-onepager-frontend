@@ -30,31 +30,9 @@ const DiscountedCard = ({ product, attributes, currency }) => {
   // console.log('attributes in product cart',attributes)
 
   const handleAddItem = (p) => {
-    // Check if user is authenticated before adding to cart
-    const userInfoCookie = Cookies.get("userInfo");
-    if (!userInfoCookie) {
-      // Redirect to login page with current page as redirectUrl
-      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
-      return;
-    }
-
-    if (p.stock < 1) return notifyError("Insufficient stock!");
-
-    if (p?.variants?.length > 0) {
-      setModalOpen(!modalOpen);
-      return;
-    }
-    const { slug, variants, categories, description, ...updatedProduct } =
-      product;
-    const newItem = {
-      ...updatedProduct,
-      title: showingTranslateValue(p?.title),
-      id: p._id,
-      variant: p.prices,
-      price: p.prices.price,
-      originalPrice: product.prices?.originalPrice,
-    };
-    addItem(newItem);
+    // Always open quick view modal when clicking any Add button
+    setModalOpen(true);
+    return;
   };
 
   const handleModalOpen = (event, id) => {

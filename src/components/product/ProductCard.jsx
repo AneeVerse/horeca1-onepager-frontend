@@ -102,20 +102,9 @@ const ProductCard = ({ product, attributes }) => {
   };
 
   const handleAddItem = (p, quantity = 1, isBulkButton = false) => {
-    // Check if user is authenticated before adding to cart
-    const userInfoCookie = Cookies.get("userInfo");
-    if (!userInfoCookie) {
-      // Redirect to login page with current page as redirectUrl
-      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
-      return;
-    }
-
-    if (p.stock < 1) return notifyError("Insufficient stock!");
-
-    if (p?.variants?.length > 0) {
-      setModalOpen(!modalOpen);
-      return;
-    }
+    // Always open quick view modal when clicking any Add button
+    setModalOpen(true);
+    return;
     const { slug, variants, categories, description, ...updatedProduct } =
       product;
 
