@@ -7,10 +7,12 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useSetting } from "@context/SettingContext";
 import SearchSuggestions from "@components/search/SearchSuggestions";
 import { getSearchSuggestions } from "@services/SearchServices";
+import useUtilsFunction from "@hooks/useUtilsFunction";
 
 const SearchInput = () => {
   const router = useRouter();
   const { globalSetting } = useSetting();
+  const { showingTranslateValue } = useUtilsFunction();
   const currency = globalSetting?.default_currency || "₹";
   
   const [searchText, setSearchText] = useState("");
@@ -107,10 +109,9 @@ const SearchInput = () => {
         e.preventDefault();
         if (selectedIndex >= 0 && suggestions[selectedIndex]) {
           const product = suggestions[selectedIndex];
-          if (product?.slug) {
-            router.push(`/products/${product.slug}`);
-          } else if (product?._id) {
-            router.push(`/products/${product._id}`);
+          const productName = showingTranslateValue(product?.title) || product?.title || "";
+          if (productName) {
+            router.push(`/search?query=${encodeURIComponent(productName)}`, { scroll: true });
           }
           setShowSuggestions(false);
           setSearchText("");

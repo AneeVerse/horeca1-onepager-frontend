@@ -37,10 +37,9 @@ const SearchSuggestions = ({
   }
 
   const handleSuggestionClick = (product) => {
-    if (product?.slug) {
-      router.push(`/products/${product.slug}`);
-    } else if (product?._id) {
-      router.push(`/products/${product._id}`);
+    const productName = showingTranslateValue(product?.title) || product?.title || "";
+    if (productName) {
+      router.push(`/search?query=${encodeURIComponent(productName)}`, { scroll: true });
     }
     onSelect();
   };
