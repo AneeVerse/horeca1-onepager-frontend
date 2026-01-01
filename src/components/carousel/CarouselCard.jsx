@@ -47,7 +47,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.mobileImage}
                   alt={item.title || "Banner"}
-                  className="object-cover w-full h-[150px] lg:hidden"
+                  className="object-cover w-full h-[150px] lg:hidden scale-150"
                   priority
                 />
                 <Image
@@ -55,7 +55,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.image}
                   alt={item.title || "Banner"}
-                  className="object-cover w-full h-[280px] hidden lg:block"
+                  className="object-cover w-full h-[280px] hidden lg:block scale-150"
                   priority
                 />
               </>
@@ -65,7 +65,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                 height={280}
                 src={item.image}
                 alt={item.title || "Banner"}
-                className="object-cover w-full h-[150px] lg:h-[280px]"
+                className="object-cover w-full h-[150px] lg:h-[280px] scale-150"
                 priority
               />
             )}

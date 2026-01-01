@@ -1067,3 +1067,21 @@ p:not(:last-of-type) {
     width: 24px !important;
   }
 }
+
+/* Swiper pagination dot color and position overrides */
+.swiper-pagination {
+  bottom: 4px !important;
+  /* Move dots lower */
+}
+
+.swiper-pagination-bullet {
+  background: #6b7280 !important;
+  /* Darker gray for inactive dots */
+  opacity: 0.6 !important;
+}
+
+.swiper-pagination-bullet-active {
+  background: #ffffff !important;
+  /* Pure white for active dot */
+  opacity: 1 !important;
+}
