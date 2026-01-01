@@ -505,7 +505,7 @@ const OTPLogin = () => {
         {/* Help */}
         <p className="text-center text-gray-400 text-xs mt-6">
           Having trouble?{" "}
-          <a href="/contact" className="text-primary-300 hover:underline">Contact Support</a>
+          <a href="/contact-us" className="text-primary-300 hover:underline">Contact Support</a>
         </p>
       </div>
     </div>

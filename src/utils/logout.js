@@ -3,7 +3,6 @@
  * Clears all user data, cookies, cart, and session
  */
 import Cookies from "js-cookie";
-import { signOut } from "next-auth/react";
 
 export const handleLogout = async (options = {}) => {
   const { 
@@ -55,17 +54,26 @@ export const handleLogout = async (options = {}) => {
       }
     }
 
-    // Sign out from NextAuth
-    if (signOutNextAuth) {
-      if (redirect) {
-        await signOut({ callbackUrl: redirectUrl });
-      } else {
-        signOut({ redirect: false });
+    // Sign out from NextAuth (only if available)
+    let nextAuthRedirected = false;
+    if (signOutNextAuth && typeof window !== "undefined") {
+      try {
+        const { signOut } = await import("next-auth/react");
+        if (redirect) {
+          // Try NextAuth signOut with redirect
+          await signOut({ callbackUrl: redirectUrl });
+          nextAuthRedirected = true;
+        } else {
+          signOut({ redirect: false });
+        }
+      } catch (nextAuthError) {
+        // NextAuth might not be configured or available, continue with manual redirect
+        console.log("NextAuth signOut not available, using manual redirect");
       }
     }
 
-    // If redirect is needed but NextAuth signOut wasn't called, do manual redirect
-    if (redirect && !signOutNextAuth && typeof window !== "undefined") {
+    // If redirect is needed but NextAuth signOut didn't redirect, do manual redirect
+    if (redirect && !nextAuthRedirected && typeof window !== "undefined") {
       window.location.href = redirectUrl;
     }
   } catch (error) {

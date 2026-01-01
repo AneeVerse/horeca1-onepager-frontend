@@ -45,19 +45,19 @@ const Footer = ({ error, storeCustomizationSetting }) => {
             
             {/* Desktop: Tagline with left and right text on same row */}
             {isHomePage && (
-              <div className="hidden lg:flex lg:flex-row lg:items-center lg:justify-between lg:w-full lg:mt-4">
+              <div className="hidden lg:grid lg:grid-cols-3 lg:items-center lg:w-full lg:mt-4">
                 {/* Left Column - Copyright */}
-                <div className="text-left flex items-center">
+                <div className="text-left flex items-center justify-start">
                   <span className="text-white/70 text-xs font-light">© {new Date().getFullYear()} Horeca1. All rights reserved.</span>
                 </div>
 
                 {/* Center Column - Tagline */}
-                <div className="text-center flex items-center flex-1">
+                <div className="text-center flex items-center justify-center">
                   <p className="text-white/80 text-sm tracking-[0.25em] uppercase font-medium italic">Hospitality Supplies Made Easy</p>
                 </div>
 
                 {/* Right Column - Design Credit */}
-                <div className="text-right flex items-center">
+                <div className="text-right flex items-center justify-end">
                   <span className="text-white/70 text-xs text-white/50">
                     Designed & Managed by <span className="text-white/90 font-semibold italic">Aneeverse</span>
                   </span>
