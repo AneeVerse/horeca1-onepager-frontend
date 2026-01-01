@@ -88,7 +88,7 @@ const PromoTimerCard = () => {
                   <Moon className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-emerald-300" />
                 </div>
                 <div>
-                  <h2 className="text-[12px] lg:text-lg font-black text-white leading-tight tracking-[0.08em] uppercase drop-shadow-lg">Happy Hour</h2>
+                  <h2 className="text-[9px] lg:text-sm font-black text-white leading-tight tracking-[0.08em] drop-shadow-lg lg:max-w-none">HAPPY HOUR 6pm to 9am</h2>
                   <div className="flex items-center gap-1 mt-0.5">
                     <span className="relative flex h-1.5 w-1.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -107,7 +107,7 @@ const PromoTimerCard = () => {
             <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2.5 lg:p-6 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-3 lg:mt-8">
               <div className="flex items-center gap-1.5 mb-2 lg:mb-3">
                 <Zap className="w-3 h-3 text-emerald-300 animate-pulse" />
-                <p className="text-white/40 text-[8px] lg:text-[10px] font-black uppercase tracking-[0.3em] leading-none">ENDS IN</p>
+                <p className="text-white/40 text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">ENDS AT 9 am</p>
               </div>
               <div className="grid grid-cols-3 gap-2 lg:gap-4">
                 <div className="bg-white/5 rounded-lg py-2.5 lg:py-6 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
@@ -155,11 +155,7 @@ const PromoTimerCard = () => {
                 <Clock className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-emerald-300" />
               </div>
               <div>
-                <h2 className="text-[12px] lg:text-lg font-black text-white leading-tight tracking-[0.08em] uppercase drop-shadow-lg text-center sm:text-left">Happy Hour</h2>
-                <div className="flex items-center gap-1 mt-0.5">
-                  <div className="w-1.5 h-1.5 rounded-full bg-white/20 animate-pulse"></div>
-                  <span className="text-emerald-300/60 text-[8px] lg:text-[10px] font-black tracking-widest uppercase text-center sm:text-left">Starts 6PM</span>
-                </div>
+                <h2 className="text-[9px] lg:text-lg font-black text-white leading-tight tracking-[0.08em] drop-shadow-lg text-center sm:text-left lg:max-w-none">HAPPY HOUR 6pm to 9 am</h2>
               </div>
             </div>
             <div className="flex items-center justify-center bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 backdrop-blur-xl">
@@ -171,7 +167,7 @@ const PromoTimerCard = () => {
           <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2.5 lg:p-5 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-2 lg:mt-4">
             <div className="flex items-center justify-center gap-1.5 mb-2 lg:mb-3">
               <div className="h-[1px] w-6 bg-white/10"></div>
-              <p className="text-white/40 text-[8px] lg:text-[10px] font-black uppercase tracking-[0.3em] leading-none">COMING SOON</p>
+              <p className="text-white/40 text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">STARTS AT 6 pm</p>
               <div className="h-[1px] w-6 bg-white/10"></div>
             </div>
             <div className="grid grid-cols-3 gap-2 lg:gap-4">

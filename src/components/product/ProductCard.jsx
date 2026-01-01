@@ -466,7 +466,7 @@ const ProductCard = ({ product, attributes }) => {
 
               <div className="relative z-10 flex items-center gap-1.5 mb-1">
                 <span className="text-[8px] font-black text-[#018549] bg-emerald-300 px-1 py-0.5 rounded leading-none">PROMO</span>
-                <span className="text-[9px] font-black text-white/90 uppercase tracking-wider">Happy Hour</span>
+                <span className="text-[9px] font-black text-white/90 tracking-wider">HAPPY HOUR 6pm to 9am</span>
               </div>
 
               {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
