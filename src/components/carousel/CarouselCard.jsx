@@ -36,10 +36,10 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
     >
       {sliderData?.map((item, i) => (
         <SwiperSlide
-          className="h-[185px] lg:h-[280px] relative rounded-lg overflow-hidden dark:bg-zinc-900"
+          className="h-[140px] lg:h-[280px] relative rounded-xl lg:rounded-2xl overflow-hidden dark:bg-zinc-900"
           key={i + 1}
         >
-          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-[185px] lg:h-[280px]">
+          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-[140px] lg:h-[280px]">
             {item.mobileImage ? (
               <>
                 <Image
@@ -47,7 +47,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.mobileImage}
                   alt={item.title || "Banner"}
-                  className="object-cover w-full h-[185px] lg:hidden scale-[1.75]"
+                  className="object-contain w-full h-[140px] lg:hidden rounded-xl"
                   priority
                 />
                 <Image
@@ -55,7 +55,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.image}
                   alt={item.title || "Banner"}
-                  className="object-cover w-full h-[280px] hidden lg:block scale-150"
+                  className="object-cover w-full h-[280px] hidden lg:block rounded-2xl"
                   priority
                 />
               </>
@@ -65,7 +65,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                 height={280}
                 src={item.image}
                 alt={item.title || "Banner"}
-                className="object-cover w-full h-[185px] lg:h-[280px] scale-[1.75] lg:scale-150"
+                className="object-cover w-full h-[185px] lg:h-[280px]"
                 priority
               />
             )}

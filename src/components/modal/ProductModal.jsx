@@ -186,7 +186,7 @@ const ProductModal = ({
 
                                 <h4 className="relative z-10 text-sm font-semibold text-white mb-2 flex items-center gap-2">
                                     <span className="text-[10px] font-black text-[#018549] bg-emerald-300 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(110,231,183,0.3)]">PROMO</span>
-                                    <span className="tracking-wide text-xs font-black">HAPPY HOUR 6pm to 9am</span>
+                                    <span className="tracking-wide text-xs font-black">DAILY DISCOUNTS 6 Pm - 9 Am</span>
                                 </h4>
                                 {product?.promoPricing?.singleUnit > 0 && (
                                     <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-2">

@@ -13,8 +13,8 @@ const MainCarousel = async () => {
       info: "",
       buttonName: "",
       url: "/",
-      image: "/banner1.png",
-      mobileImage: "/banner1.png",
+      image: "/001a.png",
+      mobileImage: "/001a.png",
     },
     {
       id: 2,
@@ -22,8 +22,8 @@ const MainCarousel = async () => {
       info: "",
       buttonName: "",
       url: "/",
-      image: "/banner2.png",
-      mobileImage: "/banner2.png",
+      image: "/001b.png",
+      mobileImage: "/001b.png",
     },
   ];
 

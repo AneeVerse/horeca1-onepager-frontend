@@ -71,7 +71,7 @@ const PromoTimerCard = () => {
   if (isPromoTime) {
     // Show Promo Active Card - Master Designer Brand Teal Design
     return (
-      <div className="w-full h-[185px] lg:h-[280px] flex">
+      <div className="w-full h-[140px] lg:h-[280px] flex">
         <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] w-full rounded-2xl shadow-[0_20px_50px_rgba(2,81,85,0.25)] overflow-hidden relative flex flex-col border border-white/10 group transition-all duration-700">
           {/* Professional Color Grading Elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-emerald-400/10 transition-all duration-1000"></div>
@@ -80,7 +80,7 @@ const PromoTimerCard = () => {
           {/* Elegant Mesh Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }}></div>
 
-          <div className="relative z-10 p-3 lg:p-6 flex flex-col justify-between h-full">
+          <div className="relative z-10 p-3 lg:p-6 px-5 lg:px-6 flex flex-col h-full">
             {/* Title Section - Premium Brand Hierarchy */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -88,7 +88,7 @@ const PromoTimerCard = () => {
                   <Moon className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-emerald-300" />
                 </div>
                 <div>
-                  <h2 className="text-[9px] lg:text-sm font-black text-white leading-tight tracking-[0.08em] drop-shadow-lg lg:max-w-none">HAPPY HOUR 6pm to 9am</h2>
+                  <h2 className="text-[15px] lg:text-[24px] font-black text-white leading-tight tracking-[0.08em] drop-shadow-lg lg:max-w-none">DAILY DISCOUNTS 6 Pm - 9 Am</h2>
                   <div className="flex items-center gap-1 mt-0.5">
                     <span className="relative flex h-1.5 w-1.5">
                       <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
@@ -98,16 +98,13 @@ const PromoTimerCard = () => {
                   </div>
                 </div>
               </div>
-              <div className="flex items-center justify-center bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 backdrop-blur-xl">
-                <span className="text-white font-bold text-[9px] lg:text-[11px] tracking-widest leading-none">6PM - 9AM</span>
-              </div>
             </div>
 
-            {/* Timer Section - High-End "Frosted" Finish */}
-            <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2.5 lg:p-6 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-3 lg:mt-8">
-              <div className="flex items-center gap-1.5 mb-2 lg:mb-3">
+            {/* Timer Section - Minimalist View */}
+            <div className="relative group/timer mt-3 lg:mt-8">
+              <div className="flex items-center gap-1.5 mb-3 lg:mb-4 px-1">
                 <Zap className="w-3 h-3 text-emerald-300 animate-pulse" />
-                <p className="text-white/40 text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">ENDS AT 9 am</p>
+                <p className="text-white/40 text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">END IN</p>
               </div>
               <div className="grid grid-cols-3 gap-2 lg:gap-4">
                 <div className="bg-white/5 rounded-lg py-2.5 lg:py-6 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
@@ -138,7 +135,7 @@ const PromoTimerCard = () => {
 
   // Show "Promo Starting Soon" Card - Brand Teal Design
   return (
-    <div className="w-full h-[185px] lg:h-[280px] flex">
+    <div className="w-full h-[140px] lg:h-[280px] flex">
       <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] w-full rounded-2xl shadow-[0_20px_50px_rgba(2,81,85,0.25)] overflow-hidden relative flex flex-col border border-white/10 group transition-all duration-700">
         {/* Professional Color Grading Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-emerald-400/10 transition-all duration-1000"></div>
@@ -147,7 +144,7 @@ const PromoTimerCard = () => {
         {/* Elegant Mesh Background Pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }}></div>
 
-        <div className="relative z-10 p-3 lg:p-6 flex flex-col justify-between h-full">
+        <div className="relative z-10 p-3 lg:p-6 px-5 lg:px-6 flex flex-col h-full">
           {/* Title Section - Premium Brand Hierarchy */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -155,19 +152,16 @@ const PromoTimerCard = () => {
                 <Clock className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-emerald-300" />
               </div>
               <div>
-                <h2 className="text-[9px] lg:text-lg font-black text-white leading-tight tracking-[0.08em] drop-shadow-lg text-center sm:text-left lg:max-w-none">HAPPY HOUR 6pm to 9 am</h2>
+                <h2 className="text-[16px] lg:text-[24px] font-black text-white leading-tight tracking-[0.08em] drop-shadow-lg text-center sm:text-left lg:max-w-none">DAILY DISCOUNTS 6 Pm - 9 Am</h2>
               </div>
-            </div>
-            <div className="flex items-center justify-center bg-white/10 px-2.5 py-1 rounded-lg border border-white/10 backdrop-blur-xl">
-              <span className="text-white font-bold text-[9px] lg:text-[11px] tracking-widest uppercase opacity-60 leading-none">Upcoming</span>
             </div>
           </div>
 
-          {/* Timer Section - High-End "Frosted" Finish */}
-          <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2.5 lg:p-5 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-2 lg:mt-4">
-            <div className="flex items-center justify-center gap-1.5 mb-2 lg:mb-3">
+          {/* Timer Section - Minimalist View */}
+          <div className="relative group/timer mt-3 lg:mt-8">
+            <div className="flex items-center justify-center gap-1.5 mb-3 lg:mb-4 px-1">
               <div className="h-[1px] w-6 bg-white/10"></div>
-              <p className="text-white/40 text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">STARTS AT 6 pm</p>
+              <p className="text-[#5be3b1] text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">START IN</p>
               <div className="h-[1px] w-6 bg-white/10"></div>
             </div>
             <div className="grid grid-cols-3 gap-2 lg:gap-4">
@@ -198,4 +192,3 @@ const PromoTimerCard = () => {
 };
 
 export default PromoTimerCard;
-
