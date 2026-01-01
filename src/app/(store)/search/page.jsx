@@ -15,7 +15,7 @@ export async function generateMetadata({ searchParams }) {
 
   const { products, error } = await getShowingStoreProducts({
     category: _id ? _id : "",
-    title: query ? encodeURIComponent(query) : "",
+    title: query ? query : "", // Don't double-encode, query is already URL decoded by Next.js
   });
 
   const product = products[0];
@@ -35,7 +35,7 @@ const Search = async ({ searchParams }) => {
 
   const { products, error } = await getShowingStoreProducts({
     category: _id ? _id : "",
-    title: query ? encodeURIComponent(query) : "",
+    title: query ? query : "", // Don't double-encode, query is already URL decoded by Next.js
   });
   const { attributes } = await getShowingAttributes();
   const { categories: allCategories } = await getShowingCategory();

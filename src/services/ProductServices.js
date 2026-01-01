@@ -9,8 +9,14 @@ const getShowingStoreProducts = async ({
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000); // 15 second timeout for cold starts
     
+    // Properly encode the title parameter
+    const params = new URLSearchParams();
+    if (category) params.set("category", category);
+    if (title) params.set("title", title);
+    if (slug) params.set("slug", slug);
+    
     const response = await fetch(
-      `${baseURL}/products/store?category=${category}&title=${title}&slug=${slug}`,
+      `${baseURL}/products/store?${params.toString()}`,
       {
         signal: controller.signal,
         next: {
