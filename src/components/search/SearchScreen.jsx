@@ -3,7 +3,8 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import dynamic from "next/dynamic";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { X } from "lucide-react";
 
 //internal import
 import useFilter from "@hooks/useFilter";
@@ -11,14 +12,95 @@ import ProductCard from "@components/product/ProductCard";
 import { Button } from "@components/ui/button";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
-const SearchScreen = ({ products, attributes, categories, currency }) => {
+const SearchScreen = ({ products, attributes, categories, currency, initialFilters = {} }) => {
   const [visibleProduct, setVisibleProduct] = useState(18);
   const [mounted, setMounted] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { showingTranslateValue } = useUtilsFunction();
+  
   useEffect(() => setMounted(true), []);
 
-  const { setSortedField, productData } = useFilter(products);
+  // Get filter values from URL params or initialFilters prop
+  const [filters, setFilters] = useState({
+    priceMin: searchParams.get("priceMin") || initialFilters.priceMin || "",
+    priceMax: searchParams.get("priceMax") || initialFilters.priceMax || "",
+    selectedCategories: searchParams.get("categories")?.split(",").filter(Boolean) || initialFilters.selectedCategories || [],
+    selectedBrands: searchParams.get("brands")?.split(",").filter(Boolean) || initialFilters.selectedBrands || [],
+    inStock: searchParams.get("inStock") ? searchParams.get("inStock") === "true" : (initialFilters.inStock !== undefined ? initialFilters.inStock : null),
+    sortBy: searchParams.get("sortBy") || initialFilters.sortBy || "",
+  });
+
+  // Extract unique brands from products
+  const brands = Array.from(
+    new Set(
+      products
+        ?.map((p) => p.brand)
+        .filter(Boolean)
+    )
+  );
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    
+    // Update URL with filter params
+    const params = new URLSearchParams();
+    
+    if (searchParams.get("query")) {
+      params.set("query", searchParams.get("query"));
+    }
+    if (searchParams.get("_id")) {
+      params.set("_id", searchParams.get("_id"));
+    }
+    
+    if (newFilters.priceMin) params.set("priceMin", newFilters.priceMin);
+    if (newFilters.priceMax) params.set("priceMax", newFilters.priceMax);
+    if (newFilters.selectedCategories.length > 0) {
+      params.set("categories", newFilters.selectedCategories.join(","));
+    }
+    if (newFilters.selectedBrands.length > 0) {
+      params.set("brands", newFilters.selectedBrands.join(","));
+    }
+    if (newFilters.inStock !== null) {
+      params.set("inStock", newFilters.inStock.toString());
+    }
+    if (newFilters.sortBy) {
+      params.set("sortBy", newFilters.sortBy);
+    }
+    
+    router.push(`/search?${params.toString()}`, { scroll: false });
+  };
+
+  const removeFilter = (filterType, value = null) => {
+    const updated = { ...filters };
+    
+    switch (filterType) {
+      case "priceMin":
+        updated.priceMin = "";
+        break;
+      case "priceMax":
+        updated.priceMax = "";
+        break;
+      case "category":
+        updated.selectedCategories = updated.selectedCategories.filter((id) => id !== value);
+        break;
+      case "brand":
+        updated.selectedBrands = updated.selectedBrands.filter((b) => b !== value);
+        break;
+      case "inStock":
+        updated.inStock = null;
+        break;
+      case "sortBy":
+        updated.sortBy = "";
+        break;
+      default:
+        break;
+    }
+    
+    handleFilterChange(updated);
+  };
+
+  const { setSortedField, productData } = useFilter(products, filters);
   if (!mounted) return null; // or a skeleton loader
 
   const categoryList = categories?.[0]?.children || [];
@@ -32,6 +114,38 @@ const SearchScreen = ({ products, attributes, categories, currency }) => {
       router.push(`/search?category=${category_name}&_id=${categoryId}`);
     }
   };
+
+  // Get active filter chips
+  const activeFilters = [];
+  if (filters.priceMin) {
+    activeFilters.push({ type: "priceMin", label: `Min: ${currency}${filters.priceMin}`, value: filters.priceMin });
+  }
+  if (filters.priceMax) {
+    activeFilters.push({ type: "priceMax", label: `Max: ${currency}${filters.priceMax}`, value: filters.priceMax });
+  }
+  filters.selectedCategories.forEach((catId) => {
+    const category = categoryList.find((c) => c._id === catId);
+    if (category) {
+      activeFilters.push({ type: "category", label: showingTranslateValue(category.name), value: catId });
+    }
+  });
+  filters.selectedBrands.forEach((brand) => {
+    activeFilters.push({ type: "brand", label: brand, value: brand });
+  });
+  if (filters.inStock !== null) {
+    activeFilters.push({ type: "inStock", label: filters.inStock ? "In Stock" : "Out of Stock", value: filters.inStock });
+  }
+  if (filters.sortBy) {
+    const sortLabels = {
+      "price-low": "Price: Low to High",
+      "price-high": "Price: High to Low",
+      "name-asc": "Name: A to Z",
+      "name-desc": "Name: Z to A",
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+    };
+    activeFilters.push({ type: "sortBy", label: sortLabels[filters.sortBy] || filters.sortBy, value: filters.sortBy });
+  }
 
   return (
     <div className="mx-auto max-w-screen-2xl px-3 sm:px-6 lg:px-10">
@@ -87,6 +201,27 @@ const SearchScreen = ({ products, attributes, categories, currency }) => {
           </div>
 
           <div className="flex-1 min-w-0">
+            {/* Active Filter Chips */}
+            {activeFilters.length > 0 && (
+              <div className="flex flex-wrap gap-2 mb-4">
+                {activeFilters.map((filter, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-primary-100 text-primary-800 text-xs font-medium rounded-full"
+                  >
+                    {filter.label}
+                    <button
+                      onClick={() => removeFilter(filter.type, filter.value)}
+                      className="ml-1 hover:text-primary-900"
+                      aria-label={`Remove ${filter.label} filter`}
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
+
             {productData?.length === 0 ? (
               <div className="mx-auto p-5 my-5">
                 <Image
@@ -106,22 +241,6 @@ const SearchScreen = ({ products, attributes, categories, currency }) => {
                   Total <span className="font-bold text-primary-600">{productData?.length}</span>{" "}
                   Items Found
                 </h6>
-                <span className="text-[10px]">
-                  <select
-                    onChange={(e) => setSortedField(e.target.value)}
-                    className="py-1 px-2 text-[10px] font-medium block w-full rounded border border-primary-300 bg-white text-gray-700 pr-5 cursor-pointer focus:ring-1 focus:ring-primary-500 focus:border-primary-500 outline-none transition-colors hover:border-primary-400"
-                  >
-                    <option className="px-2" value="All" defaultValue hidden>
-                      Sort By
-                    </option>
-                    <option className="px-2" value="Low">
-                      Low to High
-                    </option>
-                    <option className="px-2" value="High">
-                      High to Low
-                    </option>
-                  </select>
-                </span>
               </div>
             )}
 

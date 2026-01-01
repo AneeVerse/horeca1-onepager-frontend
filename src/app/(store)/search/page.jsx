@@ -31,20 +31,26 @@ export async function generateMetadata({ searchParams }) {
 }
 
 const Search = async ({ searchParams }) => {
-  //   const searchParams = useSearchParams();
-
-  const { _id, query } = await searchParams;
+  const { _id, query, priceMin, priceMax, categories, brands, inStock, sortBy } = await searchParams;
 
   const { products, error } = await getShowingStoreProducts({
     category: _id ? _id : "",
     title: query ? encodeURIComponent(query) : "",
   });
   const { attributes } = await getShowingAttributes();
-  const { categories } = await getShowingCategory();
+  const { categories: allCategories } = await getShowingCategory();
   const { globalSetting } = await getGlobalSetting();
   const currency = globalSetting?.default_currency || "₹";
 
-  //   console.log("searchParams", searchParams, "query", query, "_id", _id);
+  // Parse filter params from URL
+  const filterParams = {
+    priceMin: priceMin || "",
+    priceMax: priceMax || "",
+    selectedCategories: categories ? categories.split(",").filter(Boolean) : [],
+    selectedBrands: brands ? brands.split(",").filter(Boolean) : [],
+    inStock: inStock ? inStock === "true" : null,
+    sortBy: sortBy || "",
+  };
 
   return (
     <>
@@ -52,8 +58,9 @@ const Search = async ({ searchParams }) => {
       <SearchScreen
         products={products}
         attributes={attributes}
-        categories={categories}
+        categories={allCategories}
         currency={currency}
+        initialFilters={filterParams}
       />
     </>
   );

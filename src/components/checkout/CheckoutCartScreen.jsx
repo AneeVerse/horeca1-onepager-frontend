@@ -5,7 +5,10 @@ import { IoAlertCircleOutline, IoReturnUpBackOutline } from "react-icons/io5";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useContext } from "react";
 import { getUserSession } from "@lib/auth-client";
+import { SidebarContext } from "@context/SidebarContext";
 
 //internal import
 
@@ -17,6 +20,8 @@ import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 
 const CheckoutCartScreen = () => {
+  const router = useRouter();
+  const { setCartDrawerOpen } = useContext(SidebarContext);
   const userInfo = getUserSession();
   const { storeCustomization } = useSetting();
   const { showingTranslateValue } = useUtilsFunction();
@@ -34,6 +39,10 @@ const CheckoutCartScreen = () => {
     shippingCost,
   } = useCheckoutSubmit({});
   const { currency } = useUtilsFunction();
+  
+  const closeCartDrawer = () => {
+    setCartDrawerOpen(false);
+  };
 
   const checkout = storeCustomization?.checkout;
 
@@ -128,6 +137,15 @@ const CheckoutCartScreen = () => {
                     No items added in your cart. Please add product to your cart
                     list.
                   </p>
+                  <button
+                    onClick={() => {
+                      closeCartDrawer();
+                      router.push("/search");
+                    }}
+                    className="mt-6 px-6 py-2.5 bg-primary-600 text-white font-semibold rounded-md hover:bg-primary-700 transition-colors"
+                  >
+                    Shop Now
+                  </button>
                 </div>
               </div>
             )}

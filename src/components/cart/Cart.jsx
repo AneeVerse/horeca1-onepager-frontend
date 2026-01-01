@@ -121,6 +121,15 @@ const Cart = ({ setOpen, currency }) => {
                   No items added in your cart. Please add product to your cart
                   list.
                 </p>
+                <button
+                  onClick={() => {
+                    setOpen(false);
+                    router.push("/search");
+                  }}
+                  className="mt-6 px-6 py-2.5 bg-primary-600 text-white font-semibold rounded-md hover:bg-primary-700 transition-colors"
+                >
+                  Shop Now
+                </button>
               </div>
             </div>
           )}

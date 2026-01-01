@@ -2,22 +2,11 @@ import { Fragment } from "react";
 import {
   Dialog,
   DialogPanel,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanels,
-  TabPanel,
   Transition,
   TransitionChild,
 } from "@headlessui/react";
-import Link from "next/link";
-import { pages } from "@utils/data";
 import { X } from "lucide-react";
 import Category from "@components/category/Category";
-
-function classNames(...classes) {
-  return classes.filter(Boolean).join(" ");
-}
 
 const PagesDrawer = ({ open, setOpen, categories, categoryError }) => {
   return (
@@ -47,16 +36,8 @@ const PagesDrawer = ({ open, setOpen, categories, categoryError }) => {
             leaveTo="translate-y-full"
           >
             <DialogPanel className="relative flex w-full max-h-[85vh] flex-col overflow-y-auto bg-white pb-12 shadow-xl rounded-t-2xl">
-              {/* Header */}
-              <div className="flex px-4 pb-2 pt-5 justify-between items-center sticky top-0 bg-white z-10 border-b border-gray-100">
-                <Link href="/" className="flex flex-shrink-0 items-center" onClick={() => setOpen(false)}>
-                  <img
-                    className="h-8 w-auto px-2"
-                    src="https://res.cloudinary.com/dezs8ma9n/image/upload/v1766484997/horecaLogo_hirtnv.png"
-                    alt="Horeca1"
-                  />
-                </Link>
-
+              {/* Header - Only X button */}
+              <div className="flex px-4 pb-2 pt-5 justify-end items-center sticky top-0 bg-white z-10 border-b border-gray-100">
                 <button
                   type="button"
                   className="inline-flex items-center justify-center rounded-full p-2 text-gray-400 hover:bg-gray-100 transition-colors"
@@ -67,73 +48,16 @@ const PagesDrawer = ({ open, setOpen, categories, categoryError }) => {
                 </button>
               </div>
 
-              {/* Tabs */}
-              <TabGroup as="div" className="flex flex-col h-full">
-                {/* Tab list */}
-                <div className="border-b border-gray-100">
-                  <TabList className="flex space-x-8 px-4 justify-center">
-                    <Tab
-                      className={({ selected }) =>
-                        classNames(
-                          selected
-                            ? "border-primary-600 text-primary-600"
-                            : "border-transparent text-gray-500",
-                          "whitespace-nowrap border-b-2 px-6 py-4 text-base font-semibold focus:outline-none transition-colors"
-                        )
-                      }
-                    >
-                      Categories
-                    </Tab>
-                    <Tab
-                      className={({ selected }) =>
-                        classNames(
-                          selected
-                            ? "border-primary-600 text-primary-600"
-                            : "border-transparent text-gray-500",
-                          "whitespace-nowrap border-b-2 px-6 py-4 text-base font-semibold focus:outline-none transition-colors"
-                        )
-                      }
-                    >
-                      More
-                    </Tab>
-                  </TabList>
+              {/* Category Icons */}
+              <div className="flex-1 overflow-y-auto px-2 py-4">
+                <div className="rounded-md">
+                  <Category
+                    categories={categories}
+                    categoryError={categoryError}
+                    onClose={() => setOpen(false)}
+                  />
                 </div>
-
-                {/* Tab panels */}
-                <TabPanels className="flex-1 overflow-y-auto px-2 py-4">
-                  {/* Category Panel */}
-                  <TabPanel className="focus:outline-none">
-                    <div className="space-y-6">
-                      <div className="rounded-md">
-                        <Category
-                          categories={categories}
-                          categoryError={categoryError}
-                          onClose={() => setOpen(false)}
-                        />
-                      </div>
-                    </div>
-                  </TabPanel>
-
-                  {/* Pages Panel */}
-                  <TabPanel className="focus:outline-none">
-                    <div className="grid grid-cols-2 gap-3 px-2">
-                      {pages.map((page) => (
-                        <Link
-                          key={page.title}
-                          href={page.href}
-                          onClick={() => setOpen(false)}
-                          className="flex flex-col items-center justify-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
-                        >
-                          <page.icon className="w-6 h-6 text-gray-600 group-hover:text-primary-600 mb-2 transition-colors" />
-                          <span className="text-xs font-semibold text-gray-700 text-center">
-                            {page.title}
-                          </span>
-                        </Link>
-                      ))}
-                    </div>
-                  </TabPanel>
-                </TabPanels>
-              </TabGroup>
+              </div>
             </DialogPanel>
           </TransitionChild>
         </div>
