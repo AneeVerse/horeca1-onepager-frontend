@@ -11,35 +11,36 @@ import "swiper/css/navigation";
 
 const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
   return (
-    <Swiper
-      spaceBetween={30}
-      centeredSlides={true}
-      autoplay={{
-        delay: 2000,
-        disableOnInteraction: false,
-      }}
-      loop={true}
-      pagination={
-        (storeCustomizationSetting?.slider?.bottom_dots ||
-          storeCustomizationSetting?.slider?.both_slider) && {
-          clickable: true,
+    <div className="w-full">
+      <Swiper
+        spaceBetween={30}
+        centeredSlides={true}
+        autoplay={{
+          delay: 2000,
+          disableOnInteraction: false,
+        }}
+        loop={true}
+        pagination={
+          (storeCustomizationSetting?.slider?.bottom_dots ||
+            storeCustomizationSetting?.slider?.both_slider) && {
+            clickable: true,
+          }
         }
-      }
-      navigation={
-        (storeCustomizationSetting?.slider?.left_right_arrow ||
-          storeCustomizationSetting?.slider?.both_slider) && {
-          clickable: true,
+        navigation={
+          (storeCustomizationSetting?.slider?.left_right_arrow ||
+            storeCustomizationSetting?.slider?.both_slider) && {
+            clickable: true,
+          }
         }
-      }
-      modules={[Autoplay, Pagination, Navigation]}
-      className="mySwiper"
-    >
+        modules={[Autoplay, Pagination, Navigation]}
+        className="mySwiper"
+      >
       {sliderData?.map((item, i) => (
         <SwiperSlide
-          className="h-[140px] lg:h-[280px] relative rounded-xl lg:rounded-2xl overflow-hidden dark:bg-zinc-900"
+          className="h-[140px] lg:h-[280px] relative rounded-2xl overflow-hidden dark:bg-zinc-900"
           key={i + 1}
         >
-          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-[140px] lg:h-[280px]">
+          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-[140px] lg:h-[280px] rounded-2xl overflow-hidden">
             {item.mobileImage ? (
               <>
                 <Image
@@ -47,7 +48,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.mobileImage}
                   alt={item.title || "Banner"}
-                  className="object-contain w-full h-[140px] lg:hidden rounded-xl"
+                  className="object-cover w-full h-[140px] lg:hidden rounded-2xl"
                   priority
                 />
                 <Image
@@ -65,7 +66,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                 height={280}
                 src={item.image}
                 alt={item.title || "Banner"}
-                className="object-cover w-full h-[185px] lg:h-[280px]"
+                className="object-cover w-full h-[140px] lg:h-[280px] rounded-2xl"
                 priority
               />
             )}
@@ -96,7 +97,8 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
           )}
         </SwiperSlide>
       ))}
-    </Swiper>
+      </Swiper>
+    </div>
   );
 };
 
