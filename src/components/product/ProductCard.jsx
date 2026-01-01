@@ -214,6 +214,7 @@ const ProductCard = ({ product, attributes }) => {
       e.stopPropagation();
     }
     if (cartItem.quantity <= 1) {
+      // Remove item when quantity reaches 0
       removeItem(cartItem.id);
       return;
     }
@@ -267,9 +268,20 @@ const ProductCard = ({ product, attributes }) => {
     const inputValue = quantityInputs[cartItem.id] || cartItem.quantity.toString();
     const newQuantity = parseInt(inputValue, 10);
 
-    if (isNaN(newQuantity) || newQuantity < 1) {
+    if (isNaN(newQuantity) || newQuantity < 0) {
       // Reset to current quantity if invalid
       setQuantityInputs(prev => ({ ...prev, [cartItem.id]: cartItem.quantity.toString() }));
+      return;
+    }
+    
+    // If quantity is 0, remove item
+    if (newQuantity === 0) {
+      removeItem(cartItem.id);
+      setQuantityInputs(prev => {
+        const updated = { ...prev };
+        delete updated[cartItem.id];
+        return updated;
+      });
       return;
     }
     if (newQuantity === cartItem.quantity) {
@@ -455,7 +467,6 @@ const ProductCard = ({ product, attributes }) => {
 
               <div className="relative z-10 flex items-center gap-1.5 mb-1">
                 <span className="text-[8px] font-black text-[#018549] bg-emerald-300 px-1 py-0.5 rounded leading-none">PROMO</span>
-                <span className="text-[9px] font-black text-white/90 tracking-wider">DAILY DISCOUNTS 6 Pm - 9 Am</span>
               </div>
 
               {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
@@ -574,17 +585,28 @@ const ProductCard = ({ product, attributes }) => {
                   </div>
                 ) : null;
               })() : (
-                <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleAddItem(product, 1, false);
-                  }}
-                  className="flex items-center gap-0.5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-transparent bg-[#018549] text-white hover:bg-[#016d3b] flex-shrink-0"
-                >
-                  ADD
-                  <span className="text-white text-xs sm:text-sm leading-none ml-1">+</span>
-                </button>
+                (() => {
+                  // Determine minimum quantity from bulk pricing or default to 1
+                  const minQty = product?.bulkPricing?.bulkRate1?.quantity || 
+                                 product?.promoPricing?.bulkRate1?.quantity || 
+                                 1;
+                  return (
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddItem(product, minQty, false);
+                      }}
+                      className="flex flex-col items-center gap-0.5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-primary-300 bg-white hover:bg-gray-50 flex-shrink-0"
+                    >
+                      <div className="flex items-center gap-0.5 text-primary-600">
+                        ADD
+                        <span className="text-primary-600 text-xs sm:text-sm leading-none ml-1">+</span>
+                      </div>
+                      <span className="text-[9px] text-gray-500 font-normal">Min Qty {minQty}</span>
+                    </button>
+                  );
+                })()
               )}
             </div>
           </div>

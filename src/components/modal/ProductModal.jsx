@@ -107,6 +107,35 @@ const ProductModal = ({
         return null;
     };
 
+    // Calculate savings for promo pricing tier - uses promo single unit price
+    const calculatePromoSavingsForTier = (tierQuantity, bulkPricePerUnit, currentQuantity) => {
+        if (!product || tierQuantity < 1 || !bulkPricePerUnit || currentQuantity < tierQuantity) {
+            return null;
+        }
+        
+        // Get promo single unit price for comparison
+        const promoSingleUnitPrice = product?.promoPricing?.singleUnit || 0;
+        
+        // If no promo single unit price, fall back to regular price
+        const singleUnitPrice = promoSingleUnitPrice > 0 ? promoSingleUnitPrice : (price || product?.prices?.price || originalPrice || product?.prices?.originalPrice || 0);
+        
+        // Calculate savings: (single price - bulk price) × current quantity
+        if (bulkPricePerUnit < singleUnitPrice) {
+            const savingsPerUnit = singleUnitPrice - bulkPricePerUnit;
+            const totalSavings = savingsPerUnit * currentQuantity;
+            
+            if (totalSavings > 0) {
+                return {
+                    amount: getNumberTwo(totalSavings),
+                    quantity: currentQuantity,
+                    unit: product?.unit || "pcs"
+                };
+            }
+        }
+        
+        return null;
+    };
+
     // Determine the highest active bulk pricing tier based on current quantity
     const determineActiveBulkTier = (bulkPricing, currentQuantity) => {
         if (!bulkPricing || !currentQuantity) return null;
@@ -538,7 +567,6 @@ const ProductModal = ({
 
                                 <h4 className="relative z-10 text-sm font-semibold text-white mb-2 flex items-center gap-2">
                                     <span className="text-[10px] font-black text-[#018549] bg-emerald-300 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(110,231,183,0.3)]">PROMO</span>
-                                    <span className="tracking-wide text-xs font-black">DAILY DISCOUNTS 6 Pm - 9 Am</span>
                                 </h4>
                                 {product?.promoPricing?.singleUnit > 0 && (
                                     <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-2">
@@ -601,8 +629,8 @@ const ProductModal = ({
                                     const isPromoTier2Active = product?.promoPricing?.bulkRate2?.quantity > 0 && 
                                         item >= product.promoPricing.bulkRate2.quantity;
                                     
-                                    const promoTier1Savings = isPromoTier1Active ? calculateSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
-                                    const promoTier2Savings = isPromoTier2Active ? calculateSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
+                                    const promoTier1Savings = isPromoTier1Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
+                                    const promoTier2Savings = isPromoTier2Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
                                     
                                     // Scenario 2: Tier 2 active - hide entire section, show only tier 2 savings banner
                                     if (isPromoTier2Active && promoTier2Savings) {

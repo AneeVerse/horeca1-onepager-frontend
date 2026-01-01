@@ -80,7 +80,7 @@ const PromoTimerCard = () => {
           {/* Elegant Mesh Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }}></div>
 
-          <div className="relative z-10 p-3 lg:p-6 px-5 lg:px-6 flex flex-col h-full">
+          <div className="relative z-10 px-4 py-3 lg:px-6 lg:py-6 flex flex-col h-full">
             {/* Title Section - Premium Brand Hierarchy */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -102,24 +102,24 @@ const PromoTimerCard = () => {
 
             {/* Timer Section - Minimalist View */}
             <div className="relative group/timer mt-3 lg:mt-8">
-              <div className="flex items-center gap-1.5 mb-3 lg:mb-4 px-1">
+              <div className="flex items-center gap-1.5 mb-3 lg:mb-4 px-2">
                 <Zap className="w-3 h-3 text-emerald-300 animate-pulse" />
                 <p className="text-white/40 text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">END IN</p>
               </div>
               <div className="grid grid-cols-3 gap-2 lg:gap-4">
-                <div className="bg-white/5 rounded-lg py-2.5 lg:py-6 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <div className="bg-white/5 rounded-lg py-2.5 lg:py-6 px-2 lg:px-3 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                   <span className="text-xl lg:text-4xl font-black text-white block leading-none font-mono tracking-tighter drop-shadow-md">
                     {timeRemaining.hours.toString().padStart(2, "0")}
                   </span>
                   <p className="text-white/30 text-[8px] lg:text-[10px] mt-1 lg:mt-2 font-black leading-none uppercase tracking-widest text-center">Hours</p>
                 </div>
-                <div className="bg-white/5 rounded-lg py-2.5 lg:py-6 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <div className="bg-white/5 rounded-lg py-2.5 lg:py-6 px-2 lg:px-3 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                   <span className="text-xl lg:text-4xl font-black text-white block leading-none font-mono tracking-tighter drop-shadow-md">
                     {timeRemaining.minutes.toString().padStart(2, "0")}
                   </span>
                   <p className="text-white/30 text-[8px] lg:text-[10px] mt-1 lg:mt-2 font-black leading-none uppercase tracking-widest text-center">Min</p>
                 </div>
-                <div className="bg-white/20 rounded-lg py-1.5 lg:py-5 px-0.5 text-center border border-emerald-400/30 shadow-lg transition-all group-hover/timer:bg-white/30">
+                <div className="bg-white/20 rounded-lg py-1.5 lg:py-5 px-2 lg:px-3 text-center border border-emerald-400/30 shadow-lg transition-all group-hover/timer:bg-white/30">
                   <span className="text-xl lg:text-3xl font-black text-emerald-300 block leading-none font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(110,231,183,0.4)]">
                     {timeRemaining.seconds.toString().padStart(2, "0")}
                   </span>
@@ -144,7 +144,7 @@ const PromoTimerCard = () => {
         {/* Elegant Mesh Background Pattern */}
         <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }}></div>
 
-        <div className="relative z-10 p-3 lg:p-6 px-5 lg:px-6 flex flex-col h-full">
+        <div className="relative z-10 px-4 py-3 lg:px-6 lg:py-6 flex flex-col h-full">
           {/* Title Section - Premium Brand Hierarchy */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -159,25 +159,25 @@ const PromoTimerCard = () => {
 
           {/* Timer Section - Minimalist View */}
           <div className="relative group/timer mt-3 lg:mt-8">
-            <div className="flex items-center justify-center gap-1.5 mb-3 lg:mb-4 px-1">
+            <div className="flex items-center justify-center gap-1.5 mb-3 lg:mb-4 px-2">
               <div className="h-[1px] w-6 bg-white/10"></div>
               <p className="text-[#5be3b1] text-[8px] lg:text-[10px] font-black tracking-[0.3em] leading-none">START IN</p>
               <div className="h-[1px] w-6 bg-white/10"></div>
             </div>
             <div className="grid grid-cols-3 gap-2 lg:gap-4">
-              <div className="bg-white/5 rounded-lg py-2 lg:py-5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+              <div className="bg-white/5 rounded-lg py-2 lg:py-5 px-2 lg:px-3 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                 <span className="text-xl lg:text-3xl font-black text-white/60 block leading-none font-mono tracking-tighter drop-shadow-md">
                   {timeRemaining.hours.toString().padStart(2, "0")}
                 </span>
                 <p className="text-white/30 text-[8px] lg:text-[10px] mt-1 lg:mt-2 font-black leading-none uppercase tracking-widest text-center">Hours</p>
               </div>
-              <div className="bg-white/5 rounded-lg py-2 lg:py-5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+              <div className="bg-white/5 rounded-lg py-2 lg:py-5 px-2 lg:px-3 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                 <span className="text-xl lg:text-3xl font-black text-white/60 block leading-none font-mono tracking-tighter drop-shadow-md">
                   {timeRemaining.minutes.toString().padStart(2, "0")}
                 </span>
                 <p className="text-white/30 text-[8px] lg:text-[10px] mt-1 lg:mt-2 font-black leading-none uppercase tracking-widest text-center">Min</p>
               </div>
-              <div className="bg-white/5 rounded-lg py-2 lg:py-5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+              <div className="bg-white/5 rounded-lg py-2 lg:py-5 px-2 lg:px-3 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                 <span className="text-xl lg:text-3xl font-black text-white/40 block leading-none font-mono tracking-tighter drop-shadow-md">
                   {timeRemaining.seconds.toString().padStart(2, "0")}
                 </span>
