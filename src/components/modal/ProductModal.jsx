@@ -323,8 +323,8 @@ const ProductModal = ({
             bottomCloseBtn={false}
             handleCloseModal={() => setModalOpen(false)}
         >
-            <div className="inline-block overflow-y-auto h-full align-middle transition-all transform">
-                <div data-modal-content className="lg:flex flex-col lg:flex-row md:flex-row w-full max-w-4xl overflow-hidden mx-auto">
+            <div className="inline-block overflow-y-auto h-full align-middle transition-all transform w-full">
+                <div data-modal-content className="lg:flex flex-col lg:flex-row md:flex-row w-full overflow-hidden">
                     {/* Left Side: Product Image */}
                     <div className="w-full lg:w-[40%] flex-shrink-0">
                         <div data-product-image-container className="flex-shrink-0 flex items-center justify-center h-36 sm:h-56 md:h-64 lg:h-[400px] bg-gray-50">
