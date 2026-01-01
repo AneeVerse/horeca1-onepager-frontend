@@ -458,43 +458,46 @@ const ProductCard = ({ product, attributes }) => {
             </div>
           )}
 
-          {/* Promo Bulk Pricing Display (6pm-9am) - Only show during promo time */}
+          {/* Promo Bulk Pricing Display (6pm-9am) - Unified Happy Hour Design */}
           {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
-            <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-md p-1.5 sm:p-2.5 mb-1.5 sm:mb-2 space-y-1 sm:space-y-1.5 border border-primary-200/50">
+            <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-md p-1.5 sm:p-2 mb-1.5 sm:mb-2 space-y-1 sm:space-y-1.5 border border-white/10 shadow-lg relative overflow-hidden group">
+              {/* Subtle Decorative Glow */}
+              <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-400/10 rounded-full blur-xl -mr-8 -mt-8"></div>
+
+              <div className="relative z-10 flex items-center gap-1.5 mb-1">
+                <span className="text-[8px] font-black text-[#018549] bg-emerald-300 px-1 py-0.5 rounded leading-none">PROMO</span>
+                <span className="text-[9px] font-black text-white/90 uppercase tracking-wider">Happy Hour</span>
+              </div>
+
               {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
-                <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-                  <span className="text-[10px] sm:text-xs text-primary-700 font-medium leading-tight flex-1 min-w-0">
-                    <span className="hidden sm:inline">{currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+</span>
-                    <span className="sm:hidden">{currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}</span>
+                <div className="relative z-10 flex items-center justify-between gap-1.5">
+                  <span className="text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
+                    {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+
                   </span>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Bulk button: ADD the bulk quantity to cart (additive, not replacement)
                       handleAddItem(product, product.promoPricing.bulkRate1.quantity, true);
-                      // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded border border-white/10 transition-colors"
                   >
                     Add {product.promoPricing.bulkRate1.quantity}
                   </button>
                 </div>
               )}
               {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-                  <span className="text-[10px] sm:text-xs text-primary-700 font-medium leading-tight flex-1 min-w-0">
-                    <span className="hidden sm:inline">{currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+</span>
-                    <span className="sm:hidden">{currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}</span>
+                <div className="relative z-10 flex items-center justify-between gap-1.5">
+                  <span className="text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
+                    {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+
                   </span>
                   <button
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Bulk button: ADD the bulk quantity to cart (additive, not replacement)
                       handleAddItem(product, product.promoPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded border border-white/10 transition-colors"
                   >
                     Add {product.promoPricing.bulkRate2.quantity}
                   </button>

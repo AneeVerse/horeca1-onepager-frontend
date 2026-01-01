@@ -80,7 +80,7 @@ const PromoTimerCard = () => {
           {/* Elegant Mesh Background Pattern */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }}></div>
 
-          <div className="relative z-10 p-2.5 lg:p-6 flex flex-col justify-between h-full">
+          <div className="relative z-10 p-4 lg:p-6 flex flex-col justify-between h-full">
             {/* Title Section - Premium Brand Hierarchy */}
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -104,25 +104,25 @@ const PromoTimerCard = () => {
             </div>
 
             {/* Timer Section - High-End "Frosted" Finish */}
-            <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2 lg:p-5 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-1.5 lg:mt-4">
+            <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2.5 lg:p-5 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-3 lg:mt-4">
               <div className="flex items-center gap-1.5 mb-2">
                 <Zap className="w-3 h-3 text-emerald-300 animate-pulse" />
                 <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.3em] leading-none">ENDS IN</p>
               </div>
               <div className="grid grid-cols-3 gap-2">
-                <div className="bg-white/5 rounded-lg py-1.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <div className="bg-white/5 rounded-lg py-2.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                   <span className="text-xl lg:text-3xl font-black text-white block leading-none font-mono tracking-tighter drop-shadow-md">
                     {timeRemaining.hours.toString().padStart(2, "0")}
                   </span>
                   <p className="text-white/30 text-[8px] mt-1 font-black leading-none uppercase tracking-widest text-center">Hours</p>
                 </div>
-                <div className="bg-white/5 rounded-lg py-1.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <div className="bg-white/5 rounded-lg py-2.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
                   <span className="text-xl lg:text-3xl font-black text-white block leading-none font-mono tracking-tighter drop-shadow-md">
                     {timeRemaining.minutes.toString().padStart(2, "0")}
                   </span>
                   <p className="text-white/30 text-[8px] mt-1 font-black leading-none uppercase tracking-widest text-center">Min</p>
                 </div>
-                <div className="bg-white/20 rounded-lg py-1.5 px-0.5 text-center border border-emerald-400/30 shadow-lg transition-all group-hover/timer:bg-white/30">
+                <div className="bg-white/20 rounded-lg py-2.5 px-0.5 text-center border border-emerald-400/30 shadow-lg transition-all group-hover/timer:bg-white/30">
                   <span className="text-xl lg:text-3xl font-black text-emerald-300 block leading-none font-mono tracking-tighter drop-shadow-[0_0_15px_rgba(110,231,183,0.4)]">
                     {timeRemaining.seconds.toString().padStart(2, "0")}
                   </span>
@@ -139,54 +139,59 @@ const PromoTimerCard = () => {
   // Show "Promo Starting Soon" Card - Brand Teal Design
   return (
     <div className="w-full h-full flex">
-      <div className="bg-[#025155] w-full rounded-2xl shadow-xl overflow-hidden relative flex flex-col border border-white/5 group transition-all duration-500">
-        <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-3xl"></div>
+      <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] w-full rounded-2xl shadow-[0_20px_50px_rgba(2,81,85,0.25)] overflow-hidden relative flex flex-col border border-white/10 group transition-all duration-700">
+        {/* Professional Color Grading Elements */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-emerald-400/10 transition-all duration-1000"></div>
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-teal-400/5 rounded-full blur-[100px] -ml-32 -mb-32"></div>
 
-        <div className="relative z-10 p-2.5 lg:p-6 flex flex-col justify-between h-full">
-          {/* Title Section */}
+        {/* Elegant Mesh Background Pattern */}
+        <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: "linear-gradient(45deg, #fff 1px, transparent 1px), linear-gradient(-45deg, #fff 1px, transparent 1px)", backgroundSize: "24px 24px" }}></div>
+
+        <div className="relative z-10 p-4 lg:p-6 flex flex-col justify-between h-full">
+          {/* Title Section - Premium Brand Hierarchy */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <div className="p-1.5 lg:p-3 bg-white/5 rounded-xl flex-shrink-0 border border-white/10">
-                <Clock className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-white/30" />
+              <div className="p-1.5 lg:p-3 bg-white/10 rounded-xl flex-shrink-0 backdrop-blur-2xl shadow-2xl ring-1 ring-white/20 group-hover:ring-emerald-400/40 transition-all duration-500">
+                <Clock className="w-3.5 h-3.5 lg:w-5 lg:h-5 text-emerald-300" />
               </div>
               <div>
-                <h2 className="text-[12px] lg:text-base font-bold text-white/90 leading-tight tracking-[0.05em] uppercase text-center sm:text-left">Happy Hour</h2>
+                <h2 className="text-[12px] lg:text-base font-black text-white leading-tight tracking-[0.08em] uppercase drop-shadow-lg text-center sm:text-left">Happy Hour</h2>
                 <div className="flex items-center gap-1 mt-0.5">
-                  <div className="w-1 h-1 rounded-full bg-white/20 animate-pulse"></div>
-                  <span className="text-white/40 text-[8px] font-bold tracking-widest uppercase text-center sm:text-left">Starts 6PM</span>
+                  <div className="w-1.5 h-1.5 rounded-full bg-white/20 animate-pulse"></div>
+                  <span className="text-emerald-300/60 text-[8px] font-black tracking-widest uppercase text-center sm:text-left">Starts 6PM</span>
                 </div>
               </div>
             </div>
-            <div className="bg-white/5 px-2.5 py-0.5 rounded-lg border border-white/10">
-              <span className="text-white/30 font-bold text-[9px] tracking-widest uppercase">Upcoming</span>
+            <div className="bg-white/10 px-2.5 py-0.5 rounded-lg border border-white/10 backdrop-blur-xl">
+              <span className="text-white font-bold text-[9px] tracking-widest uppercase opacity-60">Upcoming</span>
             </div>
           </div>
 
-          {/* Timer Section */}
-          <div className="bg-black/20 rounded-xl p-2 lg:p-5 border border-white/5 relative overflow-hidden mt-1.5 lg:mt-4 shadow-inner">
+          {/* Timer Section - High-End "Frosted" Finish */}
+          <div className="bg-black/10 backdrop-blur-3xl rounded-xl p-2.5 lg:p-5 border border-white/5 shadow-2xl relative overflow-hidden group/timer mt-3 lg:mt-4">
             <div className="flex items-center justify-center gap-1.5 mb-2">
-              <div className="h-[1px] w-6 bg-white/5"></div>
-              <p className="text-white/20 text-[8px] font-black uppercase tracking-[0.2em] leading-none">COMING SOON</p>
-              <div className="h-[1px] w-6 bg-white/5"></div>
+              <div className="h-[1px] w-6 bg-white/10"></div>
+              <p className="text-white/40 text-[8px] font-black uppercase tracking-[0.3em] leading-none">COMING SOON</p>
+              <div className="h-[1px] w-6 bg-white/10"></div>
             </div>
             <div className="grid grid-cols-3 gap-2">
-              <div className="bg-white/5 rounded-lg py-1.5 px-0.5 text-center border border-white/5 shadow-lg">
-                <span className="text-xl lg:text-2xl font-black text-white/60 block leading-none font-mono tracking-tighter">
+              <div className="bg-white/5 rounded-lg py-2.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <span className="text-xl lg:text-3xl font-black text-white/60 block leading-none font-mono tracking-tighter drop-shadow-md">
                   {timeRemaining.hours.toString().padStart(2, "0")}
                 </span>
-                <p className="text-white/20 text-[7px] mt-1.5 font-bold uppercase tracking-widest text-center">Hours</p>
+                <p className="text-white/30 text-[8px] mt-1 font-black leading-none uppercase tracking-widest text-center">Hours</p>
               </div>
-              <div className="bg-white/5 rounded-lg py-1.5 px-0.5 text-center border border-white/5 shadow-lg">
-                <span className="text-xl lg:text-2xl font-black text-white/60 block leading-none font-mono tracking-tighter">
+              <div className="bg-white/5 rounded-lg py-2.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <span className="text-xl lg:text-3xl font-black text-white/60 block leading-none font-mono tracking-tighter drop-shadow-md">
                   {timeRemaining.minutes.toString().padStart(2, "0")}
                 </span>
-                <p className="text-white/20 text-[7px] mt-1.5 font-bold uppercase tracking-widest text-center">Min</p>
+                <p className="text-white/30 text-[8px] mt-1 font-black leading-none uppercase tracking-widest text-center">Min</p>
               </div>
-              <div className="bg-white/5 rounded-lg py-1.5 px-0.5 text-center border border-white/10 shadow-lg">
-                <span className="text-xl lg:text-2xl font-black text-white/20 block leading-none font-mono tracking-tighter">
+              <div className="bg-white/5 rounded-lg py-2.5 px-0.5 text-center border border-white/10 shadow-lg transition-all group-hover/timer:bg-white/10">
+                <span className="text-xl lg:text-3xl font-black text-white/40 block leading-none font-mono tracking-tighter drop-shadow-md">
                   {timeRemaining.seconds.toString().padStart(2, "0")}
                 </span>
-                <p className="text-white/20 text-[7px] mt-1.5 font-bold uppercase tracking-widest text-center">Sec</p>
+                <p className="text-white/30 text-[8px] mt-1 font-black leading-none uppercase tracking-widest text-center">Sec</p>
               </div>
             </div>
           </div>
