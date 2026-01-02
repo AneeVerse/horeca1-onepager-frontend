@@ -165,10 +165,10 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 <div className="col-span-6 sm:col-span-3">
                   <InputArea
                     register={register}
-                    label="Email (Optional)"
+                    label="Email"
                     name="email"
                     type="email"
-                    placeholder="For order updates"
+                    placeholder="Enter your email"
                   />
                   <Error errorMessage={errors.email} />
                 </div>
