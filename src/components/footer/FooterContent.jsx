@@ -22,7 +22,7 @@ const FooterContent = ({ storeCustomizationSetting }) => {
               Navi Mumbai, Maharashtra 400705
             </p>
             <p className="text-gray-500 text-sm">
-              07710920002<br />
+              7710920002<br />
               saket@red.org.in
             </p>
           </div>

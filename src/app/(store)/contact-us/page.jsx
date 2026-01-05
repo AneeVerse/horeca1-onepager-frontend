@@ -81,10 +81,10 @@ const ContactUs = async () => {
               </h5>
               <p className="mb-0 text-base text-gray-600 leading-7">
                 <a
-                  href="tel:07710920002"
+                  href="tel:7710920002"
                   className="text-primary-600 hover:text-primary-700 font-medium"
                 >
-                  07710920002
+                  7710920002
                 </a>
               </p>
             </div>

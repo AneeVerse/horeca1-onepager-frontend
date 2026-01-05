@@ -83,7 +83,7 @@ const MobileFooter = ({ globalSetting, categories, categoryError }) => {
 
         {/* WhatsApp - Third */}
         <a
-          href="https://wa.me/07710920002"
+          href="https://wa.me/7710920002"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center flex-1 h-full relative focus:outline-none group"
