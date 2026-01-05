@@ -412,7 +412,7 @@ const ProductModal = ({
                             </div>
                             {/* Quantity Selector */}
                             <div
-                                className="group flex items-center rounded-md overflow-hidden flex-shrink-0 border"
+                                className="group flex items-center rounded-full overflow-hidden flex-shrink-0 border bg-[#d1fae5]"
                                 style={{ borderColor: '#5ee9b5' }}
                             >
                                 <button
@@ -428,10 +428,10 @@ const ProductModal = ({
                                         }
                                     }}
                                     disabled={item <= 0}
-                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e hover:bg-emerald-50"
-                                    style={{ borderRightColor: '#5ee9b5' }}
+                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e hover:bg-[#b9f6e1]"
+                                    style={{ borderRightColor: '#5ee9b533' }}
                                 >
-                                    <FiMinus style={{ color: '#5ee9b5' }} className="text-lg" />
+                                    <FiMinus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
                                 </button>
                                 <input
                                     type="number"
@@ -477,7 +477,7 @@ const ProductModal = ({
                                             e.target.blur();
                                         }
                                     }}
-                                    className="font-semibold text-sm px-3 min-w-[2.5rem] text-center border-0 outline-none focus:outline-none focus:ring-0 bg-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    className="font-black text-sm px-3 min-w-[2.5rem] text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                 />
                                 <button
                                     onClick={() => {
@@ -493,10 +493,10 @@ const ProductModal = ({
                                         }
                                     }}
                                     disabled={product.quantity <= item}
-                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-s hover:bg-emerald-50"
-                                    style={{ borderLeftColor: '#5ee9b5' }}
+                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-s hover:bg-[#b9f6e1]"
+                                    style={{ borderLeftColor: '#5ee9b533' }}
                                 >
-                                    <FiPlus style={{ color: '#5ee9b5' }} className="text-lg" />
+                                    <FiPlus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
                                 </button>
                             </div>
                         </div>

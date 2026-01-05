@@ -567,8 +567,7 @@ const ProductCard = ({ product, attributes }) => {
                 return cartItem ? (
                   <div
                     key={cartItem.id}
-                    className="flex items-center h-7 sm:h-8 bg-white border rounded-md overflow-hidden shadow-sm"
-                    style={{ borderColor: '#5ee9b5' }}
+                    className="flex items-center h-7 sm:h-8 bg-[#d1fae5] border border-[#5ee9b5] rounded-full overflow-hidden shadow-sm"
                   >
                     <button
                       onClick={(e) => {
@@ -576,13 +575,13 @@ const ProductCard = ({ product, attributes }) => {
                         e.stopPropagation();
                         handleDecrementQuantity(cartItem, e);
                       }}
-                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-emerald-50 transition-colors border-r"
-                      style={{ color: '#5ee9b5', borderRightColor: '#5ee9b5' }}
+                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
+                      style={{ color: '#065f46' }}
                     >
-                      <IoRemove size={12} />
+                      <IoRemove size={12} className="stroke-2" />
                     </button>
 
-                    <div className="w-6 sm:w-8 h-full flex items-center justify-center">
+                    <div className="w-6 sm:w-8 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
                       <input
                         type="text"
                         value={quantityInputs[cartItem.id] !== undefined ? quantityInputs[cartItem.id] : cartItem.quantity}
@@ -604,7 +603,7 @@ const ProductCard = ({ product, attributes }) => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
-                        className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] sm:text-xs font-bold text-gray-800 p-0"
+                        className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] sm:text-xs font-black text-[#065f46] p-0"
                       />
                     </div>
 
@@ -616,10 +615,10 @@ const ProductCard = ({ product, attributes }) => {
                           ? handleAddItem(cartItem)
                           : handleIncrementQuantity(cartItem, e);
                       }}
-                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-emerald-50 transition-colors border-l"
-                      style={{ color: '#5ee9b5', borderLeftColor: '#5ee9b5' }}
+                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
+                      style={{ color: '#065f46' }}
                     >
-                      <IoAdd size={12} />
+                      <IoAdd size={12} className="stroke-2" />
                     </button>
                   </div>
                 ) : null;
@@ -635,14 +634,14 @@ const ProductCard = ({ product, attributes }) => {
                         // Open quick view modal where minQty will be enforced
                         handleAddItem(product, minQty, false);
                       }}
-                      className="flex flex-col items-center gap-0.5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-primary-300 bg-white hover:bg-gray-50 flex-shrink-0"
+                      className="flex flex-col items-center gap-0 bg-[#d1fae5] border border-[#5ee9b5] px-4 sm:px-6 py-1.5 sm:py-2 rounded-full transition-all hover:bg-[#b9f6e1] hover:shadow-md group flex-shrink-0"
                     >
-                      <div className="flex items-center gap-0.5 text-primary-600">
-                        ADD
-                        <span className="text-primary-600 text-xs sm:text-sm leading-none ml-1">+</span>
+                      <div className="flex items-center gap-1.5 text-[#065f46] font-black">
+                        <span className="text-[10px] sm:text-xs tracking-wider">ADD</span>
+                        <span className="text-xs sm:text-sm leading-none -mt-0.5">+</span>
                       </div>
                       {minQty > 1 && (
-                        <span className="text-[9px] text-gray-500 font-normal">Min Qty {minQty}</span>
+                        <span className="text-[8px] sm:text-[9px] text-[#065f46]/70 font-medium">Qty {minQty}</span>
                       )}
                     </button>
                   );
