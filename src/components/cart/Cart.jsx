@@ -69,9 +69,25 @@ const Cart = ({ setOpen, currency }) => {
   // Calculate total savings (Product discounts + Delivery savings)
   const totalSavings = useMemo(() => {
     const productSavings = items.reduce((acc, item) => {
-      const originalPrice = item.originalPrice || item.prices?.price || item.price;
-      const savingsPerUnit = Math.max(0, originalPrice - item.price);
-      return acc + savingsPerUnit * item.quantity;
+      // Get the best candidate for the 'baseline' price
+      const baselinePrice = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || 0);
+      const currentPrice = parseFloat(item.price || 0);
+
+      // If we have a valid baseline higher than current, that's regular savings
+      let savingsPerUnit = Math.max(0, baselinePrice - currentPrice);
+
+      // Special check: If baseline is equal to item price, but the item has bulkPricing,
+      // we might be missing the true original price.
+      if (savingsPerUnit === 0 && item.bulkPricing?.bulkRate1?.pricePerUnit > 0) {
+        // Fallback: If current price matches a bulk tier, we can infer the single unit price
+        // (This is a safety net for cases with missing originalPrice data)
+        const possibleBase = parseFloat(item.prices?.price || item.prices?.originalPrice || 0);
+        if (possibleBase > currentPrice) {
+          savingsPerUnit = possibleBase - currentPrice;
+        }
+      }
+
+      return acc + (savingsPerUnit * (item.quantity || 1));
     }, 0);
 
     return productSavings + (pricingBreakdown.isFreeDelivery ? pricingBreakdown.standardDeliveryCharge : 0);

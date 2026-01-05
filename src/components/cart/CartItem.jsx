@@ -184,11 +184,17 @@ const CartItem = ({ item, currency }) => {
               {item.title}
             </Link>
             <div className="flex items-center gap-2 mb-1">
-              {item.originalPrice > item.price && (
-                <span className="text-[10px] text-gray-400 line-through">
-                  {currency}{item.originalPrice?.toFixed(2)}
-                </span>
-              )}
+              {(() => {
+                const displayOriginalPrice = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || 0);
+                if (displayOriginalPrice > item.price) {
+                  return (
+                    <span className="text-[10px] text-gray-400 line-through">
+                      {currency}{displayOriginalPrice.toFixed(2)}
+                    </span>
+                  );
+                }
+                return null;
+              })()}
               <span className="text-xs text-gray-500 font-medium">
                 Item Price {currency}{item.price}
               </span>

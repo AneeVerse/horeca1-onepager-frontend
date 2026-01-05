@@ -401,7 +401,7 @@ const ProductModal = ({
                         <div className="flex items-center justify-between my-4">
                             <div className="flex items-center">
                                 <Price
-                                    price={price}
+                                    price={getPriceForQuantity(product, item)}
                                     product={product}
                                     currency={currency}
                                     originalPrice={originalPrice}
@@ -501,50 +501,80 @@ const ProductModal = ({
                             const shouldShowBulk = !isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0);
                             if (!shouldShowBulk) return null;
 
-                            // Check tier activation status
-                            const isTier1Active = product?.bulkPricing?.bulkRate1?.quantity > 0 &&
-                                item >= product.bulkPricing.bulkRate1.quantity &&
-                                (!product.bulkPricing.bulkRate2?.quantity || item < product.bulkPricing.bulkRate2.quantity);
-                            const isTier2Active = product?.bulkPricing?.bulkRate2?.quantity > 0 &&
-                                item >= product.bulkPricing.bulkRate2.quantity;
+                            // Determine state
+                            const activeTier = determineActiveBulkTier(product?.bulkPricing, item);
+                            const isTier1Active = activeTier?.tier === 'bulkRate1';
+                            const isTier2Active = activeTier?.tier === 'bulkRate2';
 
-                            const tier1Savings = isTier1Active ? calculateSavingsForTier(product.bulkPricing.bulkRate1.quantity, product.bulkPricing.bulkRate1.pricePerUnit, item) : null;
-                            const tier2Savings = isTier2Active ? calculateSavingsForTier(product.bulkPricing.bulkRate2.quantity, product.bulkPricing.bulkRate2.pricePerUnit, item) : null;
+                            const tier1Savings = calculateSavingsForTier(product?.bulkPricing?.bulkRate1?.quantity, product?.bulkPricing?.bulkRate1?.pricePerUnit, item);
+                            const tier2Savings = calculateSavingsForTier(product?.bulkPricing?.bulkRate2?.quantity, product?.bulkPricing?.bulkRate2?.pricePerUnit, item);
 
-                            // Scenario 2: Tier 2 active - hide entire section, show only tier 2 savings banner
-                            if (isTier2Active && tier2Savings) {
+                            // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
+                            if (isTier2Active) {
                                 return (
                                     <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                                        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                            <span className="text-sm font-semibold text-green-700">
-                                                {currency}{tier2Savings.amount} saved on {tier2Savings.quantity} {tier2Savings.unit}
-                                            </span>
-                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                </svg>
+                                        {tier2Savings ? (
+                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                                <span className="text-sm font-semibold text-green-700">
+                                                    {currency}{tier2Savings.amount} saved on {tier2Savings.quantity} {tier2Savings.unit}
+                                                </span>
+                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                                <span className="text-sm font-semibold text-green-700">Bulk Price Applied</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-green-700">
+                                                        {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
+                                                    </span>
+                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                     </div>
                                 );
                             }
 
                             // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner, show tier 2 with Add button
-                            if (isTier1Active && tier1Savings) {
+                            if (isTier1Active) {
                                 return (
                                     <div className="bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
                                         <h4 className="text-sm font-semibold text-gray-700 mb-2">Bulk Pricing</h4>
                                         {/* Tier 1 Savings Banner */}
-                                        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                            <span className="text-sm font-semibold text-green-700">
-                                                {currency}{tier1Savings.amount} saved on {tier1Savings.quantity} {tier1Savings.unit}
-                                            </span>
-                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                </svg>
+                                        {tier1Savings ? (
+                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                                <span className="text-sm font-semibold text-green-700">
+                                                    {currency}{tier1Savings.amount} saved on {tier1Savings.quantity} {tier1Savings.unit}
+                                                </span>
+                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
                                             </div>
-                                        </div>
+                                        ) : (
+                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                                <span className="text-sm font-semibold text-green-700">Bulk Price Applied</span>
+                                                <div className="flex items-center gap-2">
+                                                    <span className="text-sm font-bold text-green-700">
+                                                        {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                                    </span>
+                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
                                         {/* Tier 2 - Show with Add button */}
                                         {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
                                             <div className="flex items-center justify-between">
@@ -686,37 +716,71 @@ const ProductModal = ({
                                     const promoTier1Savings = isPromoTier1Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
                                     const promoTier2Savings = isPromoTier2Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
 
-                                    // Scenario 2: Tier 2 active - hide entire section, show only tier 2 savings banner
-                                    if (isPromoTier2Active && promoTier2Savings) {
+                                    // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
+                                    if (isPromoTier2Active) {
                                         return (
-                                            <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                <span className="text-sm font-semibold text-green-700">
-                                                    {currency}{promoTier2Savings.amount} saved on {promoTier2Savings.quantity} {promoTier2Savings.unit}
-                                                </span>
-                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </div>
-                                            </div>
+                                            <>
+                                                {promoTier2Savings ? (
+                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                                        <span className="text-sm font-semibold text-green-700">
+                                                            {currency}{promoTier2Savings.amount} saved on {promoTier2Savings.quantity} {promoTier2Savings.unit}
+                                                        </span>
+                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                ) : (
+                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                                        <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm font-bold text-green-700">
+                                                                {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
+                                                            </span>
+                                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </>
                                         );
                                     }
 
-                                    // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner, show tier 2 with Add button
-                                    if (isPromoTier1Active && promoTier1Savings) {
+                                    // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner if exists, show tier 2 with Add button
+                                    if (isPromoTier1Active) {
                                         return (
                                             <>
                                                 {/* Tier 1 Savings Banner */}
-                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                    <span className="text-sm font-semibold text-green-700">
-                                                        {currency}{promoTier1Savings.amount} saved on {promoTier1Savings.quantity} {promoTier1Savings.unit}
-                                                    </span>
-                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
+                                                {promoTier1Savings ? (
+                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                                        <span className="text-sm font-semibold text-green-700">
+                                                            {currency}{promoTier1Savings.amount} saved on {promoTier1Savings.quantity} {promoTier1Savings.unit}
+                                                        </span>
+                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                ) : (
+                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                                        <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
+                                                        <div className="flex items-center gap-2">
+                                                            <span className="text-sm font-bold text-green-700">
+                                                                {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                                            </span>
+                                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
                                                 {/* Tier 2 - Show with Add button */}
                                                 {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
                                                     <div className="relative z-10 flex items-center justify-between pt-1">
