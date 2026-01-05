@@ -567,7 +567,8 @@ const ProductCard = ({ product, attributes }) => {
                 return cartItem ? (
                   <div
                     key={cartItem.id}
-                    className="flex items-center h-7 sm:h-8 bg-white border border-gray-200 rounded-md overflow-hidden shadow-sm"
+                    className="flex items-center h-7 sm:h-8 bg-white border rounded-md overflow-hidden shadow-sm"
+                    style={{ borderColor: '#5ee9b5' }}
                   >
                     <button
                       onClick={(e) => {
@@ -575,7 +576,8 @@ const ProductCard = ({ product, attributes }) => {
                         e.stopPropagation();
                         handleDecrementQuantity(cartItem, e);
                       }}
-                      className="w-6 sm:w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors border-r border-gray-100"
+                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-emerald-50 transition-colors border-r"
+                      style={{ color: '#5ee9b5', borderRightColor: '#5ee9b5' }}
                     >
                       <IoRemove size={12} />
                     </button>
@@ -614,7 +616,8 @@ const ProductCard = ({ product, attributes }) => {
                           ? handleAddItem(cartItem)
                           : handleIncrementQuantity(cartItem, e);
                       }}
-                      className="w-6 sm:w-7 h-full flex items-center justify-center text-gray-600 hover:bg-gray-50 transition-colors border-l border-gray-100"
+                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-emerald-50 transition-colors border-l"
+                      style={{ color: '#5ee9b5', borderLeftColor: '#5ee9b5' }}
                     >
                       <IoAdd size={12} />
                     </button>

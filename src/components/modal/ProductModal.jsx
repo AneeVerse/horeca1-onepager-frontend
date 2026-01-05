@@ -411,7 +411,10 @@ const ProductModal = ({
                                 </span>
                             </div>
                             {/* Quantity Selector */}
-                            <div className="group flex items-center rounded-md overflow-hidden flex-shrink-0 border border-gray-300">
+                            <div
+                                className="group flex items-center rounded-md overflow-hidden flex-shrink-0 border"
+                                style={{ borderColor: '#5ee9b5' }}
+                            >
                                 <button
                                     onClick={() => {
                                         const minQty = product?.minOrderQuantity || 1;
@@ -425,9 +428,10 @@ const ProductModal = ({
                                         }
                                     }}
                                     disabled={item <= 0}
-                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e border-gray-300 hover:text-gray-500"
+                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e hover:bg-emerald-50"
+                                    style={{ borderRightColor: '#5ee9b5' }}
                                 >
-                                    <FiMinus className="text-dark text-lg" />
+                                    <FiMinus style={{ color: '#5ee9b5' }} className="text-lg" />
                                 </button>
                                 <input
                                     type="number"
@@ -489,9 +493,10 @@ const ProductModal = ({
                                         }
                                     }}
                                     disabled={product.quantity <= item}
-                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-s border-gray-300 hover:text-gray-500"
+                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-s hover:bg-emerald-50"
+                                    style={{ borderLeftColor: '#5ee9b5' }}
                                 >
-                                    <FiPlus className="text-dark text-lg" />
+                                    <FiPlus style={{ color: '#5ee9b5' }} className="text-lg" />
                                 </button>
                             </div>
                         </div>

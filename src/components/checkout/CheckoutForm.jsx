@@ -320,41 +320,12 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
               </div>
             </div>
 
-            {/* Price Breakdown */}
             <div className="space-y-3 pt-3 border-t border-gray-100">
               {/* Item Total (Gross) */}
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600 font-medium">Items Total (Incl. Tax)</span>
+                <span className="text-gray-600 font-medium">Item total</span>
                 <span className="text-gray-900 font-semibold">
-                  {currency}{cartTotal.toFixed(2)}
-                </span>
-              </div>
-
-              {/* Product Discount */}
-              {pricingBreakdown.productDiscount > 0 && (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600 font-medium">Product Discount</span>
-                  <span className="text-teal-600 font-semibold">
-                    - {currency}{pricingBreakdown.productDiscount.toFixed(2)}
-                  </span>
-                </div>
-              )}
-
-              {/* Coupon Discount */}
-              {discountAmount > 0 && (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600 font-medium">Coupon Discount</span>
-                  <span className="text-teal-600 font-semibold">
-                    - {currency}{discountAmount.toFixed(2)}
-                  </span>
-                </div>
-              )}
-
-              {/* Taxable Subtotal */}
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600 font-medium">Taxable Subtotal</span>
-                <span className="text-gray-900 font-semibold">
-                  {currency}{pricingBreakdown.taxableSubtotal.toFixed(2)}
+                  {currency}{pricingBreakdown.itemTotalOriginal.toFixed(2)}
                 </span>
               </div>
 

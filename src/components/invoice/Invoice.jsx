@@ -13,6 +13,12 @@ const Invoice = ({ data, printRef, globalSetting }) => {
 
   const { getNumberTwo } = useUtilsFunction();
 
+  const originalTotal = (data?.cart || []).reduce((acc, item) => {
+    const qty = item.quantity || 1;
+    const originalPrice = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || item.price || 0);
+    return acc + (originalPrice * qty);
+  }, 0);
+
   return (
     <div ref={printRef}>
       <div className="bg-indigo-50 p-8 rounded-t-xl">
@@ -139,37 +145,11 @@ const Invoice = ({ data, printRef, globalSetting }) => {
         <div className="flex lg:flex-row md:flex-row sm:flex-row flex-col justify-between pt-4">
           <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
             <span className="mb-1 font-bold text-sm uppercase text-gray-600 block">
-              Payment Method
-            </span>
-            <span className="text-sm text-gray-500 font-semibold block">
-              {data?.paymentMethod}
-            </span>
-          </div>
-          <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
-            <span className="mb-1 font-bold text-sm uppercase text-gray-600 block">
-              Shipping Cost
+              Item total
             </span>
             <span className="text-sm text-gray-500 font-semibold block">
               {currency}
-              {getNumberTwo(data?.shippingCost)}
-            </span>
-          </div>
-          <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
-            <span className="mb-1 font-bold text-sm uppercase text-gray-600 block">
-              Discount
-            </span>
-            <span className="text-sm text-gray-500 font-semibold block">
-              {currency}
-              {getNumberTwo(data?.discount)}
-            </span>
-          </div>
-          <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
-            <span className="mb-1 font-bold text-sm uppercase text-gray-600 block">
-              Taxable Subtotal
-            </span>
-            <span className="text-sm text-gray-500 font-semibold block">
-              {currency}
-              {getNumberTwo(data?.taxableSubtotal || 0)}
+              {getNumberTwo(originalTotal)}
             </span>
           </div>
           <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
@@ -179,6 +159,15 @@ const Invoice = ({ data, printRef, globalSetting }) => {
             <span className="text-sm text-gray-500 font-semibold block">
               {currency}
               {getNumberTwo(data?.totalGst || 0)}
+            </span>
+          </div>
+          <div className="mb-3 md:mb-0 lg:mb-0  flex flex-col sm:flex-wrap">
+            <span className="mb-1 font-bold text-sm uppercase text-gray-600 block">
+              Shipping Cost
+            </span>
+            <span className="text-sm text-gray-500 font-semibold block">
+              {currency}
+              {getNumberTwo(data?.shippingCost)}
             </span>
           </div>
           <div className="flex flex-col sm:flex-wrap">

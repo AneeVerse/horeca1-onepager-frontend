@@ -54,15 +54,34 @@ const Cart = ({ setOpen, currency }) => {
       totalGst += gst;
     });
 
+    // Calculate Original Total Component
+    let originalTotalGross = 0;
+    items.forEach(item => {
+      const quantity = item.quantity || 1;
+      let itemOriginalPriceGross = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || 0);
+      const itemCurrentPriceGross = parseFloat(item.price) || 0;
+
+      // Safety net for bulk pricing
+      if (itemOriginalPriceGross <= itemCurrentPriceGross && item.bulkPricing?.bulkRate1?.pricePerUnit > 0) {
+        const possibleBase = parseFloat(item.prices?.price || item.prices?.originalPrice || 0);
+        if (possibleBase > itemCurrentPriceGross) {
+          itemOriginalPriceGross = possibleBase;
+        }
+      }
+      if (itemOriginalPriceGross === 0) itemOriginalPriceGross = itemCurrentPriceGross;
+      originalTotalGross += itemOriginalPriceGross * quantity;
+    });
+
     return {
       deliveryCharge: actualDeliveryCharge,
       standardDeliveryCharge,
       isFreeDelivery,
       deliveryThreshold,
+      itemTotalOriginal: originalTotalGross,
       taxableSubtotal: cartTotal - totalGst,
       totalGst: totalGst,
       total: cartTotal + actualDeliveryCharge,
-      savings: isFreeDelivery ? standardDeliveryCharge : 0,
+      savings: (originalTotalGross - cartTotal) + (isFreeDelivery ? standardDeliveryCharge : 0),
     };
   }, [items, cartTotal]);
 
@@ -217,29 +236,23 @@ const Cart = ({ setOpen, currency }) => {
             <div className="bg-neutral-50 dark:bg-slate-900 p-5 pt-4 pb-20 sm:pb-5 border-t border-gray-100">
               {/* Price Breakdown */}
               <div className="space-y-2 text-sm">
-                {/* Subtotal (Gross) */}
+                {/* Item Total (Raw) */}
                 <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500 font-medium">Subtotal (Incl. Tax)</span>
+                  <span className="text-gray-500 font-medium">Item total</span>
                   <span className="text-gray-700 font-semibold">
-                    {currency}{cartTotal.toFixed(2)}
-                  </span>
-                </div>
-
-                {/* Taxable Value */}
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500 font-medium">Taxable Value</span>
-                  <span className="text-gray-700 font-semibold">
-                    {currency}{pricingBreakdown.taxableSubtotal.toFixed(2)}
+                    {currency}{pricingBreakdown.itemTotalOriginal.toFixed(2)}
                   </span>
                 </div>
 
                 {/* GST */}
-                <div className="flex justify-between items-center text-xs">
-                  <span className="text-gray-500 font-medium">GST</span>
-                  <span className="text-gray-700 font-semibold">
-                    {currency}{pricingBreakdown.totalGst.toFixed(2)}
-                  </span>
-                </div>
+                {pricingBreakdown.totalGst > 0 && (
+                  <div className="flex justify-between items-center text-xs">
+                    <span className="text-gray-500 font-medium">GST</span>
+                    <span className="text-gray-700 font-semibold">
+                      {currency}{pricingBreakdown.totalGst.toFixed(2)}
+                    </span>
+                  </div>
+                )}
 
                 {/* Delivery Charge */}
                 <div className="flex justify-between items-center">
