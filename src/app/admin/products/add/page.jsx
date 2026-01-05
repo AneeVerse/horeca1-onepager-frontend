@@ -454,12 +454,19 @@ export default function AddProductPage() {
                     min="0"
                     step="0.01"
                     value={formData.taxableRate}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const taxable = parseFloat(e.target.value) || 0;
+                      const tax = parseFloat(formData.taxPercent) || 0;
+                      const gross = taxable * (1 + tax / 100);
                       setFormData({
                         ...formData,
-                        taxableRate: parseFloat(e.target.value) || 0,
-                      })
-                    }
+                        taxableRate: taxable,
+                        prices: {
+                          ...formData.prices,
+                          price: parseFloat(gross.toFixed(2)),
+                        },
+                      });
+                    }}
                     placeholder="361.90"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
@@ -476,12 +483,19 @@ export default function AddProductPage() {
                     max="100"
                     step="0.01"
                     value={formData.taxPercent}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const tax = parseFloat(e.target.value) || 0;
+                      const taxable = parseFloat(formData.taxableRate) || 0;
+                      const gross = taxable * (1 + tax / 100);
                       setFormData({
                         ...formData,
-                        taxPercent: parseFloat(e.target.value) || 0,
-                      })
-                    }
+                        taxPercent: tax,
+                        prices: {
+                          ...formData.prices,
+                          price: parseFloat(gross.toFixed(2)),
+                        },
+                      });
+                    }}
                     placeholder="5"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
@@ -497,66 +511,26 @@ export default function AddProductPage() {
                     min="0"
                     step="0.01"
                     value={formData.prices.price}
-                    onChange={(e) =>
+                    onChange={(e) => {
+                      const gross = parseFloat(e.target.value) || 0;
+                      const tax = parseFloat(formData.taxPercent) || 0;
+                      const taxable = gross / (1 + tax / 100);
                       setFormData({
                         ...formData,
+                        taxableRate: parseFloat(taxable.toFixed(2)),
                         prices: {
                           ...formData.prices,
-                          price: parseFloat(e.target.value) || 0,
+                          price: gross,
                         },
-                      })
-                    }
+                      });
+                    }}
                     placeholder="380.00"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Original Price
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.prices.originalPrice}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        prices: {
-                          ...formData.prices,
-                          originalPrice: parseFloat(e.target.value) || 0,
-                        },
-                      })
-                    }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
-                  />
-                </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Discount (%)
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max="100"
-                    value={formData.prices.discount}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        prices: {
-                          ...formData.prices,
-                          discount: parseFloat(e.target.value) || 0,
-                        },
-                      })
-                    }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
-                  />
-                </div>
-              </div>
             </div>
 
             {/* Combined Bulk & Promo Pricing Section */}
