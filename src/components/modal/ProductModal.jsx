@@ -477,7 +477,7 @@ const ProductModal = ({
                                             e.target.blur();
                                         }
                                     }}
-                                    className="font-black text-sm px-3 min-w-[2.5rem] text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    className="font-bold text-[10px] px-3 min-w-[2.5rem] text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                 />
                                 <button
                                     onClick={() => {

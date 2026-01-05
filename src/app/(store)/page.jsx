@@ -147,7 +147,7 @@ const Home = async () => {
             </div>
             <div className="flex">
               <div className="w-full">
-                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-3 md:gap-4 lg:gap-4">
+                <div className="grid grid-cols-1 min-[345px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-3 md:gap-4 lg:gap-4">
                   {discountedProducts
                     ?.slice(
                       0,

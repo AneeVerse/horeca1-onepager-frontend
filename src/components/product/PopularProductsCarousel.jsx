@@ -68,8 +68,11 @@ const PopularProductsCarousel = ({ products, attributes, currency }) => {
           }}
           allowTouchMove={true}
           loop={false}
-          slidesPerView={2}
+          slidesPerView={1}
           breakpoints={{
+            345: {
+              slidesPerView: 2,
+            },
             640: {
               slidesPerView: 2,
             },

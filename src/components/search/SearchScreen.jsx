@@ -18,7 +18,7 @@ const SearchScreen = ({ products, attributes, categories, currency, initialFilte
   const router = useRouter();
   const searchParams = useSearchParams();
   const { showingTranslateValue } = useUtilsFunction();
-  
+
   useEffect(() => setMounted(true), []);
 
   // Get filter values from URL params or initialFilters prop
@@ -42,17 +42,17 @@ const SearchScreen = ({ products, attributes, categories, currency, initialFilte
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
-    
+
     // Update URL with filter params
     const params = new URLSearchParams();
-    
+
     if (searchParams.get("query")) {
       params.set("query", searchParams.get("query"));
     }
     if (searchParams.get("_id")) {
       params.set("_id", searchParams.get("_id"));
     }
-    
+
     if (newFilters.priceMin) params.set("priceMin", newFilters.priceMin);
     if (newFilters.priceMax) params.set("priceMax", newFilters.priceMax);
     if (newFilters.selectedCategories.length > 0) {
@@ -67,13 +67,13 @@ const SearchScreen = ({ products, attributes, categories, currency, initialFilte
     if (newFilters.sortBy) {
       params.set("sortBy", newFilters.sortBy);
     }
-    
+
     router.push(`/search?${params.toString()}`, { scroll: false });
   };
 
   const removeFilter = (filterType, value = null) => {
     const updated = { ...filters };
-    
+
     switch (filterType) {
       case "priceMin":
         updated.priceMin = "";
@@ -96,7 +96,7 @@ const SearchScreen = ({ products, attributes, categories, currency, initialFilte
       default:
         break;
     }
-    
+
     handleFilterChange(updated);
   };
 
@@ -244,7 +244,7 @@ const SearchScreen = ({ products, attributes, categories, currency, initialFilte
               </div>
             )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-3 md:gap-4 lg:gap-4">
+            <div className="grid grid-cols-1 min-[345px]:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-5 gap-3 md:gap-4 lg:gap-4">
               {productData?.slice(0, visibleProduct).map((product, i) => (
                 <ProductCard
                   key={i + 1}

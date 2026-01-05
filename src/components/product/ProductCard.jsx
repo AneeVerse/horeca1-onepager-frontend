@@ -567,7 +567,7 @@ const ProductCard = ({ product, attributes }) => {
                 return cartItem ? (
                   <div
                     key={cartItem.id}
-                    className="flex items-center h-7 sm:h-8 bg-[#d1fae5] border border-[#5ee9b5] rounded-full overflow-hidden shadow-sm"
+                    className="flex items-center h-6 sm:h-7 bg-[#d1fae5] border border-[#5ee9b5] rounded-full overflow-hidden shadow-sm max-w-min"
                   >
                     <button
                       onClick={(e) => {
@@ -575,13 +575,13 @@ const ProductCard = ({ product, attributes }) => {
                         e.stopPropagation();
                         handleDecrementQuantity(cartItem, e);
                       }}
-                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
+                      className="w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
                       style={{ color: '#065f46' }}
                     >
-                      <IoRemove size={12} className="stroke-2" />
+                      <IoRemove size={10} className="stroke-2" />
                     </button>
 
-                    <div className="w-6 sm:w-8 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
+                    <div className="w-7 sm:w-9 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
                       <input
                         type="text"
                         value={quantityInputs[cartItem.id] !== undefined ? quantityInputs[cartItem.id] : cartItem.quantity}
@@ -603,7 +603,7 @@ const ProductCard = ({ product, attributes }) => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
-                        className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] sm:text-xs font-black text-[#065f46] p-0"
+                        className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] font-bold text-[#065f46] p-0"
                       />
                     </div>
 
@@ -615,10 +615,10 @@ const ProductCard = ({ product, attributes }) => {
                           ? handleAddItem(cartItem)
                           : handleIncrementQuantity(cartItem, e);
                       }}
-                      className="w-6 sm:w-7 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
+                      className="w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
                       style={{ color: '#065f46' }}
                     >
-                      <IoAdd size={12} className="stroke-2" />
+                      <IoAdd size={10} className="stroke-2" />
                     </button>
                   </div>
                 ) : null;

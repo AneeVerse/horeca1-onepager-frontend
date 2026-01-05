@@ -50,8 +50,12 @@ const CategoryProductsSection = ({ categories, productsByCategory, attributes, c
                 }}
                 allowTouchMove={true}
                 loop={false}
-                slidesPerView={2}
+                slidesPerView={1}
                 breakpoints={{
+                  345: {
+                    slidesPerView: 2,
+                    spaceBetween: 12,
+                  },
                   640: {
                     slidesPerView: 2,
                     spaceBetween: 16,
