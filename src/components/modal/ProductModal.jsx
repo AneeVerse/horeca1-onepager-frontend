@@ -254,6 +254,7 @@ const ProductModal = ({
             taxableRate: productData.taxableRate || 0,
             image: selectedImage || productData.image?.[0],
             variant: hasVariants ? selectVariant : {},
+            stock: hasVariants ? (selectVariant?.quantity || productData?.variant?.quantity || productData?.stock || 0) : (productData.stock || productData.quantity || 0),
         };
     };
 

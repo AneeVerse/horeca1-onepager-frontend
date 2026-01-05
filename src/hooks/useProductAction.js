@@ -172,8 +172,8 @@ export default function useProductAction({
           product?.variants.length <= 0
             ? product._id
             : product._id +
-              "-" +
-              variantTitle?.map((att) => selectVariant[att._id]).join("-"),
+            "-" +
+            variantTitle?.map((att) => selectVariant[att._id]).join("-"),
         title:
           product?.variants.length <= 0
             ? showingTranslateValue(product.title)
@@ -188,6 +188,7 @@ export default function useProductAction({
           product.variants.length === 0
             ? getNumber(product.prices.originalPrice)
             : getNumber(originalPrice),
+        stock: stock,
       };
 
       handleAddItem(newItem);

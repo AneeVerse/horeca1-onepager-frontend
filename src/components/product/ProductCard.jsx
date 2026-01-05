@@ -164,6 +164,7 @@ const ProductCard = ({ product, attributes }) => {
       unit: product.unit,
       brand: product.brand,
       minOrderQuantity: product.minOrderQuantity || 1,
+      stock: p.stock || p.quantity,
     };
 
     if (existingItem) {
@@ -197,6 +198,13 @@ const ProductCard = ({ product, attributes }) => {
       e.stopPropagation();
     }
     const newQuantity = cartItem.quantity + 1;
+    const availableStock = product.stock || product.quantity || 9999;
+
+    if (newQuantity > availableStock) {
+      notifyError("Insufficient stock!");
+      return;
+    }
+
     const newPrice = getPriceForQuantity(product, newQuantity);
 
     // If price changed, need to remove and re-add with new price
@@ -217,6 +225,7 @@ const ProductCard = ({ product, attributes }) => {
         unit: product.unit,
         brand: product.brand,
         minOrderQuantity: product.minOrderQuantity || 1,
+        stock: product.stock || product.quantity,
       };
       addItem(updatedItem, newQuantity);
     } else {
@@ -259,6 +268,7 @@ const ProductCard = ({ product, attributes }) => {
         unit: product.unit,
         brand: product.brand,
         minOrderQuantity: product.minOrderQuantity || 1,
+        stock: product.stock || product.quantity,
       };
       requestAnimationFrame(() => {
         addItem(updatedItem, newQuantity);
@@ -285,12 +295,18 @@ const ProductCard = ({ product, attributes }) => {
   // Handle quantity input blur or Enter key
   const handleQuantityInputBlur = (cartItem) => {
     const inputValue = quantityInputs[cartItem.id] || cartItem.quantity.toString();
-    const newQuantity = parseInt(inputValue, 10);
+    const availableStock = product.stock || product.quantity || 9999;
+    let newQuantity = parseInt(inputValue, 10);
 
     if (isNaN(newQuantity) || newQuantity < 0) {
       // Reset to current quantity if invalid
       setQuantityInputs(prev => ({ ...prev, [cartItem.id]: cartItem.quantity.toString() }));
       return;
+    }
+
+    if (newQuantity > availableStock) {
+      notifyError("Insufficient stock!");
+      newQuantity = availableStock;
     }
 
     // If quantity is 0, remove item
@@ -328,6 +344,7 @@ const ProductCard = ({ product, attributes }) => {
         hsn: product.hsn,
         unit: product.unit,
         brand: product.brand,
+        stock: product.stock || product.quantity,
       };
       pendingAddRef.current = { item: updatedItem, quantity: newQuantity };
     } else {

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 //internal import
 import useAddToCart from "@hooks/useAddToCart";
 import ImageWithFallback from "@components/common/ImageWithFallBack";
+import { notifyError } from "@utils/toast";
 
 // Helper function to calculate the appropriate price based on total quantity and bulk pricing
 const getPriceForQuantity = (item, totalQuantity) => {
@@ -54,6 +55,13 @@ const CartItem = ({ item, currency }) => {
       e.stopPropagation();
     }
     const minQty = item?.minOrderQuantity || 1;
+    const availableStock = item?.stock || 9999;
+
+    if (item.quantity >= availableStock) {
+      notifyError("Insufficient stock!");
+      return;
+    }
+
     const newQuantity = item.quantity === 0 ? minQty : item.quantity + 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
 
@@ -106,11 +114,19 @@ const CartItem = ({ item, currency }) => {
   // Handle quantity input blur or Enter key
   const handleQuantityBlur = () => {
     const minQty = item?.minOrderQuantity || 1;
-    const newQuantity = parseInt(inputValue, 10);
+    const availableStock = item?.stock || 9999;
+    let newQuantity = parseInt(inputValue, 10);
+
     if (isNaN(newQuantity) || newQuantity <= 0) {
       // Reset to 0/Remove if invalid or 0
       removeItem(item.id);
       return;
+    }
+
+    if (newQuantity > availableStock) {
+      notifyError("Insufficient stock!");
+      newQuantity = availableStock;
+      setInputValue(availableStock.toString());
     }
 
     if (newQuantity < minQty) {
