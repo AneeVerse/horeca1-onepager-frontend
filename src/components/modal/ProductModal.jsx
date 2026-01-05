@@ -42,11 +42,25 @@ const ProductModal = ({
     const pathname = usePathname();
     const [isPromoTime, setIsPromoTime] = useState(false);
     const [quantityInput, setQuantityInput] = useState(item.toString());
+    const [initialized, setInitialized] = useState(false);
 
     // Sync quantityInput with item when item changes externally (e.g., from buttons)
+    // Sync quantityInput with item when item changes externally
     useEffect(() => {
         setQuantityInput(item.toString());
     }, [item]);
+
+    // Initialize item quantity from cart when modal opens
+    useEffect(() => {
+        if (modalOpen && product) {
+            const baseProductId = `${product.id || product._id}`;
+            const existingItem = items.find((i) => i.id === baseProductId);
+            // If in cart, use that quantity. If not, use 0 (prevents auto-add on mount).
+            // User must click '+' to go to 1 and trigger add.
+            setItem(existingItem ? existingItem.quantity : 0);
+            setInitialized(true);
+        }
+    }, [modalOpen, product, items, setItem]);
 
     useEffect(() => {
         const checkPromoTime = () => {
@@ -86,15 +100,15 @@ const ProductModal = ({
         if (!product || tierQuantity < 1 || !bulkPricePerUnit || currentQuantity < tierQuantity) {
             return null;
         }
-        
+
         // Get single unit base price (use current displayed price for comparison, not originalPrice)
         const singleUnitPrice = price || product?.prices?.price || originalPrice || product?.prices?.originalPrice || 0;
-        
+
         // Calculate savings: (single price - bulk price) × current quantity
         if (bulkPricePerUnit < singleUnitPrice) {
             const savingsPerUnit = singleUnitPrice - bulkPricePerUnit;
             const totalSavings = savingsPerUnit * currentQuantity;
-            
+
             if (totalSavings > 0) {
                 return {
                     amount: getNumberTwo(totalSavings),
@@ -103,7 +117,7 @@ const ProductModal = ({
                 };
             }
         }
-        
+
         return null;
     };
 
@@ -112,18 +126,18 @@ const ProductModal = ({
         if (!product || tierQuantity < 1 || !bulkPricePerUnit || currentQuantity < tierQuantity) {
             return null;
         }
-        
+
         // Get promo single unit price for comparison
         const promoSingleUnitPrice = product?.promoPricing?.singleUnit || 0;
-        
+
         // If no promo single unit price, fall back to regular price
         const singleUnitPrice = promoSingleUnitPrice > 0 ? promoSingleUnitPrice : (price || product?.prices?.price || originalPrice || product?.prices?.originalPrice || 0);
-        
+
         // Calculate savings: (single price - bulk price) × current quantity
         if (bulkPricePerUnit < singleUnitPrice) {
             const savingsPerUnit = singleUnitPrice - bulkPricePerUnit;
             const totalSavings = savingsPerUnit * currentQuantity;
-            
+
             if (totalSavings > 0) {
                 return {
                     amount: getNumberTwo(totalSavings),
@@ -132,14 +146,14 @@ const ProductModal = ({
                 };
             }
         }
-        
+
         return null;
     };
 
     // Determine the highest active bulk pricing tier based on current quantity
     const determineActiveBulkTier = (bulkPricing, currentQuantity) => {
         if (!bulkPricing || !currentQuantity) return null;
-        
+
         // Check tier 2 first (highest tier)
         if (bulkPricing.bulkRate2?.quantity > 0 && bulkPricing.bulkRate2?.pricePerUnit > 0 && currentQuantity >= bulkPricing.bulkRate2.quantity) {
             return {
@@ -148,7 +162,7 @@ const ProductModal = ({
                 pricePerUnit: bulkPricing.bulkRate2.pricePerUnit
             };
         }
-        
+
         // Check tier 1
         if (bulkPricing.bulkRate1?.quantity > 0 && bulkPricing.bulkRate1?.pricePerUnit > 0 && currentQuantity >= bulkPricing.bulkRate1.quantity) {
             return {
@@ -157,7 +171,7 @@ const ProductModal = ({
                 pricePerUnit: bulkPricing.bulkRate1.pricePerUnit
             };
         }
-        
+
         return null;
     };
 
@@ -175,7 +189,7 @@ const ProductModal = ({
                 return productData.promoPricing.singleUnit;
             }
         }
-        
+
         // Use bulkPricing
         if (productData?.bulkPricing?.bulkRate2?.quantity > 0 && totalQuantity >= productData.bulkPricing.bulkRate2.quantity) {
             return productData.bulkPricing.bulkRate2.pricePerUnit;
@@ -190,8 +204,8 @@ const ProductModal = ({
     // Helper function to prepare cart item
     const prepareCartItem = (productData, quantity, calculatedPrice) => {
         const { variants, categories, description, ...updatedProduct } = productData;
-        const baseProductId = productData.id || productData._id;
-        
+        const baseProductId = `${productData.id || productData._id}`; // Ensure unique ID as string
+
         // Handle variants - check if product has variants and if all are selected
         const hasVariants = productData?.variants?.length > 0;
         const selectedVariantName = variantTitle
@@ -199,21 +213,21 @@ const ProductModal = ({
                 att?.variants?.find((v) => v._id === selectVariant[att._id])
             )
             .map((el) => showingTranslateValue(el?.name));
-        
+
         // Determine product ID - with variant suffix if variants exist
         let productId;
         let productTitle;
-        
+
         if (hasVariants) {
             // Check if all variants are selected
-            const allVariantsSelected = variantTitle?.length > 0 && 
+            const allVariantsSelected = variantTitle?.length > 0 &&
                 variantTitle.every((att) => selectVariant[att._id]);
-            
+
             if (!allVariantsSelected) {
                 // Variants not fully selected - return null to prevent adding
                 return null;
             }
-            
+
             // Build variant ID suffix
             const variantSuffix = variantTitle?.map((att) => selectVariant[att._id]).join("-");
             productId = baseProductId + "-" + variantSuffix;
@@ -222,7 +236,7 @@ const ProductModal = ({
             productId = baseProductId;
             productTitle = showingTranslateValue(productData?.title);
         }
-        
+
         return {
             ...updatedProduct,
             id: productId,
@@ -244,8 +258,8 @@ const ProductModal = ({
 
     // Add or update cart when quantity changes
     useEffect(() => {
-        if (!modalOpen || (!product?._id && !product?.id) || item < 1) return;
-        
+        if (!initialized || !modalOpen || (!product?._id && !product?.id) || item < 0) return;
+
         // Check authentication before adding/updating cart
         const userInfoCookie = Cookies.get("userInfo");
         if (!userInfoCookie) {
@@ -253,48 +267,56 @@ const ProductModal = ({
             router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
             return;
         }
-        
+
         // Check if product has variants and if all are selected
         const hasVariants = product?.variants?.length > 0;
         if (hasVariants) {
-            const allVariantsSelected = variantTitle?.length > 0 && 
+            const allVariantsSelected = variantTitle?.length > 0 &&
                 variantTitle.every((att) => selectVariant[att._id]);
             if (!allVariantsSelected) {
                 // Don't add to cart if variants not fully selected
                 return;
             }
         }
-        
+
         // Prepare cart item to get the correct product ID (with variant suffix if applicable)
         const calculatedPrice = getPriceForQuantity(product, item);
         const preparedItem = prepareCartItem(product, item, calculatedPrice);
-        
+
         if (!preparedItem) {
             // Variants not selected or other issue
             return;
         }
-        
+
         const productId = preparedItem.id;
         const cartItem = items.find((cartItem) => cartItem.id === productId);
-        
+
         // Validate stock
-        const availableStock = product?.variants?.length > 0 
+        const availableStock = product?.variants?.length > 0
             ? (selectVariant?.quantity || product?.variant?.quantity || product?.stock || 0)
             : (stock || product?.stock || product?.quantity || 0);
-        
+
+        if (item === 0) {
+            if (cartItem) {
+                removeItem(cartItem.id);
+                // notifyError("Item removed from cart!");
+            }
+            return;
+        }
+
         if (item > availableStock) {
             notifyError("Insufficient stock!");
             setItem(Math.max(1, availableStock));
             return;
         }
-        
+
         if (cartItem) {
             // Product is in cart - update quantity/price
             if (item === cartItem.quantity) return; // No change needed
-            
+
             const newPrice = getPriceForQuantity(product, item);
             const priceChanged = Math.abs(cartItem.price - newPrice) > 0.01;
-            
+
             if (priceChanged) {
                 // Price changed - remove and re-add with new price and quantity
                 removeItem(cartItem.id);
@@ -385,38 +407,36 @@ const ProductModal = ({
                             <div className="group flex items-center rounded-md overflow-hidden flex-shrink-0 border border-gray-300">
                                 <button
                                     onClick={() => setItem(item - 1)}
-                                    disabled={item === 1}
+                                    disabled={item <= 0}
                                     className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e border-gray-300 hover:text-gray-500"
                                 >
                                     <FiMinus className="text-dark text-lg" />
                                 </button>
                                 <input
                                     type="number"
-                                    min="1"
+                                    min="0"
                                     max={product.quantity || 9999}
                                     value={quantityInput}
                                     onChange={(e) => {
                                         const value = e.target.value;
                                         setQuantityInput(value); // Update local state immediately for responsive typing
-                                        
+
                                         const numValue = parseInt(value, 10);
                                         if (value === '' || isNaN(numValue)) {
                                             // Allow empty or invalid input while typing
                                             return;
                                         }
-                                        if (numValue >= 1) {
+                                        if (numValue >= 0) {
                                             const maxQuantity = product.quantity || 9999;
                                             setItem(Math.min(numValue, maxQuantity));
-                                        } else if (numValue < 1) {
-                                            setItem(1);
                                         }
                                     }}
                                     onBlur={(e) => {
                                         const value = e.target.value;
                                         const numValue = parseInt(value, 10);
-                                        if (value === '' || isNaN(numValue) || numValue < 1) {
-                                            setItem(1);
-                                            setQuantityInput('1');
+                                        if (value === '' || isNaN(numValue) || numValue < 0) {
+                                            setItem(0);
+                                            setQuantityInput('0');
                                         } else {
                                             const maxQuantity = product.quantity || 9999;
                                             const finalValue = Math.min(numValue, maxQuantity);
@@ -446,17 +466,17 @@ const ProductModal = ({
                         {(() => {
                             const shouldShowBulk = !isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0);
                             if (!shouldShowBulk) return null;
-                            
+
                             // Check tier activation status
-                            const isTier1Active = product?.bulkPricing?.bulkRate1?.quantity > 0 && 
-                                item >= product.bulkPricing.bulkRate1.quantity && 
+                            const isTier1Active = product?.bulkPricing?.bulkRate1?.quantity > 0 &&
+                                item >= product.bulkPricing.bulkRate1.quantity &&
                                 (!product.bulkPricing.bulkRate2?.quantity || item < product.bulkPricing.bulkRate2.quantity);
-                            const isTier2Active = product?.bulkPricing?.bulkRate2?.quantity > 0 && 
+                            const isTier2Active = product?.bulkPricing?.bulkRate2?.quantity > 0 &&
                                 item >= product.bulkPricing.bulkRate2.quantity;
-                            
+
                             const tier1Savings = isTier1Active ? calculateSavingsForTier(product.bulkPricing.bulkRate1.quantity, product.bulkPricing.bulkRate1.pricePerUnit, item) : null;
                             const tier2Savings = isTier2Active ? calculateSavingsForTier(product.bulkPricing.bulkRate2.quantity, product.bulkPricing.bulkRate2.pricePerUnit, item) : null;
-                            
+
                             // Scenario 2: Tier 2 active - hide entire section, show only tier 2 savings banner
                             if (isTier2Active && tier2Savings) {
                                 return (
@@ -474,7 +494,7 @@ const ProductModal = ({
                                     </div>
                                 );
                             }
-                            
+
                             // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner, show tier 2 with Add button
                             if (isTier1Active && tier1Savings) {
                                 return (
@@ -513,7 +533,7 @@ const ProductModal = ({
                                     </div>
                                 );
                             }
-                            
+
                             // Scenario 3: No tier active - show all tiers with Add buttons
                             return (
                                 <div className="bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
@@ -621,17 +641,17 @@ const ProductModal = ({
                                             </>
                                         );
                                     }
-                                    
+
                                     // During promo time, check tier activation status
-                                    const isPromoTier1Active = product?.promoPricing?.bulkRate1?.quantity > 0 && 
-                                        item >= product.promoPricing.bulkRate1.quantity && 
+                                    const isPromoTier1Active = product?.promoPricing?.bulkRate1?.quantity > 0 &&
+                                        item >= product.promoPricing.bulkRate1.quantity &&
                                         (!product.promoPricing.bulkRate2?.quantity || item < product.promoPricing.bulkRate2.quantity);
-                                    const isPromoTier2Active = product?.promoPricing?.bulkRate2?.quantity > 0 && 
+                                    const isPromoTier2Active = product?.promoPricing?.bulkRate2?.quantity > 0 &&
                                         item >= product.promoPricing.bulkRate2.quantity;
-                                    
+
                                     const promoTier1Savings = isPromoTier1Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
                                     const promoTier2Savings = isPromoTier2Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
-                                    
+
                                     // Scenario 2: Tier 2 active - hide entire section, show only tier 2 savings banner
                                     if (isPromoTier2Active && promoTier2Savings) {
                                         return (
@@ -647,7 +667,7 @@ const ProductModal = ({
                                             </div>
                                         );
                                     }
-                                    
+
                                     // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner, show tier 2 with Add button
                                     if (isPromoTier1Active && promoTier1Savings) {
                                         return (
@@ -685,7 +705,7 @@ const ProductModal = ({
                                             </>
                                         );
                                     }
-                                    
+
                                     // Scenario 3: No tier active - show all promo bulk pricing tiers with Add buttons
                                     return (
                                         <>

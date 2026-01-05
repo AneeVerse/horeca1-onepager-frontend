@@ -9,12 +9,10 @@ import { notifyError, notifySuccess } from "@utils/toast";
 
 const useAddToCart = () => {
   const [item, setItem] = useState(1);
-  const { addItem, items, updateItemQuantity, totalItems } = useCart();
+  const { addItem, items, updateItemQuantity, totalItems, removeItem } = useCart();
   const { setCartDrawerOpen } = useContext(SidebarContext);
   const router = useRouter();
   const pathname = usePathname();
-  // console.log('products',products)
-  // console.log("items", items);
 
   const handleAddItem = (product) => {
     // Check if user is authenticated before adding to cart
@@ -25,23 +23,39 @@ const useAddToCart = () => {
       return;
     }
 
-    const result = items.find((i) => i.id === product.id);
-    // console.log(
-    //   "result in add to",
-    //   result,
-    //   items,
-    //   product.id
-    //   // product?.quantity < result?.stock,
-    //   // result?.quantity,
-    //   // "item",
-    //   // item
-    // );
+    const baseProductId = `${product.id || product._id}`;
+    let result = items.find((i) => i.id == baseProductId);
+
+    // Handle legacy items migration (Number vs String ID)
+    if (result && result.id !== baseProductId) {
+      removeItem(result.id);
+      // Add legacy quantity to current request so we merge them
+      // Wait, addItem adds TO existing if ID matches? No, we removed it.
+      // So we treat it as a new add with (legacy_qty + new_qty)
+      // But wait, the `item` state is just the *new* quantity to add.
+      // The `addItem` function usually merges if ID exists, or creates new.
+      // Since we removed it, we must add `result.quantity` (old) + `item` (new).
+      // BUT, we can just let `addItem` handle it IF we hadn't removed it?
+      // The problem is `addItem` uses the ID in the object passed to it.
+      // If we pass object with String ID, it won't find the Number ID item, and will creaate duplicate.
+      // So yes, we MUST remove old, and add (old + new).
+
+      // Update the quantity we are about to add to include the old quantity
+      // We can't easily change `item` state here. We'll pass explicit quantity to addItem.
+    }
+
+    // Calculate final quantity to add (if we found a legacy item, we need to re-add its quantity too)
+    let quantityToAdd = item;
+    if (result && result.id !== baseProductId) {
+      quantityToAdd = result.quantity + item;
+      result = undefined; // Treated as new item now
+    }
+
     const { variants, categories, description, ...updatedProduct } = product;
 
-    // Explicitly preserve product details (sku, hsn, unit, brand) for order details
-    // Also include tax and pricing info for checkout calculations
     const cartItem = {
       ...updatedProduct,
+      id: baseProductId,
       sku: product.sku,
       hsn: product.hsn,
       unit: product.unit,
@@ -52,28 +66,28 @@ const useAddToCart = () => {
     };
 
     if (result !== undefined) {
+      // Item exists (and IDs match, so no migration needed)
       if (
-        result?.quantity + item <=
+        result?.quantity + quantityToAdd <=
         (product?.variants?.length > 0
           ? product?.variant?.quantity
           : product?.stock)
       ) {
-        addItem(cartItem, item);
-        notifySuccess(`${item} ${product.title} added to cart!`);
-        // Cart drawer should only open when user clicks cart icon in navbar
+        addItem(cartItem, quantityToAdd);
+        notifySuccess(`${quantityToAdd} ${product.title} added to cart!`);
       } else {
         notifyError("Insufficient stock!");
       }
     } else {
+      // New item (or migrated item)
       if (
-        item <=
+        quantityToAdd <=
         (product?.variants?.length > 0
           ? product?.variant?.quantity
           : product?.stock)
       ) {
-        addItem(cartItem, item);
+        addItem(cartItem, quantityToAdd);
         notifySuccess(`${item} ${product.title} added to cart!`);
-        // Cart drawer should only open when user clicks cart icon in navbar
       } else {
         notifyError("Insufficient stock!");
       }

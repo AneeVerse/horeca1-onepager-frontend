@@ -13,7 +13,7 @@ const getPriceForQuantity = (item, totalQuantity) => {
   const now = new Date();
   const hours = now.getHours();
   const isPromoTime = hours >= 18 || hours < 9;
-  
+
   // Check promo pricing first if promo time
   if (isPromoTime && item?.promoPricing) {
     if (item.promoPricing?.bulkRate2?.quantity > 0 && totalQuantity >= item.promoPricing.bulkRate2.quantity) {
@@ -26,7 +26,7 @@ const getPriceForQuantity = (item, totalQuantity) => {
       return item.promoPricing.singleUnit;
     }
   }
-  
+
   // Use bulkPricing stored in cart item
   if (item?.bulkPricing?.bulkRate2?.quantity > 0 && totalQuantity >= item.bulkPricing.bulkRate2.quantity) {
     return item.bulkPricing.bulkRate2.pricePerUnit;
@@ -39,7 +39,7 @@ const getPriceForQuantity = (item, totalQuantity) => {
 };
 
 const CartItem = ({ item, currency }) => {
-  const { updateItemQuantity, removeItem, addItem } = useCart();
+  const { updateItemQuantity, removeItem, addItem, updateItem } = useCart();
   const [inputValue, setInputValue] = useState(item.quantity.toString());
 
   // Update input value when item quantity changes externally
@@ -55,16 +55,11 @@ const CartItem = ({ item, currency }) => {
     }
     const newQuantity = item.quantity + 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
-    
-    // If price changed, need to remove and re-add with new price
-    // Use setTimeout to ensure remove completes before add
+
+    // Atomically update both quantity and price (if changed)
     if (item.price !== newPrice) {
-      removeItem(item.id);
-      requestAnimationFrame(() => {
-        addItem({ ...item, price: newPrice }, newQuantity);
-      });
+      updateItem(item.id, { price: newPrice, quantity: newQuantity });
     } else {
-      // Price stays the same, just update quantity
       updateItemQuantity(item.id, newQuantity);
     }
   };
@@ -79,19 +74,14 @@ const CartItem = ({ item, currency }) => {
       removeItem(item.id);
       return;
     }
-    
+
     const newQuantity = item.quantity - 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
-    
-    // If price changed, need to remove and re-add with new price
-    // Use setTimeout to ensure remove completes before add
+
+    // Atomically update both quantity and price (if changed)
     if (item.price !== newPrice) {
-      removeItem(item.id);
-      requestAnimationFrame(() => {
-        addItem({ ...item, price: newPrice }, newQuantity);
-      });
+      updateItem(item.id, { price: newPrice, quantity: newQuantity });
     } else {
-      // Price stays the same, just update quantity
       updateItemQuantity(item.id, newQuantity);
     }
   };
@@ -124,17 +114,13 @@ const CartItem = ({ item, currency }) => {
       setInputValue(item.quantity.toString());
       return;
     }
-    
+
     const newPrice = getPriceForQuantity(item, newQuantity);
-    
-    // If price changed, need to remove and re-add with new price
+
+    // Atomically update both quantity and price (if changed)
     if (item.price !== newPrice) {
-      removeItem(item.id);
-      requestAnimationFrame(() => {
-        addItem({ ...item, price: newPrice }, newQuantity);
-      });
+      updateItem(item.id, { price: newPrice, quantity: newQuantity });
     } else {
-      // Price stays the same, just update quantity
       updateItemQuantity(item.id, newQuantity);
     }
   };

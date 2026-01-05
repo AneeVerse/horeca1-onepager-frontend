@@ -102,17 +102,33 @@ const ProductCard = ({ product, attributes }) => {
   };
 
   const handleAddItem = (p, quantity = 1, isBulkButton = false) => {
-    // Always open quick view modal when clicking any Add button
+    // Always open quick view modal when clicking any Add button, do NOT add to cart directly
     setModalOpen(true);
     return;
     const { slug, variants, categories, description, ...updatedProduct } =
       product;
 
     // Use base product ID (no suffixes) so same product always uses same ID
-    const baseProductId = p._id;
+    const baseProductId = `${p.id || p._id}`; // Enforce string ID
 
-    // Check if this product already exists in cart
-    const existingItem = items.find((item) => item.id === baseProductId);
+    // Check if this product already exists in cart (compare loosely to catch legacy number/string mismatch)
+    let existingItem = items.find((item) => item.id == baseProductId);
+
+    // If found loose match but not strict match (e.g. found number, want string), duplicates might occur.
+    // We should migrate the old item to the new format.
+    if (existingItem && existingItem.id !== baseProductId) {
+      // Remove the legacy item so we can replace it with the clean string-ID version
+      removeItem(existingItem.id);
+
+      // Preserve its quantity for the new addition
+      // NOTE: We treat it as if it didn't exist for the logic below, but start with its quantity.
+      // Actually, simpler to just "fix" the ID in our reference and let logic proceed, 
+      // but we must ensure the old one is gone from the cart state.
+
+      // Let's add the old quantity to the current add request
+      quantity += existingItem.quantity; // Merge quantities
+      existingItem = undefined; // Treat as new item addition
+    }
 
     // Calculate total quantity
     // - If bulk button clicked, ADD to existing (e.g., "Add 12" means add 12 more)
@@ -135,7 +151,7 @@ const ProductCard = ({ product, attributes }) => {
     const newItem = {
       ...updatedProduct,
       title: showingTranslateValue(p?.title),
-      id: baseProductId, // Always use base product ID
+      id: baseProductId, // Always use base product ID as string
       variant: p.prices,
       price: calculatedPrice,
       originalPrice: product.prices?.originalPrice,
@@ -273,7 +289,7 @@ const ProductCard = ({ product, attributes }) => {
       setQuantityInputs(prev => ({ ...prev, [cartItem.id]: cartItem.quantity.toString() }));
       return;
     }
-    
+
     // If quantity is 0, remove item
     if (newQuantity === 0) {
       removeItem(cartItem.id);
@@ -447,7 +463,6 @@ const ProductCard = ({ product, attributes }) => {
                     onClick={(e) => {
                       e.preventDefault();
                       e.stopPropagation();
-                      // Bulk button: ADD the bulk quantity to cart (additive, not replacement)
                       handleAddItem(product, product.bulkPricing.bulkRate2.quantity, true);
                     }}
                     className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
@@ -526,8 +541,9 @@ const ProductCard = ({ product, attributes }) => {
             </div>
 
             <div className="flex-shrink-0 ml-auto">
-              {inCart(product._id) ? (() => {
-                const cartItem = items.find((item) => item.id === product._id);
+              {/* Force string comparison for cart check */}
+              {inCart(`${product.id || product._id}`) ? (() => {
+                const cartItem = items.find((item) => item.id === `${product.id || product._id}`);
                 return cartItem ? (
                   <div
                     key={cartItem.id}
@@ -587,9 +603,9 @@ const ProductCard = ({ product, attributes }) => {
               })() : (
                 (() => {
                   // Determine minimum quantity from bulk pricing or default to 1
-                  const minQty = product?.bulkPricing?.bulkRate1?.quantity || 
-                                 product?.promoPricing?.bulkRate1?.quantity || 
-                                 1;
+                  const minQty = product?.bulkPricing?.bulkRate1?.quantity ||
+                    product?.promoPricing?.bulkRate1?.quantity ||
+                    1;
                   return (
                     <button
                       onClick={(e) => {

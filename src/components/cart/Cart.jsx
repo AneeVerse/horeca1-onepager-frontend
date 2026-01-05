@@ -135,7 +135,7 @@ const Cart = ({ setOpen, currency }) => {
           )}
 
           {items.map((item, i) => (
-            <CartItem key={i + 1} item={item} currency={currency} />
+            <CartItem key={`${item.id}-${i}`} item={item} currency={currency} />
           ))}
         </div>
 
