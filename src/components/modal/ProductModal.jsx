@@ -60,7 +60,8 @@ const ProductModal = ({
             setItem(existingItem ? existingItem.quantity : 0);
             setInitialized(true);
         }
-    }, [modalOpen, product, items, setItem]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [modalOpen, product]);
 
     useEffect(() => {
         const checkPromoTime = () => {

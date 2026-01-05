@@ -124,11 +124,7 @@ const CategoryProductsSection = ({ categories, productsByCategory, attributes, c
                   <h2 className="text-xl lg:text-2xl font-semibold text-gray-900 mb-1">
                     {showingTranslateValue(category?.name)}
                   </h2>
-                  {category.description && (
-                    <p className="text-sm text-gray-600">
-                      {showingTranslateValue(category?.description)}
-                    </p>
-                  )}
+
                 </div>
               </div>
               <div className="flex items-center gap-4">

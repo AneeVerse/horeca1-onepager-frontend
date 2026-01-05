@@ -105,9 +105,6 @@ function SortableRow({ category, onEdit, onDelete, onToggleStatus, getLanguageVa
       <td className="whitespace-nowrap px-3 py-4 text-sm font-medium text-gray-900">
         {getLanguageValue(category.title || category.name)}
       </td>
-      <td className="px-3 py-4 text-sm text-gray-500 max-w-xs truncate">
-        {getLanguageValue(category.description, "—")}
-      </td>
       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
         <button
           onClick={() => onToggleStatus(category._id, category.status)}
@@ -458,9 +455,6 @@ export default function CategoriesPage() {
                     NAME
                   </th>
                   <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                    DESCRIPTION
-                  </th>
-                  <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                     PUBLISHED
                   </th>
                   <th className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -548,26 +542,7 @@ export default function CategoriesPage() {
                       />
                     </div>
 
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Description
-                      </label>
-                      <textarea
-                        rows={3}
-                        value={formData.description.en}
-                        onChange={(e) =>
-                          setFormData({
-                            ...formData,
-                            description: {
-                              ...formData.description,
-                              en: e.target.value,
-                            },
-                          })
-                        }
-                        placeholder="Category Description"
-                        className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
-                      />
-                    </div>
+
 
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
