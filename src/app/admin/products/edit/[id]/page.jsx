@@ -58,6 +58,7 @@ export default function EditProductPage() {
     },
     status: "show",
     isCombination: false,
+    minOrderQuantity: 1,
   });
 
   // Dynamic bulk tiers state
@@ -210,6 +211,7 @@ export default function EditProductPage() {
             },
             status: product.status || "show",
             isCombination: product.isCombination || false,
+            minOrderQuantity: product.minOrderQuantity || 1,
           });
           // Initialize bulk tiers from product data
           initializeBulkTiersFromProduct(product);
@@ -930,6 +932,25 @@ export default function EditProductPage() {
                         setFormData({
                           ...formData,
                           stock: parseInt(e.target.value) || 0,
+                        })
+                      }
+                      className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Min Order Quantity *
+                    </label>
+                    <input
+                      type="number"
+                      required
+                      min="1"
+                      value={formData.minOrderQuantity}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          minOrderQuantity: parseInt(e.target.value) || 1,
                         })
                       }
                       className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"

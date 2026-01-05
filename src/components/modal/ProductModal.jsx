@@ -384,6 +384,11 @@ const ProductModal = ({
                                     {category_name}
                                 </Link>
                                 <Stock In stock={stock} />
+                                {product?.minOrderQuantity > 1 && (
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+                                        Min Order Qty: {product.minOrderQuantity}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
@@ -407,7 +412,17 @@ const ProductModal = ({
                             {/* Quantity Selector */}
                             <div className="group flex items-center rounded-md overflow-hidden flex-shrink-0 border border-gray-300">
                                 <button
-                                    onClick={() => setItem(item - 1)}
+                                    onClick={() => {
+                                        const minQty = product?.minOrderQuantity || 1;
+                                        if (item <= minQty) {
+                                            setItem(0);
+                                            setQuantityInput('0');
+                                        } else {
+                                            const newQty = item - 1;
+                                            setItem(newQty);
+                                            setQuantityInput(newQty.toString());
+                                        }
+                                    }}
                                     disabled={item <= 0}
                                     className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e border-gray-300 hover:text-gray-500"
                                 >
@@ -435,9 +450,15 @@ const ProductModal = ({
                                     onBlur={(e) => {
                                         const value = e.target.value;
                                         const numValue = parseInt(value, 10);
-                                        if (value === '' || isNaN(numValue) || numValue < 0) {
+                                        const minQty = product?.minOrderQuantity || 1;
+                                        if (value === '' || isNaN(numValue) || numValue <= 0) {
                                             setItem(0);
                                             setQuantityInput('0');
+                                        } else if (numValue < minQty) {
+                                            // Jump to minQty if they try to enter something between 0 and minQty
+                                            setItem(minQty);
+                                            setQuantityInput(minQty.toString());
+                                            notifyError(`Minimum order quantity for this product is ${minQty}`);
                                         } else {
                                             const maxQuantity = product.quantity || 9999;
                                             const finalValue = Math.min(numValue, maxQuantity);
@@ -454,7 +475,18 @@ const ProductModal = ({
                                     className="font-semibold text-sm px-3 min-w-[2.5rem] text-center border-0 outline-none focus:outline-none focus:ring-0 bg-transparent [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                                 />
                                 <button
-                                    onClick={() => setItem(item + 1)}
+                                    onClick={() => {
+                                        const minQty = product?.minOrderQuantity || 1;
+                                        const maxQuantity = product.quantity || 9999;
+                                        if (item === 0) {
+                                            setItem(minQty);
+                                            setQuantityInput(minQty.toString());
+                                        } else if (item < maxQuantity) {
+                                            const newQty = item + 1;
+                                            setItem(newQty);
+                                            setQuantityInput(newQty.toString());
+                                        }
+                                    }}
                                     disabled={product.quantity <= item}
                                     className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-s border-gray-300 hover:text-gray-500"
                                 >

@@ -53,7 +53,8 @@ const CartItem = ({ item, currency }) => {
       e.preventDefault();
       e.stopPropagation();
     }
-    const newQuantity = item.quantity + 1;
+    const minQty = item?.minOrderQuantity || 1;
+    const newQuantity = item.quantity === 0 ? minQty : item.quantity + 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
 
     // Atomically update both quantity and price (if changed)
@@ -70,7 +71,8 @@ const CartItem = ({ item, currency }) => {
       e.preventDefault();
       e.stopPropagation();
     }
-    if (item.quantity <= 1) {
+    const minQty = item?.minOrderQuantity || 1;
+    if (item.quantity <= minQty) {
       removeItem(item.id);
       return;
     }
@@ -103,12 +105,23 @@ const CartItem = ({ item, currency }) => {
 
   // Handle quantity input blur or Enter key
   const handleQuantityBlur = () => {
+    const minQty = item?.minOrderQuantity || 1;
     const newQuantity = parseInt(inputValue, 10);
-    if (isNaN(newQuantity) || newQuantity < 1) {
-      // Reset to current quantity if invalid
-      setInputValue(item.quantity.toString());
+    if (isNaN(newQuantity) || newQuantity <= 0) {
+      // Reset to 0/Remove if invalid or 0
+      removeItem(item.id);
       return;
     }
+
+    if (newQuantity < minQty) {
+      // If below min quantity, reset to min quantity or remove? 
+      // User said "they cant check out", so let's force minQty if they are trying to buy it.
+      const newPrice = getPriceForQuantity(item, minQty);
+      updateItem(item.id, { price: newPrice, quantity: minQty });
+      setInputValue(minQty.toString());
+      return;
+    }
+
     if (newQuantity === item.quantity) {
       // No change, just reset input
       setInputValue(item.quantity.toString());
@@ -197,6 +210,11 @@ const CartItem = ({ item, currency }) => {
             </button>
           </div>
         </div>
+        {item.minOrderQuantity > 1 && item.quantity < item.minOrderQuantity && (
+          <div className="mt-1 text-[10px] font-semibold text-red-500 bg-red-50 px-2 py-0.5 rounded w-fit">
+            Min order {item.minOrderQuantity} required
+          </div>
+        )}
       </div>
     </div>
   );

@@ -163,6 +163,7 @@ const ProductCard = ({ product, attributes }) => {
       hsn: product.hsn,
       unit: product.unit,
       brand: product.brand,
+      minOrderQuantity: product.minOrderQuantity || 1,
     };
 
     if (existingItem) {
@@ -215,6 +216,7 @@ const ProductCard = ({ product, attributes }) => {
         hsn: product.hsn,
         unit: product.unit,
         brand: product.brand,
+        minOrderQuantity: product.minOrderQuantity || 1,
       };
       addItem(updatedItem, newQuantity);
     } else {
@@ -256,6 +258,7 @@ const ProductCard = ({ product, attributes }) => {
         hsn: product.hsn,
         unit: product.unit,
         brand: product.brand,
+        minOrderQuantity: product.minOrderQuantity || 1,
       };
       requestAnimationFrame(() => {
         addItem(updatedItem, newQuantity);
@@ -602,15 +605,14 @@ const ProductCard = ({ product, attributes }) => {
                 ) : null;
               })() : (
                 (() => {
-                  // Determine minimum quantity from bulk pricing or default to 1
-                  const minQty = product?.bulkPricing?.bulkRate1?.quantity ||
-                    product?.promoPricing?.bulkRate1?.quantity ||
-                    1;
+                  // Use specific minOrderQuantity from admin panel, default to 1
+                  const minQty = product?.minOrderQuantity || 1;
                   return (
                     <button
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
+                        // Open quick view modal where minQty will be enforced
                         handleAddItem(product, minQty, false);
                       }}
                       className="flex flex-col items-center gap-0.5 px-3 sm:px-5 py-1.5 sm:py-2 rounded-md font-semibold text-[10px] sm:text-xs transition-colors border border-primary-300 bg-white hover:bg-gray-50 flex-shrink-0"
@@ -619,7 +621,9 @@ const ProductCard = ({ product, attributes }) => {
                         ADD
                         <span className="text-primary-600 text-xs sm:text-sm leading-none ml-1">+</span>
                       </div>
-                      <span className="text-[9px] text-gray-500 font-normal">Min Qty {minQty}</span>
+                      {minQty > 1 && (
+                        <span className="text-[9px] text-gray-500 font-normal">Min Qty {minQty}</span>
+                      )}
                     </button>
                   );
                 })()

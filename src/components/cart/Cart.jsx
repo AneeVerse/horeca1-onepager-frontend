@@ -62,8 +62,19 @@ const Cart = ({ setOpen, currency }) => {
     return productSavings + (pricingBreakdown.isFreeDelivery ? pricingBreakdown.standardDeliveryCharge : 0);
   }, [items, pricingBreakdown]);
 
+  // Check if any items are below their minimum order quantity
+  const itemsBelowMinimum = useMemo(() => {
+    return items.filter(item => item.minOrderQuantity > 1 && item.quantity < item.minOrderQuantity);
+  }, [items]);
+
+  const hasMinimumQuantityError = itemsBelowMinimum.length > 0;
+
   const handleCheckout = (e) => {
     e.preventDefault();
+
+    if (hasMinimumQuantityError) {
+      return;
+    }
 
     if (items?.length <= 0) {
       setOpen(false);
@@ -216,10 +227,25 @@ const Cart = ({ setOpen, currency }) => {
                 </div>
               </div>
 
-              <div className="flex mt-4">
+              <div className="flex flex-col mt-4 gap-2">
+                {hasMinimumQuantityError && (
+                  <div className="bg-red-50 border border-red-100 rounded-lg p-3">
+                    <p className="text-xs text-red-600 font-bold flex items-center gap-1.5">
+                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                      </svg>
+                      Some items don't meet minimum quantity
+                    </p>
+                    <p className="text-[10px] text-red-500 mt-0.5">Please update quantities before checkout.</p>
+                  </div>
+                )}
                 <button
                   onClick={handleCheckout}
-                  className="relative h-12 w-full inline-flex items-center justify-center rounded-lg transition-all text-sm sm:text-base font-bold py-2 px-3 bg-[#018549] hover:bg-[#016d3b] text-white shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#018549]"
+                  disabled={hasMinimumQuantityError}
+                  className={`relative h-12 w-full inline-flex items-center justify-center rounded-lg transition-all text-sm sm:text-base font-bold py-2 px-3 shadow-md hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 ${hasMinimumQuantityError
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#018549] hover:bg-[#016d3b] text-white focus:ring-[#018549]"
+                    }`}
                 >
                   Checkout
                   <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
