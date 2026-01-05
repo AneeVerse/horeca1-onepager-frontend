@@ -206,7 +206,7 @@ const InvoicePDF = ({ data, globalSetting }) => {
 
         {/* Footer Totals Section */}
         <View style={tw("border-t border-b border-gray-100 p-8 bg-emerald-50 mt-4")}>
-          <View style={tw("flex flex-row justify-between")}>
+          <View style={tw("flex flex-row justify-between mb-4")}>
             <View style={tw("flex flex-col w-1/4")}>
               <Text style={tw("font-bold text-xs uppercase text-gray-600 mb-1")}>
                 Payment Method
@@ -231,6 +231,34 @@ const InvoicePDF = ({ data, globalSetting }) => {
               <Text style={tw("text-xs text-gray-500 font-bold")}>
                 {currency}{getNumberTwo(data?.discount)}
               </Text>
+            </View>
+
+            <View style={tw("flex flex-col w-1/4")}>
+              {/* Spacer */}
+            </View>
+          </View>
+
+          <View style={tw("flex flex-row justify-between pt-4 border-t border-emerald-100")}>
+            <View style={tw("flex flex-col w-1/4")}>
+              <Text style={tw("font-bold text-xs uppercase text-gray-600 mb-1")}>
+                Taxable Subtotal
+              </Text>
+              <Text style={tw("text-xs text-gray-500 font-bold")}>
+                {currency}{getNumberTwo(data?.taxableSubtotal)}
+              </Text>
+            </View>
+
+            <View style={tw("flex flex-col w-1/4")}>
+              <Text style={tw("font-bold text-xs uppercase text-gray-600 mb-1")}>
+                GST
+              </Text>
+              <Text style={tw("text-xs text-gray-500 font-bold")}>
+                {currency}{getNumberTwo(data?.totalGst)}
+              </Text>
+            </View>
+
+            <View style={tw("flex flex-col w-1/4")}>
+              {/* Spacer */}
             </View>
 
             <View style={tw("flex flex-col w-1/4")}>

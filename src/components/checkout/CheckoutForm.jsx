@@ -59,33 +59,35 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
 
   // Calculate pricing breakdown
   const pricingBreakdown = useMemo(() => {
-    // Calculate original total (if items had originalPrice) and tax
-    let originalTotal = 0;
-    let currentTotal = 0;
-    let totalTax = 0;
+    let originalTotalGross = 0;
+    let currentTotalGross = 0;
+    let totalTaxAmount = 0;
+    let totalTaxableAmount = 0;
 
     items.forEach(item => {
-      const itemOriginalPrice = item.originalPrice || item.prices?.originalPrice || item.price;
-      const itemCurrentPrice = item.price;
       const quantity = item.quantity || 1;
-      const taxPercent = item.taxPercent || 0;
+      const taxPercent = parseFloat(item.taxPercent) || 0;
 
-      originalTotal += itemOriginalPrice * quantity;
-      currentTotal += itemCurrentPrice * quantity;
+      // Prices are Gross (Inclusive of tax)
+      const itemCurrentPriceGross = parseFloat(item.price) || 0;
+      const itemOriginalPriceGross = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || itemCurrentPriceGross);
 
-      // Calculate tax for this item (taxPercent is the GST percentage)
-      if (taxPercent > 0) {
-        const taxableAmount = item.taxableRate || itemCurrentPrice;
-        const itemTax = (taxableAmount * quantity * taxPercent) / 100;
-        totalTax += itemTax;
-      }
+      originalTotalGross += itemOriginalPriceGross * quantity;
+      currentTotalGross += itemCurrentPriceGross * quantity;
+
+      // Calculate Taxable Amount and GST Amount for this item
+      // Formula: Taxable = Gross / (1 + TaxRate/100)
+      // GST = Gross - Taxable
+      const itemCurrentTotalGross = itemCurrentPriceGross * quantity;
+      const itemTaxableAmount = itemCurrentTotalGross / (1 + taxPercent / 100);
+      const itemTaxAmount = itemCurrentTotalGross - itemTaxableAmount;
+
+      totalTaxableAmount += itemTaxableAmount;
+      totalTaxAmount += itemTaxAmount;
     });
 
     // Product discount is the difference between original and current prices
-    const productDiscount = originalTotal > currentTotal ? originalTotal - currentTotal : 0;
-
-    // Add coupon discount
-    const totalDiscount = productDiscount + discountAmount;
+    const productDiscount = originalTotalGross > currentTotalGross ? originalTotalGross - currentTotalGross : 0;
 
     // Shipping settings - free if over a threshold (₹500)
     const deliveryThreshold = 500;
@@ -94,15 +96,16 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
     const actualDeliveryCharge = isFreeDelivery ? 0 : standardDeliveryCharge;
 
     return {
-      itemTotal: originalTotal > 0 ? originalTotal : cartTotal,
-      productDiscount: totalDiscount,
-      gstCess: totalTax,
+      itemTotalOriginal: originalTotalGross,
+      productDiscount: productDiscount,
+      taxableSubtotal: totalTaxableAmount,
+      totalGst: totalTaxAmount,
       deliveryCharge: actualDeliveryCharge,
       standardDeliveryCharge,
       isFreeDelivery,
       deliveryThreshold,
-      calculatedTotal: cartTotal - discountAmount + actualDeliveryCharge,
-      savings: totalDiscount + (isFreeDelivery ? standardDeliveryCharge : 0),
+      totalCost: cartTotal - discountAmount + actualDeliveryCharge,
+      savings: productDiscount + (isFreeDelivery ? standardDeliveryCharge : 0),
     };
   }, [items, cartTotal, discountAmount]);
 
@@ -308,37 +311,55 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
 
             {/* Price Breakdown */}
             <div className="space-y-3 pt-3 border-t border-gray-100">
-              {/* Item Total */}
+              {/* Item Total (Gross) */}
               <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-600 font-medium">Item total</span>
+                <span className="text-gray-600 font-medium">Items Total (Incl. Tax)</span>
                 <span className="text-gray-900 font-semibold">
-                  {currency}{pricingBreakdown.itemTotal.toFixed(2)}
+                  {currency}{cartTotal.toFixed(2)}
                 </span>
               </div>
 
               {/* Product Discount */}
               {pricingBreakdown.productDiscount > 0 && (
                 <div className="flex justify-between items-center text-sm">
-                  <span className="text-gray-600 font-medium">Product discount</span>
+                  <span className="text-gray-600 font-medium">Product Discount</span>
                   <span className="text-teal-600 font-semibold">
                     - {currency}{pricingBreakdown.productDiscount.toFixed(2)}
                   </span>
                 </div>
               )}
 
-              {/* GST + Cess */}
-              {pricingBreakdown.gstCess > 0 && (
+              {/* Coupon Discount */}
+              {discountAmount > 0 && (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-gray-600 font-medium">Coupon Discount</span>
+                  <span className="text-teal-600 font-semibold">
+                    - {currency}{discountAmount.toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              {/* Taxable Subtotal */}
+              <div className="flex justify-between items-center text-sm">
+                <span className="text-gray-600 font-medium">Taxable Subtotal</span>
+                <span className="text-gray-900 font-semibold">
+                  {currency}{pricingBreakdown.taxableSubtotal.toFixed(2)}
+                </span>
+              </div>
+
+              {/* GST */}
+              {pricingBreakdown.totalGst > 0 && (
                 <div className="flex justify-between items-center text-sm">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-gray-600 font-medium">GST + Cess</span>
-                    <button className="text-gray-400 hover:text-gray-600" title="Tax calculated based on product tax rates">
+                    <span className="text-gray-600 font-medium">GST</span>
+                    <button className="text-gray-400 hover:text-gray-600" title="GST calculated as per product tax rates (Inclusive)">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </button>
                   </div>
                   <span className="text-gray-900 font-semibold">
-                    {currency}{pricingBreakdown.gstCess.toFixed(2)}
+                    {currency}{pricingBreakdown.totalGst.toFixed(2)}
                   </span>
                 </div>
               )}

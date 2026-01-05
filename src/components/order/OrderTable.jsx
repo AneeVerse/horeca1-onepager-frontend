@@ -32,8 +32,16 @@ const OrderTable = ({ data, currency, drawer }) => {
             {item.quantity}{" "}
           </td>
           <td className="px-6 py-2 text-sm font-medium text-center text-gray-500">
-            {currency}
-            {getNumberTwo(item.price)}
+            <div className="flex flex-col items-center">
+              {item.originalPrice > item.price && (
+                <span className="text-[10px] text-gray-400 line-through">
+                  {currency}{getNumberTwo(item.originalPrice)}
+                </span>
+              )}
+              <span>
+                {currency}{getNumberTwo(item.price)}
+              </span>
+            </div>
           </td>
 
           <td className="px-6 py-2 text-sm text-right font-semibold text-gray-500">

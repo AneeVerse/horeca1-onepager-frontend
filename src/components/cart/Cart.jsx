@@ -41,20 +41,35 @@ const Cart = ({ setOpen, currency }) => {
     const isFreeDelivery = cartTotal >= deliveryThreshold;
     const actualDeliveryCharge = isFreeDelivery ? 0 : standardDeliveryCharge;
 
+    // Calculate GST component (Informative)
+    let totalGst = 0;
+    items.forEach(item => {
+      const taxPercent = parseFloat(item.taxPercent) || 0;
+      const quantity = item.quantity || 1;
+      const grossPrice = parseFloat(item.price) || 0;
+      const totalGross = grossPrice * quantity;
+
+      const taxable = totalGross / (1 + taxPercent / 100);
+      const gst = totalGross - taxable;
+      totalGst += gst;
+    });
+
     return {
       deliveryCharge: actualDeliveryCharge,
       standardDeliveryCharge,
       isFreeDelivery,
       deliveryThreshold,
+      taxableSubtotal: cartTotal - totalGst,
+      totalGst: totalGst,
       total: cartTotal + actualDeliveryCharge,
       savings: isFreeDelivery ? standardDeliveryCharge : 0,
     };
-  }, [cartTotal]);
+  }, [items, cartTotal]);
 
   // Calculate total savings (Product discounts + Delivery savings)
   const totalSavings = useMemo(() => {
     const productSavings = items.reduce((acc, item) => {
-      const originalPrice = item.originalPrice || item.price;
+      const originalPrice = item.originalPrice || item.prices?.price || item.price;
       const savingsPerUnit = Math.max(0, originalPrice - item.price);
       return acc + savingsPerUnit * item.quantity;
     }, 0);
@@ -186,11 +201,27 @@ const Cart = ({ setOpen, currency }) => {
             <div className="bg-neutral-50 dark:bg-slate-900 p-5 pt-4 pb-20 sm:pb-5 border-t border-gray-100">
               {/* Price Breakdown */}
               <div className="space-y-2 text-sm">
-                {/* Subtotal */}
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600 font-medium">Subtotal</span>
-                  <span className="text-gray-900 font-semibold">
+                {/* Subtotal (Gross) */}
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500 font-medium">Subtotal (Incl. Tax)</span>
+                  <span className="text-gray-700 font-semibold">
                     {currency}{cartTotal.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* Taxable Value */}
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500 font-medium">Taxable Value</span>
+                  <span className="text-gray-700 font-semibold">
+                    {currency}{pricingBreakdown.taxableSubtotal.toFixed(2)}
+                  </span>
+                </div>
+
+                {/* GST */}
+                <div className="flex justify-between items-center text-xs">
+                  <span className="text-gray-500 font-medium">GST</span>
+                  <span className="text-gray-700 font-semibold">
+                    {currency}{pricingBreakdown.totalGst.toFixed(2)}
                   </span>
                 </div>
 

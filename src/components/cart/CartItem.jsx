@@ -167,9 +167,16 @@ const CartItem = ({ item, currency }) => {
             >
               {item.title}
             </Link>
-            <span className="text-xs text-gray-400 mb-1">
-              Item Price {currency}{item.price}
-            </span>
+            <div className="flex items-center gap-2 mb-1">
+              {item.originalPrice > item.price && (
+                <span className="text-[10px] text-gray-400 line-through">
+                  {currency}{item.originalPrice?.toFixed(2)}
+                </span>
+              )}
+              <span className="text-xs text-gray-500 font-medium">
+                Item Price {currency}{item.price}
+              </span>
+            </div>
           </div>
           <div className="ml-4 flow-root shrink-0">
             <button
