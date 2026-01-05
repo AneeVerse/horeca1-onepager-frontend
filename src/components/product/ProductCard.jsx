@@ -379,7 +379,7 @@ const ProductCard = ({ product, attributes }) => {
         <div className="w-full flex justify-between">
           <Discount product={product} />
         </div>
-        <div className="relative w-full h-32 sm:h-40 lg:h-40 xl:h-44">
+        <div className="relative w-full aspect-[4/3] sm:aspect-square">
           <div
             className="relative block w-full h-full overflow-hidden bg-gray-100 cursor-pointer"
             onClick={() => {

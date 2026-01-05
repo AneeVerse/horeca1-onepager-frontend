@@ -71,7 +71,7 @@ const PromoTimerCard = () => {
   if (isPromoTime) {
     // Show Promo Active Card - Master Designer Brand Teal Design
     return (
-      <div className="w-full h-[140px] lg:h-[280px] flex">
+      <div className="w-full h-auto min-h-[140px] lg:h-[280px] flex">
         <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] w-full rounded-2xl shadow-[0_20px_50px_rgba(2,81,85,0.25)] overflow-hidden relative flex flex-col border border-white/10 group transition-all duration-700">
           {/* Professional Color Grading Elements */}
           <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-emerald-400/10 transition-all duration-1000"></div>
@@ -130,7 +130,7 @@ const PromoTimerCard = () => {
 
   // Show "Promo Starting Soon" Card - Brand Teal Design
   return (
-    <div className="w-full h-[140px] lg:h-[280px] flex">
+    <div className="w-full h-auto min-h-[140px] lg:h-[280px] flex">
       <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] w-full rounded-2xl shadow-[0_20px_50px_rgba(2,81,85,0.25)] overflow-hidden relative flex flex-col border border-white/10 group transition-all duration-700">
         {/* Professional Color Grading Elements */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-400/5 rounded-full blur-[100px] -mr-32 -mt-32 group-hover:bg-emerald-400/10 transition-all duration-1000"></div>
