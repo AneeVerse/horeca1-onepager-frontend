@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
-const SearchSuggestions = ({ 
-  suggestions = [], 
-  isOpen, 
-  onClose, 
+const SearchSuggestions = ({
+  suggestions = [],
+  searchText = "",
+  isOpen,
+  onClose,
   onSelect,
   selectedIndex,
   currency = "₹"
@@ -54,16 +55,15 @@ const SearchSuggestions = ({
           const productName = showingTranslateValue(product?.title) || product?.title || "Product";
           const productPrice = product?.prices?.price || product?.price || 0;
           const productImage = product?.image?.[0] || "https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png";
-          
+
           return (
             <div
               key={product._id || product.id || index}
               onClick={() => handleSuggestionClick(product)}
-              className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${
-                index === selectedIndex
-                  ? "bg-primary-50 border-l-4 border-primary-600"
-                  : "hover:bg-gray-50"
-              }`}
+              className={`flex items-center gap-3 px-4 py-3 cursor-pointer transition-colors ${index === selectedIndex
+                ? "bg-primary-50 border-l-4 border-primary-600"
+                : "hover:bg-gray-50"
+                }`}
             >
               <div className="flex-shrink-0 w-12 h-12 relative">
                 <Image
@@ -86,6 +86,22 @@ const SearchSuggestions = ({
             </div>
           );
         })}
+
+        {/* Search All Link */}
+        <div
+          onClick={() => {
+            router.push(`/search?query=${encodeURIComponent(searchText)}`, { scroll: true });
+            onSelect();
+          }}
+          className="px-4 py-3 bg-gray-50 border-t border-gray-100 cursor-pointer hover:bg-primary-50 hover:text-primary-700 text-center transition-colors shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] sticky bottom-0 z-10"
+        >
+          <p className="text-sm font-bold text-primary-600 flex items-center justify-center gap-2">
+            See all matching results for "{searchText}"
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </p>
+        </div>
       </div>
     </div>
   );

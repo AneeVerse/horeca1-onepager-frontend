@@ -6,7 +6,7 @@ import { baseURL, handleResponse } from "@services/CommonService";
  * @param {number} limit - Maximum number of suggestions (default: 5)
  * @returns {Promise<Array>} Array of product suggestions
  */
-export const getSearchSuggestions = async (query, limit = 5) => {
+export const getSearchSuggestions = async (query, limit = 50) => {
   if (!query || query.trim().length < 1) {
     return [];
   }
@@ -14,7 +14,7 @@ export const getSearchSuggestions = async (query, limit = 5) => {
   try {
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 second timeout
-    
+
     const response = await fetch(
       `${baseURL}/products/store?title=${encodeURIComponent(query.trim())}&limit=${limit}`,
       {
@@ -25,7 +25,7 @@ export const getSearchSuggestions = async (query, limit = 5) => {
         },
       }
     );
-    
+
     clearTimeout(timeoutId);
     const data = await handleResponse(response);
 

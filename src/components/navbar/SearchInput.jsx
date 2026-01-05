@@ -14,13 +14,13 @@ const SearchInput = () => {
   const { globalSetting } = useSetting();
   const { showingTranslateValue } = useUtilsFunction();
   const currency = globalSetting?.default_currency || "₹";
-  
+
   const [searchText, setSearchText] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const inputRef = useRef(null);
   const debounceTimerRef = useRef(null);
 
@@ -34,7 +34,7 @@ const SearchInput = () => {
       if (query && query.trim().length >= 1) {
         setIsLoading(true);
         try {
-          const results = await getSearchSuggestions(query, 5);
+          const results = await getSearchSuggestions(query, 50);
           setSuggestions(results);
           setShowSuggestions(true);
           setSelectedIndex(-1);
@@ -62,7 +62,7 @@ const SearchInput = () => {
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchText(value);
-    
+
     if (value.trim().length >= 1) {
       debouncedSearch(value);
     } else {
@@ -74,7 +74,7 @@ const SearchInput = () => {
   const handleSearch = (e) => {
     e.preventDefault();
     setShowSuggestions(false);
-    
+
     if (searchText) {
       router.push(`/search?query=${encodeURIComponent(searchText)}`, { scroll: true });
       setSearchText("");
@@ -97,7 +97,7 @@ const SearchInput = () => {
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
-        setSelectedIndex((prev) => 
+        setSelectedIndex((prev) =>
           prev < suggestions.length - 1 ? prev + 1 : prev
         );
         break;
@@ -178,9 +178,10 @@ const SearchInput = () => {
           />
         </button>
       </form>
-      
+
       <SearchSuggestions
         suggestions={suggestions}
+        searchText={searchText}
         isOpen={showSuggestions && suggestions.length > 0}
         onClose={() => setShowSuggestions(false)}
         onSelect={handleSuggestionSelect}
