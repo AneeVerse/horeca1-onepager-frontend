@@ -59,7 +59,7 @@ const Home = async () => {
   return (
     <div className="min-h-screen dark:bg-zinc-900">
       <div className="bg-white dark:bg-zinc-900">
-        <div className="mx-auto py-5 max-w-screen-2xl px-3 sm:px-10">
+        <div className="mx-auto py-5 max-w-screen-2xl px-3 sm:px-4 lg:px-10">
           <div className="flex flex-col lg:flex-row w-full gap-4 lg:gap-6">
             {/* Home page main carousel */}
             <div className="flex-shrink-0 lg:block w-full lg:w-3/5">
