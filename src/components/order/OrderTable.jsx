@@ -33,11 +33,17 @@ const OrderTable = ({ data, currency, drawer }) => {
           </td>
           <td className="px-6 py-2 text-sm font-medium text-center text-gray-500">
             <div className="flex flex-col items-center">
-              {item.originalPrice > item.price && (
-                <span className="text-[10px] text-gray-400 line-through">
-                  {currency}{getNumberTwo(item.originalPrice)}
-                </span>
-              )}
+              {(() => {
+                const originalPrice = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || 0);
+                if (originalPrice > item.price) {
+                  return (
+                    <span className="text-[10px] text-gray-400 line-through">
+                      {currency}{getNumberTwo(originalPrice)}
+                    </span>
+                  );
+                }
+                return null;
+              })()}
               <span>
                 {currency}{getNumberTwo(item.price)}
               </span>

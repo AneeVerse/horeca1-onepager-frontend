@@ -70,7 +70,18 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
 
       // Prices are Gross (Inclusive of tax)
       const itemCurrentPriceGross = parseFloat(item.price) || 0;
-      const itemOriginalPriceGross = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || itemCurrentPriceGross);
+      let itemOriginalPriceGross = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || 0);
+
+      // Safety net: If baseline is equal to item price, but the item has bulkPricing, try to find the true original
+      if (itemOriginalPriceGross <= itemCurrentPriceGross && item.bulkPricing?.bulkRate1?.pricePerUnit > 0) {
+        const possibleBase = parseFloat(item.prices?.price || item.prices?.originalPrice || 0);
+        if (possibleBase > itemCurrentPriceGross) {
+          itemOriginalPriceGross = possibleBase;
+        }
+      }
+
+      // Final fallback to current price if still 0
+      if (itemOriginalPriceGross === 0) itemOriginalPriceGross = itemCurrentPriceGross;
 
       originalTotalGross += itemOriginalPriceGross * quantity;
       currentTotalGross += itemCurrentPriceGross * quantity;
