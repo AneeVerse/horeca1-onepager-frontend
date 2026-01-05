@@ -375,7 +375,7 @@ const ProductCard = ({ product, attributes }) => {
         />
       )}
 
-      <div className="group relative flex flex-col overflow-hidden rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-primary-500">
+      <div className="group relative flex flex-col overflow-hidden rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-primary-500 w-full h-full">
         <div className="w-full flex justify-between">
           <Discount product={product} />
         </div>

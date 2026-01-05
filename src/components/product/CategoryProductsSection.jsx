@@ -43,7 +43,7 @@ const CategoryProductsSection = ({ categories, productsByCategory, attributes, c
             <div className="relative">
               <Swiper
                 onSwiper={setSwiperInstance}
-                spaceBetween={16}
+                spaceBetween={12}
                 navigation={{
                   prevEl: prevEl,
                   nextEl: nextEl,
@@ -54,22 +54,26 @@ const CategoryProductsSection = ({ categories, productsByCategory, attributes, c
                 breakpoints={{
                   640: {
                     slidesPerView: 2,
+                    spaceBetween: 16,
                   },
                   768: {
                     slidesPerView: 3,
+                    spaceBetween: 16,
                   },
                   1024: {
                     slidesPerView: 4,
+                    spaceBetween: 24,
                   },
                   1280: {
                     slidesPerView: 5,
+                    spaceBetween: 24,
                   },
                 }}
                 modules={[Navigation]}
-                className="category-products-carousel"
+                className="category-products-carousel !py-1"
               >
                 {products?.map((product) => (
-                  <SwiperSlide key={product._id}>
+                  <SwiperSlide key={product._id} className="h-auto! flex">
                     <ProductCard
                       product={product}
                       attributes={attributes}
