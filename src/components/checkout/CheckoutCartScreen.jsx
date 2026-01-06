@@ -53,6 +53,8 @@ const CheckoutCartScreen = () => {
     let currentTotal = 0;
     let totalTax = 0;
 
+    let totalTaxableAmount = 0;
+
     items.forEach(item => {
       const itemOriginalPrice = item.originalPrice || item.prices?.originalPrice || item.price;
       const itemCurrentPrice = item.price;
@@ -62,12 +64,14 @@ const CheckoutCartScreen = () => {
       originalTotal += itemOriginalPrice * quantity;
       currentTotal += itemCurrentPrice * quantity;
 
-      // Calculate tax for this item (taxPercent is the GST percentage)
-      if (taxPercent > 0) {
-        const taxableAmount = item.taxableRate || itemCurrentPrice;
-        const itemTax = (taxableAmount * quantity * taxPercent) / 100;
-        totalTax += itemTax;
-      }
+      // Calculate taxable amount and GST using stored taxableRate from cart item
+      // Fallback to calculation if taxableRate not available
+      const itemTaxableRate = item.taxableRate || (itemCurrentPrice / (1 + taxPercent / 100));
+      const itemTaxableAmount = itemTaxableRate * quantity;
+      const itemTax = itemTaxableAmount * (taxPercent / 100);
+
+      totalTaxableAmount += itemTaxableAmount;
+      totalTax += itemTax;
     });
 
     // Product discount is the difference between original and current prices
@@ -76,22 +80,20 @@ const CheckoutCartScreen = () => {
     // Add coupon discount
     const totalDiscount = productDiscount + discountAmount;
 
-    // Shipping settings - free if over a threshold (let's say ₹500)
-    const deliveryThreshold = 500;
+    // Shipping settings - always free delivery
     const standardDeliveryCharge = 30;
-    const isFreeDelivery = cartTotal >= deliveryThreshold;
-    const actualDeliveryCharge = isFreeDelivery ? 0 : standardDeliveryCharge;
+    const isFreeDelivery = true; // Always free delivery
+    const actualDeliveryCharge = 0; // Always free
 
     return {
-      itemTotal: originalTotal > 0 ? originalTotal : cartTotal,
+      itemTotal: totalTaxableAmount, // Taxable amount (before GST)
       productDiscount: totalDiscount,
       gstCess: totalTax,
       deliveryCharge: actualDeliveryCharge,
       standardDeliveryCharge,
       isFreeDelivery,
-      deliveryThreshold,
-      total: cartTotal - discountAmount + actualDeliveryCharge,
-      savings: totalDiscount + (isFreeDelivery ? standardDeliveryCharge : 0),
+      total: totalTaxableAmount + totalTax + actualDeliveryCharge - discountAmount,
+      savings: totalDiscount + standardDeliveryCharge, // Always include delivery savings since it's always free
     };
   }, [items, cartTotal, discountAmount]);
 
@@ -187,34 +189,6 @@ const CheckoutCartScreen = () => {
                   </div>
                 )}
               </form>
-
-              {/* Total Savings Box - Inspired by image */}
-              <div className="mb-6 bg-[#eff6ff] rounded-xl overflow-hidden shadow-sm border border-blue-100 relative">
-                {/* Wavy Top Border Effect */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-repeat-x" style={{ backgroundImage: 'radial-gradient(circle at 5px -2px, transparent 6px, #eff6ff 0px)', backgroundSize: '10px 10px' }}></div>
-
-                <div className="p-4 pt-5">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-blue-700 font-bold text-sm">Your total savings</span>
-                    <span className="text-blue-700 font-bold text-base">{currency}{pricingBreakdown.savings.toFixed(0)}</span>
-                  </div>
-
-                  {!pricingBreakdown.isFreeDelivery && (
-                    <p className="text-[11px] text-blue-500 font-medium leading-normal">
-                      Shop for {currency}{(pricingBreakdown.deliveryThreshold - cartTotal).toFixed(0)} more to <span className="text-blue-700 font-bold italic underline decoration-blue-300">save {currency}{pricingBreakdown.standardDeliveryCharge}</span> on delivery charge
-                    </p>
-                  )}
-
-                  {pricingBreakdown.isFreeDelivery && (
-                    <p className="text-[11px] text-[#018549] font-bold flex items-center gap-1 mt-1">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Free delivery applied!
-                    </p>
-                  )}
-                </div>
-              </div>
 
               {/* Price Breakdown */}
               <div className="space-y-3">

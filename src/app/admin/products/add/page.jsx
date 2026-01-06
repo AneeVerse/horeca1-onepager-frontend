@@ -27,7 +27,7 @@ export default function AddProductPage() {
   const [submitting, setSubmitting] = useState(false);
   // Dynamic bulk tiers state
   const [bulkTiers, setBulkTiers] = useState([
-    { id: 1, quantity: 0, pricePerUnit: 0, promoQuantity: 0, promoPricePerUnit: 0 },
+    { id: 1, quantity: 0, pricePerUnit: 0, taxableRate: 0, promoQuantity: 0, promoPricePerUnit: 0 },
   ]);
 
   const [formData, setFormData] = useState({
@@ -50,8 +50,8 @@ export default function AddProductPage() {
       discount: 0,
     },
     bulkPricing: {
-      bulkRate1: { quantity: 0, pricePerUnit: 0 },
-      bulkRate2: { quantity: 0, pricePerUnit: 0 },
+      bulkRate1: { quantity: 0, pricePerUnit: 0, taxableRate: 0 },
+      bulkRate2: { quantity: 0, pricePerUnit: 0, taxableRate: 0 },
     },
     promoPricing: {
       singleUnit: 0,
@@ -68,7 +68,7 @@ export default function AddProductPage() {
     const newId = bulkTiers.length + 1;
     setBulkTiers([
       ...bulkTiers,
-      { id: newId, quantity: 0, pricePerUnit: 0, promoQuantity: 0, promoPricePerUnit: 0 },
+      { id: newId, quantity: 0, pricePerUnit: 0, taxableRate: 0, promoQuantity: 0, promoPricePerUnit: 0 },
     ]);
   };
 
@@ -95,9 +95,16 @@ export default function AddProductPage() {
 
     bulkTiers.forEach((tier, index) => {
       const rateKey = `bulkRate${index + 1}`;
+      // Taxable = Gross - GST, where GST = Gross × Tax%
+      const gst = formData.taxPercent > 0 && tier.pricePerUnit > 0
+        ? tier.pricePerUnit * (formData.taxPercent / 100)
+        : 0;
+      const calculatedTaxable = tier.pricePerUnit - gst;
+      
       bulkPricing[rateKey] = {
         quantity: tier.quantity,
         pricePerUnit: tier.pricePerUnit,
+        taxableRate: parseFloat(calculatedTaxable.toFixed(2)),
       };
       promoPricingBulk[rateKey] = {
         quantity: tier.promoQuantity,
@@ -456,8 +463,11 @@ export default function AddProductPage() {
                     value={formData.taxableRate}
                     onChange={(e) => {
                       const taxable = parseFloat(e.target.value) || 0;
-                      const tax = parseFloat(formData.taxPercent) || 0;
-                      const gross = taxable * (1 + tax / 100);
+                      const taxPercent = parseFloat(formData.taxPercent) || 0;
+                      // Taxable = Gross - GST, so Gross = Taxable / (1 - Tax%/100)
+                      const gross = taxPercent > 0 && taxable > 0
+                        ? taxable / (1 - taxPercent / 100)
+                        : taxable;
                       setFormData({
                         ...formData,
                         taxableRate: taxable,
@@ -485,16 +495,25 @@ export default function AddProductPage() {
                     value={formData.taxPercent}
                     onChange={(e) => {
                       const tax = parseFloat(e.target.value) || 0;
-                      const taxable = parseFloat(formData.taxableRate) || 0;
-                      const gross = taxable * (1 + tax / 100);
+                      const gross = parseFloat(formData.prices.price) || 0;
+                      // When tax % changes: GST = Gross × Tax%, Taxable = Gross - GST
+                      const gst = gross * (tax / 100);
+                      const taxable = gross - gst;
                       setFormData({
                         ...formData,
                         taxPercent: tax,
-                        prices: {
-                          ...formData.prices,
-                          price: parseFloat(gross.toFixed(2)),
-                        },
+                        taxableRate: parseFloat(taxable.toFixed(2)),
                       });
+                      // For bulk tiers: Taxable = Gross - GST
+                      const updatedTiers = bulkTiers.map(tier => {
+                        if (tier.pricePerUnit > 0) {
+                          const tierGst = tier.pricePerUnit * (tax / 100);
+                          const tierTaxable = tier.pricePerUnit - tierGst;
+                          return { ...tier, taxableRate: parseFloat(tierTaxable.toFixed(2)) };
+                        }
+                        return tier;
+                      });
+                      setBulkTiers(updatedTiers);
                     }}
                     placeholder="5"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
@@ -513,8 +532,10 @@ export default function AddProductPage() {
                     value={formData.prices.price}
                     onChange={(e) => {
                       const gross = parseFloat(e.target.value) || 0;
-                      const tax = parseFloat(formData.taxPercent) || 0;
-                      const taxable = gross / (1 + tax / 100);
+                      const taxPercent = parseFloat(formData.taxPercent) || 0;
+                      // Taxable = Gross - GST, where GST = Gross × Tax%
+                      const gst = gross * (taxPercent / 100);
+                      const taxable = gross - gst;
                       setFormData({
                         ...formData,
                         taxableRate: parseFloat(taxable.toFixed(2)),
@@ -527,6 +548,13 @@ export default function AddProductPage() {
                     placeholder="380.00"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
+                  {formData.taxPercent > 0 && formData.prices.price > 0 && (
+                    <p className="text-xs text-gray-600 mt-1.5 flex items-center gap-1">
+                      <span className="font-medium">Taxable: ₹{formData.taxableRate.toFixed(2)}</span>
+                      <span>|</span>
+                      <span className="font-medium">GST {formData.taxPercent}%: ₹{((formData.prices.price - formData.taxableRate)).toFixed(2)}</span>
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -591,12 +619,21 @@ export default function AddProductPage() {
                     className="w-full rounded-lg border-[#018549]/40 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-4 py-2.5 border bg-white"
                   />
                   {formData.promoPricing.singleUnit > 0 && (
-                    <p className="text-xs text-[#016d3b] mt-2 flex items-center gap-1">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Single unit promo: ₹{formData.promoPricing.singleUnit} per {formData.unit || "unit"}
-                    </p>
+                    <>
+                      <p className="text-xs text-[#016d3b] mt-2 flex items-center gap-1">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        Single unit promo: ₹{formData.promoPricing.singleUnit} per {formData.unit || "unit"}
+                      </p>
+                      {formData.taxPercent > 0 && formData.promoPricing.singleUnit > 0 && (
+                        <p className="text-xs text-[#016d3b] mt-1.5 flex items-center gap-1">
+                          <span className="font-medium">Taxable: ₹{(formData.promoPricing.singleUnit - (formData.promoPricing.singleUnit * (formData.taxPercent / 100))).toFixed(2)}</span>
+                          <span>|</span>
+                          <span className="font-medium">GST {formData.taxPercent}%: ₹{(formData.promoPricing.singleUnit * (formData.taxPercent / 100)).toFixed(2)}</span>
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
@@ -667,14 +704,62 @@ export default function AddProductPage() {
                                 min="0"
                                 step="0.01"
                                 value={tier.pricePerUnit}
-                                onChange={(e) =>
-                                  updateBulkTier(tier.id, "pricePerUnit", parseFloat(e.target.value) || 0)
-                                }
+                                 onChange={(e) => {
+                                   const newPrice = parseFloat(e.target.value) || 0;
+                                   // Taxable = Gross - GST, where GST = Gross × Tax%
+                                   const calculatedGst = formData.taxPercent > 0 && newPrice > 0
+                                     ? newPrice * (formData.taxPercent / 100)
+                                     : 0;
+                                   const calculatedTaxable = newPrice - calculatedGst;
+                                   // Update both pricePerUnit and taxableRate in a single state update
+                                   setBulkTiers(
+                                     bulkTiers.map((t) =>
+                                       t.id === tier.id 
+                                         ? { ...t, pricePerUnit: newPrice, taxableRate: parseFloat(calculatedTaxable.toFixed(2)) }
+                                         : t
+                                     )
+                                   );
+                                 }}
                                 placeholder="0.00"
                                 className="w-full rounded-lg border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm pl-7 pr-3 py-2.5 border bg-white"
                               />
                             </div>
                           </div>
+                        </div>
+                        <div className="mt-3">
+                          {(() => {
+                            // Taxable = Gross - GST, where GST = Gross × Tax%
+                            const calculatedGst = formData.taxPercent > 0 && tier.pricePerUnit > 0
+                              ? tier.pricePerUnit * (formData.taxPercent / 100)
+                              : 0;
+                            const calculatedTaxable = tier.pricePerUnit - calculatedGst;
+                            
+                            return (
+                              <>
+                                <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                                  Taxable Rate (per Unit) <span className="text-gray-400 text-[10px]">(auto-calculated)</span>
+                                </label>
+                                <div className="relative">
+                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                                  <input
+                                    type="number"
+                                    min="0"
+                                    step="0.01"
+                                    value={calculatedTaxable.toFixed(2)}
+                                    readOnly
+                                    className="w-full rounded-lg border-blue-200 shadow-sm bg-gray-50 text-sm pl-7 pr-3 py-2.5 border text-gray-600 cursor-not-allowed"
+                                  />
+                                </div>
+                                {formData.taxPercent > 0 && tier.pricePerUnit > 0 && (
+                                  <p className="text-xs text-gray-500 mt-1">
+                                    <span className="font-medium">Taxable: ₹{calculatedTaxable.toFixed(2)}</span>
+                                    <span className="mx-1">|</span>
+                                    <span className="font-medium">GST {formData.taxPercent}%: ₹{calculatedGst.toFixed(2)}</span>
+                                  </p>
+                                )}
+                              </>
+                            );
+                          })()}
                         </div>
                         {tier.quantity > 0 && tier.pricePerUnit > 0 && (
                           <p className="text-xs text-blue-700 mt-3 bg-blue-100/50 px-3 py-2 rounded-lg">
@@ -730,11 +815,27 @@ export default function AddProductPage() {
                             </div>
                           </div>
                         </div>
-                        {tier.promoQuantity > 0 && tier.promoPricePerUnit > 0 && (
-                          <p className="text-xs text-[#016d3b] mt-3 bg-[#d4f5e5]/50 px-3 py-2 rounded-lg">
-                            ₹{tier.promoPricePerUnit} per {formData.unit || "unit"} for {tier.promoQuantity}+ {formData.unit ? `${formData.unit}s` : "units"}
-                          </p>
-                        )}
+                          {formData.taxPercent > 0 && tier.promoPricePerUnit > 0 && (
+                            <div className="mt-3">
+                              {(() => {
+                                // Taxable = Gross - GST, where GST = Gross × Tax%
+                                const promoGst = tier.promoPricePerUnit * (formData.taxPercent / 100);
+                                const promoTaxableRate = tier.promoPricePerUnit - promoGst;
+                                return (
+                                  <p className="text-xs text-[#016d3b] flex items-center gap-1">
+                                    <span className="font-medium">Taxable: ₹{promoTaxableRate.toFixed(2)}</span>
+                                    <span>|</span>
+                                    <span className="font-medium">GST {formData.taxPercent}%: ₹{promoGst.toFixed(2)}</span>
+                                  </p>
+                                );
+                              })()}
+                            </div>
+                          )}
+                          {tier.promoQuantity > 0 && tier.promoPricePerUnit > 0 && (
+                            <p className="text-xs text-[#016d3b] mt-3 bg-[#d4f5e5]/50 px-3 py-2 rounded-lg">
+                              ₹{tier.promoPricePerUnit} per {formData.unit || "unit"} for {tier.promoQuantity}+ {formData.unit ? `${formData.unit}s` : "units"}
+                            </p>
+                          )}
                       </div>
                     </div>
                   </div>

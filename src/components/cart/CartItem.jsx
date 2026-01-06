@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import useAddToCart from "@hooks/useAddToCart";
 import ImageWithFallback from "@components/common/ImageWithFallBack";
 import { notifyError } from "@utils/toast";
+import { getActiveBulkTier, getTaxableRate } from "@utils/pricing";
 
 // Helper function to calculate the appropriate price based on total quantity and bulk pricing
 const getPriceForQuantity = (item, totalQuantity) => {
@@ -14,6 +15,10 @@ const getPriceForQuantity = (item, totalQuantity) => {
   const now = new Date();
   const hours = now.getHours();
   const isPromoTime = hours >= 18 || hours < 9;
+
+  // Get base price (regular product price, not bulk)
+  const basePrice = item.prices?.price || item.price || 0;
+  const promoSinglePrice = item.promoPricing?.singleUnit || 0;
 
   // Check promo pricing first if promo time
   if (isPromoTime && item?.promoPricing) {
@@ -23,9 +28,11 @@ const getPriceForQuantity = (item, totalQuantity) => {
     if (item.promoPricing?.bulkRate1?.quantity > 0 && totalQuantity >= item.promoPricing.bulkRate1.quantity) {
       return item.promoPricing.bulkRate1.pricePerUnit;
     }
-    if (item.promoPricing?.singleUnit > 0) {
-      return item.promoPricing.singleUnit;
+    // Fall back to promo single unit price or base price
+    if (promoSinglePrice > 0) {
+      return promoSinglePrice;
     }
+    return basePrice;
   }
 
   // Use bulkPricing stored in cart item
@@ -35,8 +42,8 @@ const getPriceForQuantity = (item, totalQuantity) => {
   if (item?.bulkPricing?.bulkRate1?.quantity > 0 && totalQuantity >= item.bulkPricing.bulkRate1.quantity) {
     return item.bulkPricing.bulkRate1.pricePerUnit;
   }
-  // Default to current price if no bulk pricing
-  return item.price;
+  // Fall back to base price when quantity doesn't meet bulk requirements
+  return basePrice;
 };
 
 const CartItem = ({ item, currency }) => {
@@ -64,13 +71,15 @@ const CartItem = ({ item, currency }) => {
 
     const newQuantity = item.quantity === 0 ? minQty : item.quantity + 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
+    
+    // Get taxable rate based on active bulk tier
+    const now = new Date();
+    const hours = now.getHours();
+    const isPromoTime = hours >= 18 || hours < 9;
+    const taxableRate = getTaxableRate(item, newQuantity, isPromoTime);
 
-    // Atomically update both quantity and price (if changed)
-    if (item.price !== newPrice) {
-      updateItem(item.id, { price: newPrice, quantity: newQuantity });
-    } else {
-      updateItemQuantity(item.id, newQuantity);
-    }
+    // Always update price and taxableRate when quantity changes to ensure correct pricing
+    updateItem(item.id, { price: newPrice, quantity: newQuantity, taxableRate: taxableRate });
   };
 
   // Handle decrement with price recalculation
@@ -87,13 +96,15 @@ const CartItem = ({ item, currency }) => {
 
     const newQuantity = item.quantity - 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
+    
+    // Get taxable rate based on active bulk tier
+    const now = new Date();
+    const hours = now.getHours();
+    const isPromoTime = hours >= 18 || hours < 9;
+    const taxableRate = getTaxableRate(item, newQuantity, isPromoTime);
 
-    // Atomically update both quantity and price (if changed)
-    if (item.price !== newPrice) {
-      updateItem(item.id, { price: newPrice, quantity: newQuantity });
-    } else {
-      updateItemQuantity(item.id, newQuantity);
-    }
+    // Always update price and taxableRate when quantity changes to ensure correct pricing
+    updateItem(item.id, { price: newPrice, quantity: newQuantity, taxableRate: taxableRate });
   };
 
   // Handle direct quantity input
@@ -133,7 +144,11 @@ const CartItem = ({ item, currency }) => {
       // If below min quantity, reset to min quantity or remove? 
       // User said "they cant check out", so let's force minQty if they are trying to buy it.
       const newPrice = getPriceForQuantity(item, minQty);
-      updateItem(item.id, { price: newPrice, quantity: minQty });
+      const now = new Date();
+      const hours = now.getHours();
+      const isPromoTime = hours >= 18 || hours < 9;
+      const taxableRate = getTaxableRate(item, minQty, isPromoTime);
+      updateItem(item.id, { price: newPrice, quantity: minQty, taxableRate: taxableRate });
       setInputValue(minQty.toString());
       return;
     }
@@ -145,13 +160,13 @@ const CartItem = ({ item, currency }) => {
     }
 
     const newPrice = getPriceForQuantity(item, newQuantity);
+    const now = new Date();
+    const hours = now.getHours();
+    const isPromoTime = hours >= 18 || hours < 9;
+    const taxableRate = getTaxableRate(item, newQuantity, isPromoTime);
 
-    // Atomically update both quantity and price (if changed)
-    if (item.price !== newPrice) {
-      updateItem(item.id, { price: newPrice, quantity: newQuantity });
-    } else {
-      updateItemQuantity(item.id, newQuantity);
-    }
+    // Always update price and taxableRate when quantity changes to ensure correct pricing
+    updateItem(item.id, { price: newPrice, quantity: newQuantity, taxableRate: taxableRate });
   };
 
   const handleQuantityKeyDown = (e) => {

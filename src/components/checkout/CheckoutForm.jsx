@@ -87,11 +87,11 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
       currentTotalGross += itemCurrentPriceGross * quantity;
 
       // Calculate Taxable Amount and GST Amount for this item
-      // Formula: Taxable = Gross / (1 + TaxRate/100)
-      // GST = Gross - Taxable
-      const itemCurrentTotalGross = itemCurrentPriceGross * quantity;
-      const itemTaxableAmount = itemCurrentTotalGross / (1 + taxPercent / 100);
-      const itemTaxAmount = itemCurrentTotalGross - itemTaxableAmount;
+      // Use stored taxableRate from cart item (based on active bulk tier)
+      // Fallback to calculation if taxableRate not available
+      const itemTaxableRate = item.taxableRate || (itemCurrentPriceGross / (1 + taxPercent / 100));
+      const itemTaxableAmount = itemTaxableRate * quantity;
+      const itemTaxAmount = itemTaxableAmount * (taxPercent / 100);
 
       totalTaxableAmount += itemTaxableAmount;
       totalTaxAmount += itemTaxAmount;
@@ -100,11 +100,10 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
     // Product discount is the difference between original and current prices
     const productDiscount = originalTotalGross > currentTotalGross ? originalTotalGross - currentTotalGross : 0;
 
-    // Shipping settings - free if over a threshold (₹500)
-    const deliveryThreshold = 500;
+    // Shipping settings - always free delivery
     const standardDeliveryCharge = 30;
-    const isFreeDelivery = cartTotal >= deliveryThreshold;
-    const actualDeliveryCharge = isFreeDelivery ? 0 : standardDeliveryCharge;
+    const isFreeDelivery = true; // Always free delivery
+    const actualDeliveryCharge = 0; // Always free
 
     return {
       itemTotalOriginal: originalTotalGross,
@@ -114,9 +113,8 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
       deliveryCharge: actualDeliveryCharge,
       standardDeliveryCharge,
       isFreeDelivery,
-      deliveryThreshold,
-      totalCost: cartTotal - discountAmount + actualDeliveryCharge,
-      savings: productDiscount + (isFreeDelivery ? standardDeliveryCharge : 0),
+      totalCost: totalTaxableAmount + totalTaxAmount + actualDeliveryCharge - discountAmount,
+      savings: productDiscount + standardDeliveryCharge, // Always include delivery savings since it's always free
     };
   }, [items, cartTotal, discountAmount]);
 
@@ -290,42 +288,12 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
               </form>
             </div>
 
-            {/* Total Savings Box - Inspired by image */}
-            <div className="py-3 border-t border-gray-100">
-              <div className="bg-[#eff6ff] rounded-xl overflow-hidden shadow-sm border border-blue-100 relative">
-                {/* Wavy Top Border Effect */}
-                <div className="absolute top-0 left-0 right-0 h-1 bg-repeat-x" style={{ backgroundImage: 'radial-gradient(circle at 5px -2px, transparent 6px, #eff6ff 0px)', backgroundSize: '10px 10px' }}></div>
-
-                <div className="p-4 pt-5">
-                  <div className="flex justify-between items-center mb-1">
-                    <span className="text-blue-700 font-bold text-sm">Your total savings</span>
-                    <span className="text-blue-700 font-bold text-base">{currency}{pricingBreakdown.savings.toFixed(0)}</span>
-                  </div>
-
-                  {!pricingBreakdown.isFreeDelivery && (
-                    <p className="text-[11px] text-blue-500 font-medium leading-normal">
-                      Shop for {currency}{(pricingBreakdown.deliveryThreshold - cartTotal).toFixed(0)} more to <span className="text-blue-700 font-bold italic underline decoration-blue-300">save {currency}{pricingBreakdown.standardDeliveryCharge}</span> on delivery charge
-                    </p>
-                  )}
-
-                  {pricingBreakdown.isFreeDelivery && (
-                    <p className="text-[11px] text-[#018549] font-bold flex items-center gap-1 mt-1">
-                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      Free delivery applied!
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-
             <div className="space-y-3 pt-3 border-t border-gray-100">
-              {/* Item Total (Gross) */}
+              {/* Item Total (Taxable Amount) */}
               <div className="flex justify-between items-center text-sm">
                 <span className="text-gray-600 font-medium">Item total</span>
                 <span className="text-gray-900 font-semibold">
-                  {currency}{pricingBreakdown.itemTotalOriginal.toFixed(2)}
+                  {currency}{pricingBreakdown.taxableSubtotal.toFixed(2)}
                 </span>
               </div>
 

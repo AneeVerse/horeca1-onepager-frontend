@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 
 import { notifyError, notifySuccess } from "@utils/toast";
+import { getTaxableRate } from "@utils/pricing";
 
 const useAddToCart = () => {
   const [item, setItem] = useState(1);
@@ -53,6 +54,14 @@ const useAddToCart = () => {
 
     const { variants, categories, description, ...updatedProduct } = product;
 
+    // Determine if promo time (6pm-9am)
+    const now = new Date();
+    const hours = now.getHours();
+    const isPromoTime = hours >= 18 || hours < 9;
+
+    // Get taxable rate based on active bulk tier for the quantity being added
+    const taxableRate = getTaxableRate(product, quantityToAdd, isPromoTime);
+
     const cartItem = {
       ...updatedProduct,
       id: baseProductId,
@@ -61,7 +70,7 @@ const useAddToCart = () => {
       unit: product.unit,
       brand: product.brand,
       taxPercent: product.taxPercent || 0,
-      taxableRate: product.taxableRate || 0,
+      taxableRate: taxableRate,
       originalPrice: product.prices?.originalPrice || product.originalPrice || product.price,
     };
 
