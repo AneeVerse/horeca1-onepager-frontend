@@ -1,7 +1,7 @@
 "use client";
 
 import { Eye } from "lucide-react";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { IoBagHandle } from "react-icons/io5";
@@ -9,10 +9,8 @@ import Cookies from "js-cookie";
 
 //internal import
 import OrderHistory from "./OrderHistory";
-import { SidebarContext } from "@context/SidebarContext";
 import useUtilsFunction from "@hooks/useUtilsFunction";
 import Pagination from "@components/pagination/Pagination";
-import OrderDetailsDrawer from "@components/drawer/OrderDetailsDrawer";
 
 // JWT Expired Handler Component
 const JWTExpiredHandler = () => {
@@ -35,24 +33,17 @@ const JWTExpiredHandler = () => {
 
 const RecentOrder = ({ data, error, link, title }) => {
   const router = useRouter();
-  const [orderData, setOrderData] = useState({});
   const { showingTranslateValue } = useUtilsFunction();
-  const { setDrawerOpen } = useContext(SidebarContext);
 
   const handleChangePage = (page) => {
     // console.log("handleChangePage::", page);
     router.push(`?page=${page}`);
   };
 
-  const handleOrderDetails = (order) => {
-    setOrderData(order);
-    setDrawerOpen(true);
-  };
   // console.log("orders", data, "title", title);
 
   return (
     <>
-      {orderData && <OrderDetailsDrawer data={orderData} />}
       <div className="max-w-screen-2xl mx-auto">
         <div className="rounded-md">
           {error ? (
@@ -147,23 +138,11 @@ const RecentOrder = ({ data, error, link, title }) => {
                               <tr key={order._id}>
                                 <OrderHistory order={order} />
                                 <td className="px-4 text-sm whitespace-nowrap text-end">
-                                  {link ? (
-                                    <Link href={`/order/${order._id}`}>
-                                      <span className="text-[#018549] text-end cursor-pointer hover:text-[#016d3b] transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5">
-                                        <Eye className="h-4 w-4" />
-                                      </span>
-                                    </Link>
-                                  ) : (
-                                    <span
-                                      onClick={() => {
-                                        handleOrderDetails(order);
-                                        setDrawerOpen(true);
-                                      }}
-                                      className="text-[#018549] text-end cursor-pointer hover:text-[#016d3b] transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5"
-                                    >
+                                  <Link href={`/order/${order._id}`}>
+                                    <span className="text-[#018549] text-end cursor-pointer hover:text-[#016d3b] transition-all p-3 font-semibold rounded-full flex items-center justify-end gap-1.5">
                                       <Eye className="h-4 w-4" />
                                     </span>
-                                  )}
+                                  </Link>
                                 </td>
                               </tr>
                             ))}

@@ -40,7 +40,7 @@ const buttonVariants = cva(
         download:
           "bg-purple-500 text-white hover:bg-purple-600 dark:bg-purple-600 dark:hover:bg-purple-700",
         print:
-          "bg-pink-500 text-white hover:bg-pink-600 dark:bg-pink-600 dark:hover:bg-pink-700",
+          "bg-blue-500 text-white hover:bg-blue-600 dark:bg-blue-600 dark:hover:bg-blue-700",
       },
       size: {
         default: "h-9 px-4 py-2 has-[>svg]:px-3",

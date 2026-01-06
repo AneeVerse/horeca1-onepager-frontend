@@ -1,5 +1,5 @@
 "use client";
-import { Fragment } from "react";
+import { Fragment, useRef } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -8,9 +8,22 @@ import {
 } from "@headlessui/react";
 
 const MainDrawer = ({ open, onClose, children }) => {
+  const panelRef = useRef(null);
+
   return (
     <Transition show={open} as={Fragment}>
-      <Dialog as="div" className="relative z-[100]" onClose={onClose}>
+      <Dialog 
+        as="div" 
+        className="relative z-[100]" 
+        onClose={(value) => {
+          // Only close if explicitly requested (clicking overlay or ESC)
+          // Headless UI calls onClose with false when clicking outside
+          // We'll let it close normally, but prevent it from closing on inside clicks
+          if (value === false) {
+            onClose();
+          }
+        }}
+      >
         {/* Overlay with opacity transition */}
         <TransitionChild
           as={Fragment}
@@ -37,7 +50,24 @@ const MainDrawer = ({ open, onClose, children }) => {
                 leaveFrom="translate-y-0"
                 leaveTo="translate-y-full"
               >
-                <DialogPanel className="pointer-events-auto w-full max-h-[90vh] bg-white shadow-xl flex flex-col rounded-t-2xl overflow-hidden">
+                <DialogPanel 
+                  ref={panelRef}
+                  className="pointer-events-auto w-full max-h-[90vh] bg-white shadow-xl flex flex-col rounded-t-2xl overflow-hidden"
+                  onClick={(e) => {
+                    // Prevent clicks inside the panel from bubbling to Dialog's onClose
+                    e.stopPropagation();
+                    e.nativeEvent?.stopImmediatePropagation?.();
+                  }}
+                  onTouchStart={(e) => {
+                    // Prevent touch events inside the panel from closing the drawer
+                    e.stopPropagation();
+                    e.nativeEvent?.stopImmediatePropagation?.();
+                  }}
+                  onTouchEnd={(e) => {
+                    // Prevent touch end from triggering close
+                    e.stopPropagation();
+                  }}
+                >
                   {children}
                 </DialogPanel>
               </TransitionChild>
@@ -58,7 +88,14 @@ const MainDrawer = ({ open, onClose, children }) => {
                 leaveFrom="translate-x-0"
                 leaveTo="translate-x-full"
               >
-                <DialogPanel className="pointer-events-auto w-[80vw] md:w-[60vw] lg:w-[45vw] max-w-none bg-white shadow-xl flex flex-col h-full">
+                <DialogPanel 
+                  ref={panelRef}
+                  className="pointer-events-auto w-[80vw] md:w-[60vw] lg:w-[45vw] max-w-none bg-white shadow-xl flex flex-col h-full"
+                  onClick={(e) => {
+                    // Prevent clicks inside the panel from closing the drawer
+                    e.stopPropagation();
+                  }}
+                >
                   {children}
                 </DialogPanel>
               </TransitionChild>

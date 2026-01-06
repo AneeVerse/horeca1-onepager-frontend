@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import dynamic from "next/dynamic";
 import { Download } from "lucide-react";
-import { PDFDownloadLink } from "@react-pdf/renderer";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 
 // internal imports
 import Invoice from "@components/invoice/Invoice";
@@ -20,11 +20,97 @@ const DownloadPrintButton = ({ data }) => {
 
   // Flag to only render PDFDownloadLink after client mount
   const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [downloadLoading, setDownloadLoading] = useState(false);
+
   useEffect(() => {
     setIsClient(true);
+    // Detect mobile device
+    const checkMobile = () => {
+      setIsMobile(/iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // console.log("globalSetting", globalSetting, "data", data);
+  // Mobile-friendly download handler
+  const handleMobileDownload = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    setDownloadLoading(true);
+    try {
+      // Generate PDF blob
+      const pdfBlob = await pdf(
+        <InvoicePDF data={data} globalSetting={globalSetting} />
+      ).toBlob();
+
+      const fileName = `Invoice-${data?.invoice}.pdf`;
+
+      // Check if Web Share API is available (preferred for mobile)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: `Invoice #${data?.invoice}`,
+              text: 'Your order invoice',
+            });
+            setDownloadLoading(false);
+            return;
+          }
+        } catch (shareError) {
+          console.log("Web Share API not available, falling back to download");
+        }
+      }
+
+      // Fallback: Create download link and trigger click
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.style.display = 'none';
+      a.style.position = 'fixed';
+      a.style.top = '-9999px';
+      document.body.appendChild(a);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'DownloadPrintButton.jsx:handleMobileDownload',message:'Triggering mobile download',data:{isMobile,hasNavigatorShare:!!navigator.share,fileName,userAgent:navigator.userAgent},timestamp:Date.now(),sessionId:'debug-session',runId:'mobile-download',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      // Use both click and programmatic trigger for better mobile support
+      a.click();
+      // Also trigger programmatically after a small delay
+      setTimeout(() => {
+        if (document.body.contains(a)) {
+          a.click();
+        }
+      }, 100);
+      setTimeout(() => {
+        if (document.body.contains(a)) {
+          document.body.removeChild(a);
+        }
+        URL.revokeObjectURL(url);
+      }, 1000);
+    } catch (error) {
+      console.error("Error with mobile download:", error);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'DownloadPrintButton.jsx:handleMobileDownload',message:'Mobile download error',data:{error:error.message,stack:error.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'mobile-download-error',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
+
+  // #region agent log
+  useEffect(() => {
+    if (isClient) {
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'DownloadPrintButton.jsx:useEffect',message:'Component mounted',data:{isClient,isMobile,hasData:!!data},timestamp:Date.now(),sessionId:'debug-session',runId:'mount',hypothesisId:'C'})}).catch(()=>{});
+    }
+  }, [isClient, isMobile, data]);
+  // #endregion
 
   return (
     <>
@@ -42,21 +128,36 @@ const DownloadPrintButton = ({ data }) => {
 
       <div className="bg-white rounded-lg shadow-sm">
         <div className="bg-white p-8 rounded-b-xl">
-          <div className="flex justify-center invoice-btn">
+          <div className="flex flex-col sm:flex-row justify-center gap-4 invoice-btn">
+            {/* Download Button */}
             {isClient && (
-              <PDFDownloadLink
-                document={
-                  <InvoicePDF data={data} globalSetting={globalSetting} />
-                }
-                fileName={`Invoice-${data.invoice}.pdf`}
-              >
-                {({ loading }) => (
-                  <Button variant="create" className="px-8 py-3 text-base font-semibold">
-                    {loading ? "Generating..." : "Download Invoice"}{" "}
+              <>
+                {isMobile ? (
+                  <Button 
+                    variant="create" 
+                    className="px-8 py-3 text-base font-semibold w-full sm:w-auto"
+                    onClick={handleMobileDownload}
+                    disabled={downloadLoading}
+                  >
+                    {downloadLoading ? "Generating..." : (showingTranslateValue(dashboard?.download_button) || "Download Invoice")}{" "}
                     <Download className="ml-2 w-5 h-5" />
                   </Button>
+                ) : (
+                  <PDFDownloadLink
+                    document={
+                      <InvoicePDF data={data} globalSetting={globalSetting} />
+                    }
+                    fileName={`Invoice-${data?.invoice}.pdf`}
+                  >
+                    {({ loading }) => (
+                      <Button variant="create" className="px-8 py-3 text-base font-semibold">
+                        {loading ? "Generating..." : (showingTranslateValue(dashboard?.download_button) || "Download Invoice")}{" "}
+                        <Download className="ml-2 w-5 h-5" />
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
                 )}
-              </PDFDownloadLink>
+              </>
             )}
           </div>
         </div>

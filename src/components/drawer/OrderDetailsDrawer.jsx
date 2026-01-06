@@ -61,8 +61,105 @@ const OrderDetailsDrawer = ({ data }) => {
     documentTitle: `Invoice-${orderDetails?.invoice}`,
   });
 
+  // Mobile-friendly download handler
+  const handleMobileDownload = async (e) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobileDownload',message:'Handler called',data:{hasEvent:!!e,isMobile,downloadLoading,drawerOpen},timestamp:Date.now(),sessionId:'debug-session',runId:'handler-call',hypothesisId:'A'})}).catch(()=>{});
+    // #endregion
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent?.stopImmediatePropagation?.();
+    }
+    // Prevent drawer from closing
+    if (!orderDetails?._id) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobileDownload',message:'No order details',data:{hasOrderDetails:!!orderDetails},timestamp:Date.now(),sessionId:'debug-session',runId:'no-order-details',hypothesisId:'G'})}).catch(()=>{});
+      // #endregion
+      return;
+    }
+    setDownloadLoading(true);
+    try {
+      // Generate PDF blob
+      const pdfBlob = await pdf(
+        <InvoicePDF data={orderDetails} globalSetting={globalSetting} />
+      ).toBlob();
+
+      const fileName = `Invoice-${orderDetails?.invoice}.pdf`;
+
+      // Check if Web Share API is available (preferred for mobile)
+      if (navigator.share && navigator.canShare) {
+        try {
+          const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+          if (navigator.canShare({ files: [file] })) {
+            await navigator.share({
+              files: [file],
+              title: `Invoice #${orderDetails?.invoice}`,
+              text: 'Your order invoice',
+            });
+            setDownloadLoading(false);
+            return;
+          }
+        } catch (shareError) {
+          console.log("Web Share API not available, falling back to download");
+        }
+      }
+
+      // Fallback: Create download link and trigger click
+      const url = URL.createObjectURL(pdfBlob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      a.style.display = 'none';
+      a.style.position = 'fixed';
+      a.style.top = '-9999px';
+      document.body.appendChild(a);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobileDownload',message:'Triggering mobile download',data:{isMobile,hasNavigatorShare:!!navigator.share,fileName,userAgent:navigator.userAgent},timestamp:Date.now(),sessionId:'debug-session',runId:'mobile-download',hypothesisId:'A'})}).catch(()=>{});
+      // #endregion
+      // Use both click and programmatic trigger for better mobile support
+      a.click();
+      // Also trigger programmatically after a small delay
+      setTimeout(() => {
+        if (document.body.contains(a)) {
+          a.click();
+        }
+      }, 100);
+      setTimeout(() => {
+        if (document.body.contains(a)) {
+          document.body.removeChild(a);
+        }
+        URL.revokeObjectURL(url);
+      }, 1000);
+    } catch (error) {
+      console.error("Error with mobile download:", error);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobileDownload',message:'Mobile download error',data:{error:error.message,stack:error.stack,drawerOpen},timestamp:Date.now(),sessionId:'debug-session',runId:'mobile-download-error',hypothesisId:'B'})}).catch(()=>{});
+      // #endregion
+      // Don't close drawer on error - let user try again
+      alert("Failed to download invoice. Please try again.");
+    } finally {
+      setDownloadLoading(false);
+    }
+  };
+
   // Mobile-friendly print using PDF blob and share API
-  const handleMobilePrint = async () => {
+  const handleMobilePrint = async (e) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobilePrint',message:'Handler called',data:{hasEvent:!!e,isMobile,downloadLoading,drawerOpen},timestamp:Date.now(),sessionId:'debug-session',runId:'handler-call',hypothesisId:'B'})}).catch(()=>{});
+    // #endregion
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.nativeEvent?.stopImmediatePropagation?.();
+    }
+    // Prevent drawer from closing
+    if (!orderDetails?._id) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobilePrint',message:'No order details',data:{hasOrderDetails:!!orderDetails},timestamp:Date.now(),sessionId:'debug-session',runId:'no-order-details',hypothesisId:'H'})}).catch(()=>{});
+      // #endregion
+      return;
+    }
     setDownloadLoading(true);
     try {
       // Generate PDF blob
@@ -99,21 +196,15 @@ const OrderDetailsDrawer = ({ data }) => {
       setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (error) {
       console.error("Error with mobile print:", error);
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:handleMobilePrint',message:'Mobile print error',data:{error:error.message,stack:error.stack,drawerOpen},timestamp:Date.now(),sessionId:'debug-session',runId:'mobile-print-error',hypothesisId:'I'})}).catch(()=>{});
+      // #endregion
       // Final fallback: download the PDF
       try {
-        const pdfBlob = await pdf(
-          <InvoicePDF data={orderDetails} globalSetting={globalSetting} />
-        ).toBlob();
-        const url = URL.createObjectURL(pdfBlob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `Invoice-${orderDetails?.invoice}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        await handleMobileDownload();
       } catch (fallbackError) {
-        console.error("Fallback download failed:", fallbackError);
+        console.error("Fallback download also failed:", fallbackError);
+        alert("Failed to print invoice. Please try downloading instead.");
       }
     } finally {
       setDownloadLoading(false);
@@ -186,28 +277,93 @@ const OrderDetailsDrawer = ({ data }) => {
         </div>
 
         {/* Sticky Footer */}
-        <div className="flex-none bg-neutral-50 dark:bg-slate-900 p-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div 
+          className="flex-none bg-neutral-50 dark:bg-slate-900 p-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]"
+          onClick={(e) => {
+            // Prevent clicks in footer from closing the drawer
+            e.stopPropagation();
+          }}
+        >
           <div className="flex space-x-3 flex-wrap justify-between gap-2">
-            {/* Download PDF Button - Uses @react-pdf/renderer for mobile compatibility */}
+            {/* Download PDF Button - Mobile-friendly handler */}
             {isClient && (
-              <PDFDownloadLink
-                document={<InvoicePDF data={orderDetails} globalSetting={globalSetting} />}
-                fileName={`Invoice-${orderDetails?.invoice}.pdf`}
-              >
-                {({ loading, error }) => (
-                  <Button variant="create" disabled={loading}>
-                    {loading ? "Generating..." : "Download PDF"}{" "}
+              <>
+                {isMobile ? (
+                  <Button 
+                    variant="create" 
+                    disabled={downloadLoading}
+                    onClick={(e) => {
+                      // #region agent log
+                      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:DownloadButton:onClick',message:'Button clicked',data:{isMobile,downloadLoading,drawerOpen},timestamp:Date.now(),sessionId:'debug-session',runId:'button-click',hypothesisId:'C'})}).catch(()=>{});
+                      // #endregion
+                      e.preventDefault();
+                      e.stopPropagation();
+                      e.nativeEvent?.stopImmediatePropagation?.();
+                      // Use setTimeout to ensure handler runs after event propagation is stopped
+                      setTimeout(() => {
+                        handleMobileDownload(e);
+                      }, 0);
+                    }}
+                    onTouchStart={(e) => {
+                      // #region agent log
+                      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:DownloadButton:onTouchStart',message:'Touch start',data:{isMobile},timestamp:Date.now(),sessionId:'debug-session',runId:'touch-start',hypothesisId:'D'})}).catch(()=>{});
+                      // #endregion
+                      e.stopPropagation();
+                    }}
+                    onTouchEnd={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                    }}
+                  >
+                    {downloadLoading ? "Generating..." : "Download PDF"}{" "}
                     <Download className="ml-2" />
                   </Button>
+                ) : (
+                  <PDFDownloadLink
+                    document={<InvoicePDF data={orderDetails} globalSetting={globalSetting} />}
+                    fileName={`Invoice-${orderDetails?.invoice}.pdf`}
+                  >
+                    {({ loading, error }) => (
+                      <Button variant="create" disabled={loading}>
+                        {loading ? "Generating..." : "Download PDF"}{" "}
+                        <Download className="ml-2" />
+                      </Button>
+                    )}
+                  </PDFDownloadLink>
                 )}
-              </PDFDownloadLink>
+              </>
             )}
 
             {/* Print Button - Different handling for mobile vs desktop */}
             <Button
-              onClick={isMobile ? handleMobilePrint : handlePrintInvoice}
+              onClick={(e) => {
+                // #region agent log
+                fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:PrintButton:onClick',message:'Button clicked',data:{isMobile,downloadLoading,drawerOpen},timestamp:Date.now(),sessionId:'debug-session',runId:'button-click',hypothesisId:'E'})}).catch(()=>{});
+                // #endregion
+                e.preventDefault();
+                e.stopPropagation();
+                e.nativeEvent?.stopImmediatePropagation?.();
+                // Use setTimeout to ensure handler runs after event propagation is stopped
+                setTimeout(() => {
+                  if (isMobile) {
+                    handleMobilePrint(e);
+                  } else {
+                    handlePrintInvoice();
+                  }
+                }, 0);
+              }}
               variant="import"
               disabled={downloadLoading}
+              onTouchStart={(e) => {
+                // #region agent log
+                fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'OrderDetailsDrawer.jsx:PrintButton:onTouchStart',message:'Touch start',data:{isMobile},timestamp:Date.now(),sessionId:'debug-session',runId:'touch-start',hypothesisId:'F'})}).catch(()=>{});
+                // #endregion
+                e.stopPropagation();
+              }}
+              onTouchEnd={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+              }}
             >
               {downloadLoading ? "Preparing..." : (showingTranslateValue(dashboard?.print_button) || "Print")}{" "}
               <span className="ml-2">
