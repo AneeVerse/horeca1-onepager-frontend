@@ -1,8 +1,50 @@
 import { IoClose } from "react-icons/io5";
 import { Button, Dialog, DialogPanel, Transition, TransitionChild } from "@headlessui/react";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useRef } from "react";
 
 const MainModal = ({ children, modalOpen, handleCloseModal }) => {
+  const historyPushedRef = useRef(false);
+
+  // Handle browser back button - close modal instead of navigating
+  useEffect(() => {
+    if (!modalOpen) {
+      // Clean up history when modal closes normally (via X button or click outside)
+      if (historyPushedRef.current && window.history.state?.modalOpen) {
+        // Replace the modal state with null to clean up without navigating
+        window.history.replaceState(null, '', window.location.href);
+      }
+      historyPushedRef.current = false;
+      return;
+    }
+
+    // Push a state to history when modal opens (only once)
+    if (!historyPushedRef.current) {
+      window.history.pushState({ modalOpen: true }, '', window.location.href);
+      historyPushedRef.current = true;
+    }
+
+    const handlePopState = (event) => {
+      // When back button is pressed while modal is open, close modal
+      if (modalOpen && historyPushedRef.current) {
+        // Close the modal
+        handleCloseModal();
+        // Reset the flag
+        historyPushedRef.current = false;
+        // Push state again to keep user on current page (browser already went back)
+        // Use setTimeout to ensure modal closes first
+        setTimeout(() => {
+          window.history.pushState(null, '', window.location.href);
+        }, 0);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [modalOpen, handleCloseModal]);
+
   return (
     <Transition show={modalOpen} as={Fragment}>
       <Dialog
