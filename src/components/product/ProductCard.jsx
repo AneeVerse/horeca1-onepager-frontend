@@ -203,7 +203,7 @@ const ProductCard = ({ product, attributes }) => {
       // New product, add with specified quantity and calculated price
       addItem(newItem, totalQuantity);
     }
-    
+
     // After adding to cart, open the modal to show the updated quantity
     if (shouldOpenModal) {
       setModalOpen(true);
@@ -415,11 +415,11 @@ const ProductCard = ({ product, attributes }) => {
         />
       )}
 
-      <div className="group relative flex flex-col overflow-hidden rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-primary-500 w-full h-full">
+      <div className="group relative flex flex-col overflow-hidden rounded-sm min-[300px]:rounded-md min-[345px]:rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-primary-500 w-full h-full">
         <div className="w-full flex justify-between">
           <Discount product={product} />
         </div>
-        <div className="relative w-full aspect-[4/3] sm:aspect-square">
+        <div className="relative w-full aspect-[4/3.5] min-[300px]:aspect-[4/3] min-[345px]:aspect-[4/3] sm:aspect-square">
           <div
             className="relative block w-full h-full overflow-hidden bg-gray-100 cursor-pointer"
             onClick={() => {
@@ -449,9 +449,9 @@ const ProductCard = ({ product, attributes }) => {
                   )} product modal`
                 );
               }}
-              className="relative h-auto inline-flex items-center cursor-pointer justify-center rounded-full transition-colors text-[10px] sm:text-xs py-1 sm:py-2 px-2 sm:px-4 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-slate-800 shadow-lg focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-primary-600 dark:focus:ring-offset-0"
+              className="relative h-auto inline-flex items-center cursor-pointer justify-center rounded-full transition-colors text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs py-0.5 min-[345px]:py-1 sm:py-2 px-1 min-[300px]:px-1.5 min-[345px]:px-2 sm:px-4 bg-white text-slate-700 dark:bg-slate-900 dark:text-slate-300 hover:text-primary-500 hover:bg-gray-100 dark:hover:bg-slate-800 shadow-lg focus:outline-none focus:ring-1 focus:ring-offset-1 focus:ring-primary-600 dark:focus:ring-offset-0"
             >
-              <IoExpand className="w-3 h-3 sm:w-4 sm:h-4" />
+              <IoExpand className="w-2 h-2 min-[300px]:w-2.5 min-[300px]:h-2.5 min-[345px]:w-3 min-[345px]:h-3 sm:w-4 sm:h-4" />
               <span className="ms-1 hidden xl:block lg:block">Quick View</span>
             </button>
           </div>
@@ -459,25 +459,25 @@ const ProductCard = ({ product, attributes }) => {
         </div>
 
         {/* product info start */}
-        <div className="flex flex-1 flex-col px-2 sm:px-3 pt-1.5 sm:pt-2 pb-2 sm:pb-3">
+        <div className="flex flex-1 flex-col px-1 min-[300px]:px-1.5 min-[345px]:px-2 sm:px-3 pt-0.5 min-[300px]:pt-1 min-[345px]:pt-1.5 sm:pt-2 pb-1 min-[300px]:pb-1.5 min-[345px]:pb-2 sm:pb-3">
           {/* Product Title */}
-          <div className="h-10 sm:h-12 text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-tight sm:leading-snug mb-0.5">
+          <div className="h-6 min-[300px]:h-7 min-[345px]:h-10 sm:h-12 text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-tight min-[345px]:leading-tight sm:leading-snug mb-0.5">
             {showingTranslateValue(product?.title)}
           </div>
 
           {/* Unit info */}
           {product?.unit && (
-            <span className="text-[10px] sm:text-xs text-gray-400 mb-1 sm:mb-1.5">1 {product.unit}</span>
+            <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-gray-400 mb-0.5 min-[345px]:mb-1 sm:mb-1.5">1 {product.unit}</span>
           )}
 
           {/* Bulk Pricing Display - Only show when NOT promo time */}
           {!isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0) && (
-            <div className="bg-gray-50 rounded-md p-1.5 sm:p-2.5 mb-1.5 sm:mb-2 space-y-1 sm:space-y-1.5">
+            <div className="bg-gray-50 rounded-sm min-[300px]:rounded-md p-0.5 min-[300px]:p-1 min-[345px]:p-1.5 sm:p-2.5 mb-0.5 min-[300px]:mb-1 min-[345px]:mb-1.5 sm:mb-2 space-y-0.5 min-[345px]:space-y-1 sm:space-y-1.5">
               {product?.bulkPricing?.bulkRate1?.quantity > 0 && product?.bulkPricing?.bulkRate1?.pricePerUnit > 0 && (
-                <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-                  <span className="text-[10px] sm:text-xs text-primary-600 font-medium leading-tight flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 sm:gap-2">
+                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-primary-600 font-medium leading-tight flex-1 min-w-0">
                     <span className="hidden sm:inline">{currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.bulkPricing.bulkRate1.quantity}+</span>
-                    <span className="sm:hidden">{currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}</span>
+                    <span className="sm:hidden">{currency}{product.bulkPricing.bulkRate1.pricePerUnit}</span>
                   </span>
                   <button
                     onClick={(e) => {
@@ -487,17 +487,17 @@ const ProductCard = ({ product, attributes }) => {
                       handleAddItem(product, product.bulkPricing.bulkRate1.quantity, true);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-0.5 py-0.5 min-[300px]:px-1 min-[345px]:px-1.5 min-[345px]:py-0.5 sm:px-0 sm:py-0"
                   >
-                    Add {product.bulkPricing.bulkRate1.quantity}
+                    +{product.bulkPricing.bulkRate1.quantity}
                   </button>
                 </div>
               )}
               {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
-                <div className="flex items-center justify-between gap-1.5 sm:gap-2">
-                  <span className="text-[10px] sm:text-xs text-primary-600 font-medium leading-tight flex-1 min-w-0">
+                <div className="flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 sm:gap-2">
+                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-primary-600 font-medium leading-tight flex-1 min-w-0">
                     <span className="hidden sm:inline">{currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.bulkPricing.bulkRate2.quantity}+</span>
-                    <span className="sm:hidden">{currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}</span>
+                    <span className="sm:hidden">{currency}{product.bulkPricing.bulkRate2.pricePerUnit}</span>
                   </span>
                   <button
                     onClick={(e) => {
@@ -505,9 +505,9 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleAddItem(product, product.bulkPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-1.5 py-0.5 sm:px-0 sm:py-0"
+                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-0.5 py-0.5 min-[300px]:px-1 min-[345px]:px-1.5 min-[345px]:py-0.5 sm:px-0 sm:py-0"
                   >
-                    Add {product.bulkPricing.bulkRate2.quantity}
+                    +{product.bulkPricing.bulkRate2.quantity}
                   </button>
                 </div>
               )}
@@ -516,18 +516,19 @@ const ProductCard = ({ product, attributes }) => {
 
           {/* Promo Bulk Pricing Display (6pm-9am) - Unified Happy Hour Design */}
           {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
-            <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-md p-1.5 sm:p-2 mb-1.5 sm:mb-2 space-y-1 sm:space-y-1.5 border border-white/10 shadow-lg relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-sm min-[300px]:rounded-md p-0.5 min-[300px]:p-1 min-[345px]:p-1.5 sm:p-2 mb-0.5 min-[300px]:mb-1 min-[345px]:mb-1.5 sm:mb-2 space-y-0.5 min-[345px]:space-y-1 sm:space-y-1.5 border border-white/10 shadow-lg relative overflow-hidden group">
               {/* Subtle Decorative Glow */}
-              <div className="absolute top-0 right-0 w-16 h-16 bg-emerald-400/10 rounded-full blur-xl -mr-8 -mt-8"></div>
+              <div className="absolute top-0 right-0 w-10 min-[300px]:w-16 h-10 min-[300px]:h-16 bg-emerald-400/10 rounded-full blur-xl -mr-6 min-[300px]:-mr-8 -mt-6 min-[300px]:-mt-8"></div>
 
-              <div className="relative z-10 flex items-center gap-1.5 mb-1">
-                <span className="text-[8px] font-black text-[#018549] bg-emerald-300 px-1 py-0.5 rounded leading-none">PROMO</span>
+              <div className="relative z-10 flex items-center gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 mb-0.5 min-[345px]:mb-1">
+                <span className="text-[5px] min-[300px]:text-[6px] min-[345px]:text-[8px] font-black text-[#018549] bg-emerald-300 px-0.5 min-[345px]:px-1 py-0.5 rounded leading-none">PROMO</span>
               </div>
 
               {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
-                <div className="relative z-10 flex items-center justify-between gap-1.5">
-                  <span className="text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
-                    {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+
+                <div className="relative z-10 flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5">
+                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
+                    <span className="hidden min-[345px]:inline">{currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+</span>
+                    <span className="min-[345px]:hidden">{currency}{product.promoPricing.bulkRate1.pricePerUnit}</span>
                   </span>
                   <button
                     onClick={(e) => {
@@ -535,16 +536,17 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleAddItem(product, product.promoPricing.bulkRate1.quantity, true);
                     }}
-                    className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded border border-white/10 transition-colors"
+                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-1 min-[300px]:px-1.5 min-[345px]:px-2 py-0.5 rounded border border-white/10 transition-colors"
                   >
-                    Add {product.promoPricing.bulkRate1.quantity}
+                    +{product.promoPricing.bulkRate1.quantity}
                   </button>
                 </div>
               )}
               {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                <div className="relative z-10 flex items-center justify-between gap-1.5">
-                  <span className="text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
-                    {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+
+                <div className="relative z-10 flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5">
+                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
+                    <span className="hidden min-[345px]:inline">{currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+</span>
+                    <span className="min-[345px]:hidden">{currency}{product.promoPricing.bulkRate2.pricePerUnit}</span>
                   </span>
                   <button
                     onClick={(e) => {
@@ -552,9 +554,9 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleAddItem(product, product.promoPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-2 py-0.5 rounded border border-white/10 transition-colors"
+                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-1 min-[300px]:px-1.5 min-[345px]:px-2 py-0.5 rounded border border-white/10 transition-colors"
                   >
-                    Add {product.promoPricing.bulkRate2.quantity}
+                    +{product.promoPricing.bulkRate2.quantity}
                   </button>
                 </div>
               )}
@@ -562,20 +564,20 @@ const ProductCard = ({ product, attributes }) => {
           )}
 
           {/* Price and Add Button Row */}
-          <div className="flex items-center justify-between mt-auto pt-1 sm:pt-1.5 gap-2">
-            <div className="flex flex-col min-w-max">
+          <div className="flex items-center justify-between mt-auto pt-0.5 min-[345px]:pt-1 sm:pt-1.5 gap-1 min-[300px]:gap-1.5 min-[345px]:gap-2">
+            <div className="flex flex-col min-w-0 flex-shrink">
               {isPromoTime && product?.promoPricing?.singleUnit > 0 ? (
                 <div className="flex flex-col">
-                  <span className="text-[9px] sm:text-xs font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-400 px-1.5 py-0.5 rounded shadow-sm w-fit mb-0.5">PROMO</span>
-                  <span className="text-sm sm:text-base font-bold text-primary-600">
+                  <span className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-xs font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-400 px-0.5 min-[300px]:px-1 min-[345px]:px-1.5 py-0.5 rounded shadow-sm w-fit mb-0.5">PROMO</span>
+                  <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-primary-600">
                     {currency}{product.promoPricing.singleUnit}
-                    {product?.unit && <span className="text-[10px] sm:text-xs font-normal text-primary-500">/{product.unit}</span>}
+                    {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-primary-500">/{product.unit}</span>}
                   </span>
                 </div>
               ) : (
-                <span className="text-sm sm:text-base font-bold text-gray-900">
+                <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-gray-900">
                   {currency}{product?.isCombination ? product?.variants[0]?.price : product?.prices?.price}
-                  {product?.unit && <span className="text-[10px] sm:text-xs font-normal text-gray-400">/{product.unit}</span>}
+                  {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-gray-400">/{product.unit}</span>}
                 </span>
               )}
             </div>
@@ -587,7 +589,7 @@ const ProductCard = ({ product, attributes }) => {
                 return cartItem ? (
                   <div
                     key={cartItem.id}
-                    className="flex items-center h-6 sm:h-7 bg-[#d1fae5] border border-[#5ee9b5] rounded-full overflow-hidden shadow-sm max-w-min"
+                    className="flex items-center h-4 min-[300px]:h-5 min-[345px]:h-6 sm:h-7 bg-[#d1fae5] border border-[#5ee9b5] rounded-full overflow-hidden shadow-sm max-w-min"
                   >
                     <button
                       onClick={(e) => {
@@ -595,13 +597,13 @@ const ProductCard = ({ product, attributes }) => {
                         e.stopPropagation();
                         handleDecrementQuantity(cartItem, e);
                       }}
-                      className="w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
+                      className="w-3.5 min-[300px]:w-4 min-[345px]:w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
                       style={{ color: '#065f46' }}
                     >
-                      <IoRemove size={10} className="stroke-2" />
+                      <IoRemove size={7} className="min-[300px]:size-[8px] min-[345px]:size-[10px] stroke-2" />
                     </button>
 
-                    <div className="w-7 sm:w-9 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
+                    <div className="w-5 min-[300px]:w-6 min-[345px]:w-7 sm:w-9 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
                       <input
                         type="text"
                         value={quantityInputs[cartItem.id] !== undefined ? quantityInputs[cartItem.id] : cartItem.quantity}
@@ -623,7 +625,7 @@ const ProductCard = ({ product, attributes }) => {
                           e.preventDefault();
                           e.stopPropagation();
                         }}
-                        className="w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] font-bold text-[#065f46] p-0"
+                        className="quantity-input w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] font-bold text-[#065f46] p-0"
                       />
                     </div>
 
@@ -635,10 +637,10 @@ const ProductCard = ({ product, attributes }) => {
                           ? handleAddItem(cartItem)
                           : handleIncrementQuantity(cartItem, e);
                       }}
-                      className="w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
+                      className="w-3.5 min-[300px]:w-4 min-[345px]:w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
                       style={{ color: '#065f46' }}
                     >
-                      <IoAdd size={10} className="stroke-2" />
+                      <IoAdd size={7} className="min-[300px]:size-[8px] min-[345px]:size-[10px] stroke-2" />
                     </button>
                   </div>
                 ) : null;
@@ -654,14 +656,14 @@ const ProductCard = ({ product, attributes }) => {
                         // Open quick view modal where minQty will be enforced
                         handleAddItem(product, minQty, false);
                       }}
-                      className="flex flex-col items-center gap-0 bg-[#d1fae5] border border-[#5ee9b5] px-4 sm:px-6 py-1.5 sm:py-2 rounded-full transition-all hover:bg-[#b9f6e1] hover:shadow-md group flex-shrink-0"
+                      className="flex flex-col items-center gap-0 bg-[#d1fae5] border border-[#5ee9b5] px-1.5 min-[300px]:px-2 min-[345px]:px-4 sm:px-6 py-0.5 min-[300px]:py-1 min-[345px]:py-1.5 sm:py-2 rounded-full transition-all hover:bg-[#b9f6e1] hover:shadow-md group flex-shrink-0"
                     >
-                      <div className="flex items-center gap-1.5 text-[#065f46] font-black">
-                        <span className="text-[10px] sm:text-xs tracking-wider">ADD</span>
-                        <span className="text-xs sm:text-sm leading-none -mt-0.5">+</span>
+                      <div className="flex items-center gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 text-[#065f46] font-black">
+                        <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs tracking-wider">ADD</span>
+                        <span className="text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm leading-none -mt-0.5">+</span>
                       </div>
                       {minQty > 1 && (
-                        <span className="text-[8px] sm:text-[9px] text-[#065f46]/70 font-medium">Qty {minQty}</span>
+                        <span className="text-[5px] min-[300px]:text-[6px] min-[345px]:text-[8px] sm:text-[9px] text-[#065f46]/70 font-medium">Qty {minQty}</span>
                       )}
                     </button>
                   );

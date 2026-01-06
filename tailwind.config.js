@@ -8,6 +8,9 @@ const config = {
       DejaVu: ["DejaVu Sans", "Arial", "sans-serif"],
     },
     extend: {
+      screens: {
+        'xs': '200px',
+      },
       colors: {
         primary: {
           50: '#e6f2f3',

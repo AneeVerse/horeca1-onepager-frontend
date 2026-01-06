@@ -61,20 +61,26 @@ const PopularProductsCarousel = ({ products, attributes, currency }) => {
       <div className="relative">
         <Swiper
           onSwiper={setSwiperInstance}
-          spaceBetween={16}
+          spaceBetween={8}
           navigation={{
             prevEl: prevEl,
             nextEl: nextEl,
           }}
           allowTouchMove={true}
           loop={false}
-          slidesPerView={1}
+          slidesPerView={2}
           breakpoints={{
+            300: {
+              slidesPerView: 2,
+              spaceBetween: 10,
+            },
             345: {
               slidesPerView: 2,
+              spaceBetween: 12,
             },
             640: {
               slidesPerView: 2,
+              spaceBetween: 16,
             },
             768: {
               slidesPerView: 3,

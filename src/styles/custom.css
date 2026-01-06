@@ -1072,10 +1072,26 @@ p:not(:last-of-type) {
 }
 
 /* Override mobile font-size for quantity input selector */
-@media screen and (max-width: 767px) {
+@media screen and (max-width: 299px) {
   input[type="text"].quantity-input {
-    font-size: 8px !important;
-    width: 14px !important;
+    font-size: 6px !important;
+    width: 16px !important;
+    padding: 0 !important;
+  }
+}
+
+@media screen and (min-width: 300px) and (max-width: 344px) {
+  input[type="text"].quantity-input {
+    font-size: 7px !important;
+    width: 18px !important;
+    padding: 0 !important;
+  }
+}
+
+@media screen and (min-width: 345px) and (max-width: 639px) {
+  input[type="text"].quantity-input {
+    font-size: 9px !important;
+    width: 22px !important;
     padding: 0 !important;
   }
 }
@@ -1083,7 +1099,7 @@ p:not(:last-of-type) {
 @media screen and (min-width: 640px) {
   input[type="text"].quantity-input {
     font-size: 14px !important;
-    width: 24px !important;
+    width: 28px !important;
   }
 }
 

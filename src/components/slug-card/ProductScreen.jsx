@@ -561,9 +561,9 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
                     <p className="text-sm leading-6 text-gray-500 md:leading-6 mb-3">
                       {isReadMore
                         ? showingTranslateValue(product?.description)?.slice(
-                            0,
-                            150
-                          )
+                          0,
+                          150
+                        )
                         : showingTranslateValue(product?.description)}
                     </p>
                     <div className="text-sm text-gray-500 [&_h4]:mt-5 [&_h4]:font-medium [&_h4]:text-gray-900 [&_li]:pl-2 [&_li::marker]:text-gray-300 [&_p]:my-2 [&_p]:text-sm/6 [&_ul]:my-4 [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-5 [&_ul]:text-sm/6 [&>:first-child]:mt-0" />
@@ -580,7 +580,7 @@ const ProductScreen = ({ product, reviews, attributes, relatedProducts }) => {
               </h3>
               <div className="flex">
                 <div className="w-full">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-2 md:gap-3 lg:gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-5 2xl:grid-cols-6 gap-1.5 min-[300px]:gap-2 md:gap-3 lg:gap-3">
                     {relatedProducts?.slice(1, 13).map((product, i) => (
                       <ProductCard
                         key={product._id}

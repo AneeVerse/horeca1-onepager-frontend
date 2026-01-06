@@ -43,15 +43,19 @@ const CategoryProductsSection = ({ categories, productsByCategory, attributes, c
             <div className="relative">
               <Swiper
                 onSwiper={setSwiperInstance}
-                spaceBetween={12}
+                spaceBetween={6}
                 navigation={{
                   prevEl: prevEl,
                   nextEl: nextEl,
                 }}
                 allowTouchMove={true}
                 loop={false}
-                slidesPerView={1}
+                slidesPerView={2}
                 breakpoints={{
+                  300: {
+                    slidesPerView: 2,
+                    spaceBetween: 8,
+                  },
                   345: {
                     slidesPerView: 2,
                     spaceBetween: 12,
