@@ -60,13 +60,20 @@ const ProductCard = ({ product, attributes }) => {
   // Handle pending add operations after item removal
   useEffect(() => {
     if (pendingAddRef.current) {
-      const { item, quantity } = pendingAddRef.current;
+      const { item, quantity, shouldOpenModal } = pendingAddRef.current;
       // Check if the item was actually removed (not in cart)
       const itemStillExists = items.find((cartItem) => cartItem.id === item.id);
       if (!itemStillExists) {
         // Item successfully removed, now add it back
         addItem(item, quantity);
+        const openModal = shouldOpenModal !== false; // Default to true if not specified
         pendingAddRef.current = null; // Clear the pending operation
+        // Open modal after item is re-added if requested
+        if (openModal) {
+          setTimeout(() => {
+            setModalOpen(true);
+          }, 100);
+        }
       }
     }
   }, [items, addItem]);
@@ -102,9 +109,16 @@ const ProductCard = ({ product, attributes }) => {
   };
 
   const handleAddItem = (p, quantity = 1, isBulkButton = false) => {
-    // Always open quick view modal when clicking any Add button, do NOT add to cart directly
-    setModalOpen(true);
-    return;
+    // Check if user is authenticated before adding to cart
+    const userInfoCookie = Cookies.get("userInfo");
+    if (!userInfoCookie) {
+      // Redirect to login page with current page as redirectUrl
+      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
+      return;
+    }
+
+    let shouldOpenModal = true; // Track if we should open modal after cart update
+
     const { slug, variants, categories, description, ...updatedProduct } =
       product;
 
@@ -178,8 +192,9 @@ const ProductCard = ({ product, attributes }) => {
         // Price changed - remove and re-add with new price and quantity
         // Store the item to add in a ref, then remove
         // The useEffect will watch for the removal and add it back
-        pendingAddRef.current = { item: { ...newItem, price: newPrice }, quantity: totalQuantity };
+        pendingAddRef.current = { item: { ...newItem, price: newPrice }, quantity: totalQuantity, shouldOpenModal: true };
         removeItem(baseProductId);
+        shouldOpenModal = false; // Modal will be opened by useEffect after re-add
       } else {
         // Price unchanged - just update quantity (faster path)
         updateItemQuantity(baseProductId, totalQuantity);
@@ -187,6 +202,11 @@ const ProductCard = ({ product, attributes }) => {
     } else {
       // New product, add with specified quantity and calculated price
       addItem(newItem, totalQuantity);
+    }
+    
+    // After adding to cart, open the modal to show the updated quantity
+    if (shouldOpenModal) {
+      setModalOpen(true);
     }
     // Cart drawer should only open when user clicks cart icon in navbar
   };
