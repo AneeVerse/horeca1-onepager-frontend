@@ -37,7 +37,7 @@ export default async function RootLayout({ children }) {
   const globalSetting = globalResult.status === 'fulfilled' && globalResult.value?.globalSetting ? globalResult.value.globalSetting : {};
   const storeSetting = storeResult.status === 'fulfilled' && storeResult.value?.storeSetting ? storeResult.value.storeSetting : {};
   const apiCustomization = customizationResult.status === 'fulfilled' && customizationResult.value?.storeCustomizationSetting ? customizationResult.value.storeCustomizationSetting : {};
-  
+
   // Deep merge to ensure API values override defaults, especially for nested objects like home
   const storeCustomizationSetting = {
     ...defaultStoreCustomization,
@@ -47,8 +47,8 @@ export default async function RootLayout({ children }) {
       ...defaultStoreCustomization.home,
       ...apiCustomization.home,
       // Ensure API values override defaults for these specific fields - check if API has the nested .en property
-      quick_delivery_subtitle: (apiCustomization.home?.quick_delivery_subtitle?.en || apiCustomization.home?.quick_delivery_subtitle) 
-        ? apiCustomization.home.quick_delivery_subtitle 
+      quick_delivery_subtitle: (apiCustomization.home?.quick_delivery_subtitle?.en || apiCustomization.home?.quick_delivery_subtitle)
+        ? apiCustomization.home.quick_delivery_subtitle
         : defaultStoreCustomization.home.quick_delivery_subtitle,
       quick_delivery_description: (apiCustomization.home?.quick_delivery_description?.en || apiCustomization.home?.quick_delivery_description)
         ? apiCustomization.home.quick_delivery_description

@@ -13,6 +13,7 @@ import OrderItems from "@components/order/OrderItems";
 import { Button } from "@components/ui/button";
 import Invoice from "@components/invoice/Invoice";
 import InvoicePDF from "@components/invoice/InvoiceForDownload";
+import { getOrderById } from "@services/OrderServices";
 
 const OrderDetailsDrawer = ({ data }) => {
   const printRef = useRef();
@@ -23,6 +24,7 @@ const OrderDetailsDrawer = ({ data }) => {
   const [downloadLoading, setDownloadLoading] = useState(false);
   const [isClient, setIsClient] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [orderDetails, setOrderDetails] = useState(data);
 
   const dashboard = storeCustomization?.dashboard;
 
@@ -37,9 +39,26 @@ const OrderDetailsDrawer = ({ data }) => {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Fetch full order details to ensure all fields for PDF are present
+  useEffect(() => {
+    if (data?._id) {
+      const fetchOrderDetails = async () => {
+        try {
+          const res = await getOrderById({ id: data._id });
+          if (res?.data) {
+            setOrderDetails(res.data);
+          }
+        } catch (err) {
+          console.error("Error fetching order details:", err);
+        }
+      };
+      fetchOrderDetails();
+    }
+  }, [data?._id]);
+
   const handlePrintInvoice = useReactToPrint({
     contentRef: invoiceRef,
-    documentTitle: `Invoice-${data?.invoice}`,
+    documentTitle: `Invoice-${orderDetails?.invoice}`,
   });
 
   // Mobile-friendly print using PDF blob and share API
@@ -48,10 +67,10 @@ const OrderDetailsDrawer = ({ data }) => {
     try {
       // Generate PDF blob
       const pdfBlob = await pdf(
-        <InvoicePDF data={data} globalSetting={globalSetting} />
+        <InvoicePDF data={orderDetails} globalSetting={globalSetting} />
       ).toBlob();
 
-      const fileName = `Invoice-${data?.invoice}.pdf`;
+      const fileName = `Invoice-${orderDetails?.invoice}.pdf`;
 
       // Check if Web Share API is available (preferred for mobile)
       if (navigator.share && navigator.canShare) {
@@ -59,7 +78,7 @@ const OrderDetailsDrawer = ({ data }) => {
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: `Invoice #${data?.invoice}`,
+            title: `Invoice #${orderDetails?.invoice}`,
             text: 'Your order invoice',
           });
           setDownloadLoading(false);
@@ -83,12 +102,12 @@ const OrderDetailsDrawer = ({ data }) => {
       // Final fallback: download the PDF
       try {
         const pdfBlob = await pdf(
-          <InvoicePDF data={data} globalSetting={globalSetting} />
+          <InvoicePDF data={orderDetails} globalSetting={globalSetting} />
         ).toBlob();
         const url = URL.createObjectURL(pdfBlob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Invoice-${data?.invoice}.pdf`;
+        a.download = `Invoice-${orderDetails?.invoice}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -108,42 +127,42 @@ const OrderDetailsDrawer = ({ data }) => {
         <div className="flex-none w-full flex justify-between items-center relative px-5 py-4 border-b bg-indigo-50 border-gray-100">
           <div className="flex flex-col">
             <h2 className="font-semibold text-lg m-0 text-heading flex items-center">
-              Invoice No #{data?.invoice}
+              Invoice No #{orderDetails?.invoice}
             </h2>
 
             <div className="text-sm">
-              {(data.status === "Delivered" ||
-                data?.status === "delivered") && (
+              {(orderDetails?.status === "Delivered" ||
+                orderDetails?.status === "delivered") && (
                   <span className="flex items-center gap-x-2 justify-start">
                     <div className="flex-none rounded-full bg-green-400/10 p-1 text-green-400">
                       <div className="size-2.5 rounded-full bg-current"></div>
                     </div>
-                    <span className="block">{data.status}</span>
+                    <span className="block">{orderDetails?.status}</span>
                   </span>
                 )}
-              {(data.status === "Pending" || data?.status === "pending") && (
+              {(orderDetails?.status === "Pending" || orderDetails?.status === "pending") && (
                 <span className="flex items-center gap-x-2 justify-start">
                   <div className="flex-none rounded-full bg-orange-400/10 p-1 text-orange-400">
                     <div className="size-2.5 rounded-full bg-current"></div>
                   </div>
-                  <span className="block">{data.status}</span>
+                  <span className="block">{orderDetails?.status}</span>
                 </span>
               )}
-              {(data.status === "Cancel" || data.status === "cancel") && (
+              {(orderDetails?.status === "Cancel" || orderDetails?.status === "cancel") && (
                 <span className="flex items-center gap-x-2 justify-start">
                   <div className="flex-none rounded-full bg-red-400/10 p-1 text-red-400">
                     <div className="size-2.5 rounded-full bg-current"></div>
                   </div>
-                  <span className="block">{data.status}</span>
+                  <span className="block">{orderDetails?.status}</span>
                 </span>
               )}
-              {(data.status === "Processing" ||
-                data.status === "processing") && (
+              {(orderDetails?.status === "Processing" ||
+                orderDetails?.status === "processing") && (
                   <span className="flex items-center gap-x-2 justify-start">
                     <div className="flex-none rounded-full bg-emerald-400/10 p-1 text-emerald-400">
                       <div className="size-2.5 rounded-full bg-current"></div>
                     </div>
-                    <span className="block">{data.status}</span>
+                    <span className="block">{orderDetails?.status}</span>
                   </span>
                 )}
             </div>
@@ -162,7 +181,7 @@ const OrderDetailsDrawer = ({ data }) => {
         {/* Scrollable Invoice Content */}
         <div className="flex-1 w-full overflow-y-auto scrollbar-hide">
           <div ref={invoiceRef} className="bg-white">
-            <Invoice data={data} globalSetting={globalSetting} />
+            <Invoice data={orderDetails} globalSetting={globalSetting} />
           </div>
         </div>
 
@@ -172,8 +191,8 @@ const OrderDetailsDrawer = ({ data }) => {
             {/* Download PDF Button - Uses @react-pdf/renderer for mobile compatibility */}
             {isClient && (
               <PDFDownloadLink
-                document={<InvoicePDF data={data} globalSetting={globalSetting} />}
-                fileName={`Invoice-${data?.invoice}.pdf`}
+                document={<InvoicePDF data={orderDetails} globalSetting={globalSetting} />}
+                fileName={`Invoice-${orderDetails?.invoice}.pdf`}
               >
                 {({ loading, error }) => (
                   <Button variant="create" disabled={loading}>
