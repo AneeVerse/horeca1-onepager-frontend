@@ -18,6 +18,11 @@ export const revalidate = 0;
 export const metadata = {
   title: "horeca1 - Grocery & Food Store",
   description: "horeca1 passwordless grocery store",
+  icons: {
+    icon: "/logo/favicon.webp",
+    shortcut: "/logo/favicon.webp",
+    apple: "/logo/favicon.webp",
+  },
 };
 
 export default async function RootLayout({ children }) {

@@ -1,9 +1,8 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useReactToPrint } from "react-to-print";
-import { CreditCard, Download, Printer, Truck, X } from "lucide-react";
-import { toPng } from "html-to-image";
-import { jsPDF } from "jspdf";
+import { CreditCard, Download, Printer, Truck, X, Share2 } from "lucide-react";
+import { PDFDownloadLink, pdf } from "@react-pdf/renderer";
 
 //internal import
 import MainDrawer from "./MainDrawer";
@@ -13,6 +12,7 @@ import { useSetting } from "@context/SettingContext";
 import OrderItems from "@components/order/OrderItems";
 import { Button } from "@components/ui/button";
 import Invoice from "@components/invoice/Invoice";
+import InvoicePDF from "@components/invoice/InvoiceForDownload";
 
 const OrderDetailsDrawer = ({ data }) => {
   const printRef = useRef();
@@ -21,42 +21,81 @@ const OrderDetailsDrawer = ({ data }) => {
   const { globalSetting, storeCustomization } = useSetting();
   const { showingTranslateValue, getNumberTwo, currency } = useUtilsFunction();
   const [downloadLoading, setDownloadLoading] = useState(false);
+  const [isClient, setIsClient] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const dashboard = storeCustomization?.dashboard;
+
+  // Check if client-side and detect mobile
+  useEffect(() => {
+    setIsClient(true);
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent));
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handlePrintInvoice = useReactToPrint({
     contentRef: invoiceRef,
     documentTitle: `Invoice-${data?.invoice}`,
   });
 
-  // Download PDF using html-to-image + jsPDF (same format as print)
-  const handleDownloadPDF = async () => {
-    if (!invoiceRef.current) return;
-
+  // Mobile-friendly print using PDF blob and share API
+  const handleMobilePrint = async () => {
     setDownloadLoading(true);
     try {
-      // Convert the invoice HTML to image
-      const dataUrl = await toPng(invoiceRef.current, {
-        quality: 1,
-        pixelRatio: 2,
-        backgroundColor: "#ffffff",
-      });
+      // Generate PDF blob
+      const pdfBlob = await pdf(
+        <InvoicePDF data={data} globalSetting={globalSetting} />
+      ).toBlob();
 
-      // Create PDF
-      const pdf = new jsPDF({
-        orientation: "portrait",
-        unit: "mm",
-        format: "a4",
-      });
+      const fileName = `Invoice-${data?.invoice}.pdf`;
 
-      const imgProps = pdf.getImageProperties(dataUrl);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+      // Check if Web Share API is available (preferred for mobile)
+      if (navigator.share && navigator.canShare) {
+        const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: `Invoice #${data?.invoice}`,
+            text: 'Your order invoice',
+          });
+          setDownloadLoading(false);
+          return;
+        }
+      }
 
-      pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Invoice-${data?.invoice}.pdf`);
+      // Fallback: Open PDF in new tab for printing
+      const url = URL.createObjectURL(pdfBlob);
+      const newWindow = window.open(url, '_blank');
+      if (newWindow) {
+        newWindow.addEventListener('load', () => {
+          setTimeout(() => {
+            newWindow.print();
+          }, 500);
+        });
+      }
+      setTimeout(() => URL.revokeObjectURL(url), 10000);
     } catch (error) {
-      console.error("Error generating PDF:", error);
+      console.error("Error with mobile print:", error);
+      // Final fallback: download the PDF
+      try {
+        const pdfBlob = await pdf(
+          <InvoicePDF data={data} globalSetting={globalSetting} />
+        ).toBlob();
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Invoice-${data?.invoice}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (fallbackError) {
+        console.error("Fallback download failed:", fallbackError);
+      }
     } finally {
       setDownloadLoading(false);
     }
@@ -130,19 +169,30 @@ const OrderDetailsDrawer = ({ data }) => {
         {/* Sticky Footer */}
         <div className="flex-none bg-neutral-50 dark:bg-slate-900 p-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
           <div className="flex space-x-3 flex-wrap justify-between gap-2">
+            {/* Download PDF Button - Uses @react-pdf/renderer for mobile compatibility */}
+            {isClient && (
+              <PDFDownloadLink
+                document={<InvoicePDF data={data} globalSetting={globalSetting} />}
+                fileName={`Invoice-${data?.invoice}.pdf`}
+              >
+                {({ loading, error }) => (
+                  <Button variant="create" disabled={loading}>
+                    {loading ? "Generating..." : "Download PDF"}{" "}
+                    <Download className="ml-2" />
+                  </Button>
+                )}
+              </PDFDownloadLink>
+            )}
+
+            {/* Print Button - Different handling for mobile vs desktop */}
             <Button
-              variant="create"
-              onClick={handleDownloadPDF}
+              onClick={isMobile ? handleMobilePrint : handlePrintInvoice}
+              variant="import"
               disabled={downloadLoading}
             >
-              {downloadLoading ? "Generating..." : "Download PDF"}{" "}
-              <Download className="ml-2" />
-            </Button>
-
-            <Button onClick={handlePrintInvoice} variant="import">
-              {showingTranslateValue(dashboard?.print_button) || "Print"}{" "}
+              {downloadLoading ? "Preparing..." : (showingTranslateValue(dashboard?.print_button) || "Print")}{" "}
               <span className="ml-2">
-                <Printer />
+                {isMobile ? <Share2 /> : <Printer />}
               </span>
             </Button>
           </div>

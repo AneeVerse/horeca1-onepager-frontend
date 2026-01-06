@@ -81,9 +81,6 @@ export default function EditProductPage() {
         promoPricePerUnit: promo.pricePerUnit || 0,
         promoTaxableRate: promo.taxableRate || 0,
       });
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edit/[id]/page.jsx:82',message:'Loading promo bulk tier',data:{rateIndex,promoTaxableRate:promo.taxableRate,promoPricePerUnit:promo.pricePerUnit,fullPromo:promo},timestamp:Date.now(),sessionId:'debug-session',runId:'load-promo-bulk',hypothesisId:'E'})}).catch(()=>{});
-      // #endregion
 
       rateIndex++;
     }
@@ -139,9 +136,6 @@ export default function EditProductPage() {
         pricePerUnit: tier.promoPricePerUnit,
         taxableRate: tier.promoTaxableRate,
       };
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edit/[id]/page.jsx:137',message:'Syncing promo bulk tier',data:{tierId:tier.id,rateKey,promoTaxableRate:tier.promoTaxableRate,promoPricePerUnit:tier.promoPricePerUnit},timestamp:Date.now(),sessionId:'debug-session',runId:'sync-promo-bulk',hypothesisId:'D'})}).catch(()=>{});
-      // #endregion
     });
 
     return {
@@ -169,9 +163,6 @@ export default function EditProductPage() {
 
         if (productRes && productRes.product) {
           const product = productRes.product;
-          // #region agent log
-          fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edit/[id]/page.jsx:165',message:'Loaded product promoPricing',data:{singleUnitTaxable:product.promoPricing?.singleUnitTaxable,singleUnit:product.promoPricing?.singleUnit,fullPromoPricing:product.promoPricing},timestamp:Date.now(),sessionId:'debug-session',runId:'load',hypothesisId:'B'})}).catch(()=>{});
-          // #endregion
           setFormData({
             title: product.title || { en: "" },
             description: product.description || { en: "" },
@@ -196,8 +187,6 @@ export default function EditProductPage() {
               singleUnit: product.promoPricing?.singleUnit || 0,
               singleUnitTaxable: product.promoPricing?.singleUnitTaxable || 0,
             },
-            // #region agent log
-            // #endregion
             status: product.status || "show",
             isCombination: product.isCombination || false,
             minOrderQuantity: product.minOrderQuantity || 1,
@@ -228,9 +217,6 @@ export default function EditProductPage() {
         bulkPricing: syncedPricing.bulkPricing,
         promoPricing: syncedPricing.promoPricing
       };
-      // #region agent log
-      fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'edit/[id]/page.jsx:214',message:'Before submit - promoPricing data',data:{singleUnitTaxable:submitData.promoPricing.singleUnitTaxable,singleUnit:submitData.promoPricing.singleUnit},timestamp:Date.now(),sessionId:'debug-session',runId:'pre-submit',hypothesisId:'A'})}).catch(()=>{});
-      // #endregion
 
       // Generate slug if not provided
       if (!submitData.slug && submitData.title.en) {

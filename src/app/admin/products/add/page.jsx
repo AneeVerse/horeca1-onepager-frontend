@@ -641,7 +641,6 @@ export default function AddProductPage() {
                   </>
                 )}
               </div>
-            </div>
 
             {/* Dynamic Bulk Tiers Container */}
             <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
@@ -868,7 +867,7 @@ export default function AddProductPage() {
                 </span>
               )}
             </div>
-          </div>
+            </div>
 
           {/* Stock and Status */}
           <div className="border-t pt-6">
@@ -931,38 +930,36 @@ export default function AddProductPage() {
               </div>
             </div>
           </div>
-      </div>
 
-      {/* Form Actions */}
-      <div className="mt-8 flex items-center justify-end gap-4 border-t pt-6">
-        <Link
-          href="/admin/products"
-          className="inline-flex justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-        >
-          Cancel
-        </Link>
-        <button
-          type="submit"
-          disabled={submitting}
-          className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm ${submitting
-            ? "bg-gray-400 cursor-not-allowed"
-            : "bg-[#016d3b] hover:bg-[#018549]"
-            }`}
-        >
-          {submitting ? (
-            <>
-              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-              Adding...
-            </>
-          ) : (
-            "Add Product"
-          )}
-        </button>
+          {/* Form Actions */}
+          <div className="mt-8 flex items-center justify-end gap-4 border-t pt-6">
+            <Link
+              href="/admin/products"
+              className="inline-flex justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+            >
+              Cancel
+            </Link>
+            <button
+              type="submit"
+              disabled={submitting}
+              className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm ${submitting
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-[#016d3b] hover:bg-[#018549]"
+                }`}
+            >
+              {submitting ? (
+                <>
+                  <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Adding...
+                </>
+              ) : (
+                "Add Product"
+              )}
+            </button>
+          </div>
+          </div>
+        </form>
       </div>
-    </form>
-      </div >
-    </div >
+    </div>
   );
 }
-
-
