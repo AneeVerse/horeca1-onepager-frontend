@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState, useMemo, useContext } from "react";
 import Link from "next/link";
 import {
   IoReturnUpBackOutline,
@@ -18,10 +18,15 @@ import useCheckoutSubmit from "@hooks/useCheckoutSubmit";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
 import AddressManager from "@components/checkout/AddressManager";
+import CartDrawer from "@components/drawer/CartDrawer";
+import { SidebarContext } from "@context/SidebarContext";
+import ImageWithFallback from "@components/common/ImageWithFallBack";
 
 const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
+  const [showAllProducts, setShowAllProducts] = useState(false);
+  const { cartDrawerOpen, setCartDrawerOpen } = useContext(SidebarContext);
 
   useEffect(() => setMounted(true), []);
 
@@ -57,6 +62,11 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
   } = useCheckoutSubmit({ shippingAddress });
   const checkout = storeCustomization?.checkout;
 
+  // Limit products shown initially (show first 2)
+  const MAX_VISIBLE_PRODUCTS = 2;
+  const visibleProducts = showAllProducts ? items : items.slice(0, MAX_VISIBLE_PRODUCTS);
+  const hasMoreProducts = items.length > MAX_VISIBLE_PRODUCTS;
+
   // Calculate pricing breakdown
   const pricingBreakdown = useMemo(() => {
     let originalTotalGross = 0;
@@ -87,14 +97,22 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
       currentTotalGross += itemCurrentPriceGross * quantity;
 
       // Calculate Taxable Amount and GST Amount for this item
-      // Use stored taxableRate from cart item (based on active bulk tier)
-      // Fallback to calculation if taxableRate not available
-      const itemTaxableRate = item.taxableRate || (itemCurrentPriceGross / (1 + taxPercent / 100));
-      const itemTaxableAmount = itemTaxableRate * quantity;
-      const itemTaxAmount = itemTaxableAmount * (taxPercent / 100);
+      // GST-exclusive: Taxable = Gross - GST, where GST = Gross × Tax%
+      const itemGrossTotal = itemCurrentPriceGross * quantity;
+      let itemTaxableAmount, itemGstAmount;
+      
+      if (item.taxableRate && item.taxableRate > 0) {
+        // Use stored taxableRate (already calculated as Gross - GST per unit)
+        itemTaxableAmount = item.taxableRate * quantity;
+        itemGstAmount = itemGrossTotal - itemTaxableAmount;
+      } else {
+        // Fallback: calculate from gross price
+        itemGstAmount = itemGrossTotal * (taxPercent / 100);
+        itemTaxableAmount = itemGrossTotal - itemGstAmount;
+      }
 
       totalTaxableAmount += itemTaxableAmount;
-      totalTaxAmount += itemTaxAmount;
+      totalTaxAmount += itemGstAmount;
     });
 
     // Product discount is the difference between original and current prices
@@ -105,6 +123,9 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
     const isFreeDelivery = true; // Always free delivery
     const actualDeliveryCharge = 0; // Always free
 
+    // Total = Taxable + GST + Delivery - Discount
+    const finalTotal = totalTaxableAmount + totalTaxAmount + actualDeliveryCharge - discountAmount;
+
     return {
       itemTotalOriginal: originalTotalGross,
       productDiscount: productDiscount,
@@ -113,7 +134,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
       deliveryCharge: actualDeliveryCharge,
       standardDeliveryCharge,
       isFreeDelivery,
-      totalCost: totalTaxableAmount + totalTaxAmount + actualDeliveryCharge - discountAmount,
+      totalCost: finalTotal,
       savings: productDiscount + standardDeliveryCharge, // Always include delivery savings since it's always free
     };
   }, [items, cartTotal, discountAmount]);
@@ -227,6 +248,13 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
         </div>
       </div>
 
+      {/* Cart Drawer */}
+      <CartDrawer 
+        open={cartDrawerOpen} 
+        setOpen={setCartDrawerOpen} 
+        currency={currency}
+      />
+
       {/* cart section - Redesigned Order Summary */}
       <div className="md:w-full lg:w-2/5 lg:ml-10 xl:ml-14 md:ml-6 flex flex-col h-full md:sticky lg:sticky top-28 md:order-2 lg:order-2">
         <div className="border rounded-xl bg-white shadow-sm overflow-hidden order-1 sm:order-2">
@@ -236,13 +264,9 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
             </h2>
 
             {/* Cart Items */}
-            <div className="overflow-y-auto flex-grow scrollbar-hide w-full max-h-48 bg-gray-50 rounded-lg block mb-4">
-              {items.map((item) => (
-                <CartItem key={item.id} item={item} currency={currency} />
-              ))}
-
-              {isEmpty && (
-                <div className="text-center py-8">
+            <div className="space-y-2 mb-4">
+              {isEmpty ? (
+                <div className="text-center py-8 bg-gray-50 rounded-lg">
                   <span className="flex justify-center my-auto text-gray-400 text-4xl">
                     <IoBagHandle />
                   </span>
@@ -250,6 +274,62 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                     No Item Added Yet!
                   </h2>
                 </div>
+              ) : (
+                <>
+                  {visibleProducts.map((item) => (
+                    <div
+                      key={item.id}
+                      onClick={() => setCartDrawerOpen(true)}
+                      className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 cursor-pointer transition-colors"
+                    >
+                      <div className="relative flex-shrink-0 w-16 h-16 overflow-hidden rounded-md bg-gray-200">
+                        <ImageWithFallback
+                          img
+                          width={64}
+                          height={64}
+                          src={item.image}
+                          alt={item.title}
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="text-sm font-medium text-gray-900 truncate">
+                          {item.title}
+                        </h3>
+                        <div className="flex items-center gap-2 mt-1">
+                          <span className="text-xs text-gray-500">
+                            Qty: {item.quantity}
+                          </span>
+                          <span className="text-sm font-semibold text-teal-600">
+                            {currency}{(item.price * item.quantity).toFixed(2)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  {hasMoreProducts && !showAllProducts && (
+                    <button
+                      onClick={() => setShowAllProducts(true)}
+                      className="w-full py-2 text-sm font-medium text-[#018549] hover:text-[#016d3b] transition-colors"
+                    >
+                      See more ({items.length - MAX_VISIBLE_PRODUCTS} more)
+                    </button>
+                  )}
+                  {showAllProducts && hasMoreProducts && (
+                    <button
+                      onClick={() => setShowAllProducts(false)}
+                      className="w-full py-2 text-sm font-medium text-[#018549] hover:text-[#016d3b] transition-colors"
+                    >
+                      Show less
+                    </button>
+                  )}
+                  <button
+                    onClick={() => setCartDrawerOpen(true)}
+                    className="w-full mt-2 py-2 px-4 bg-[#018549] hover:bg-[#016d3b] text-white text-sm font-medium rounded-lg transition-colors"
+                  >
+                    View All Products ({items.length})
+                  </button>
+                </>
               )}
             </div>
 
@@ -301,8 +381,8 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
               {pricingBreakdown.totalGst > 0 && (
                 <div className="flex justify-between items-center text-sm">
                   <div className="flex items-center gap-1.5">
-                    <span className="text-gray-600 font-medium">GST</span>
-                    <button className="text-gray-400 hover:text-gray-600" title="GST calculated as per product tax rates (Inclusive)">
+                    <span className="text-gray-600 font-medium">+ GST</span>
+                    <button className="text-gray-400 hover:text-gray-600" title="GST calculated as per product tax rates">
                       <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
@@ -347,7 +427,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 {showingTranslateValue(checkout?.total_cost) || "TOTAL COST"}
               </span>
               <span className="text-gray-900 font-extrabold text-xl">
-                {currency}{parseFloat(total).toFixed(2)}
+                {currency}{pricingBreakdown.totalCost.toFixed(2)}
               </span>
             </div>
           </div>
