@@ -48,6 +48,7 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
     paddingBottom: 40,
     backgroundColor: "#ffffff",
+    fontSize: 12,
   },
   header: {
     backgroundColor: "#eef2ff", // indigo-50
@@ -86,7 +87,9 @@ const styles = StyleSheet.create({
 });
 
 const InvoicePDF = ({ data, globalSetting }) => {
-  const currency = globalSetting?.default_currency || "₹";
+  // Use "Rs." instead of "₹" for better PDF compatibility
+  const currencySymbol = globalSetting?.default_currency || "₹";
+  const currency = currencySymbol === "₹" ? "Rs." : currencySymbol;
   const getNumberTwo = (num) => (!num ? "0.00" : Number(num).toFixed(2));
 
   // Status Color Logic
@@ -194,9 +197,22 @@ const InvoicePDF = ({ data, globalSetting }) => {
                 <Text style={tw("text-xs font-medium text-gray-700 pl-2")}>{item.title}</Text>
               </View>
               <Text style={[styles.colQty, tw("text-xs text-gray-500")]}>{item.quantity}</Text>
-              <Text style={[styles.colPrice, tw("text-xs font-bold text-gray-500")]}>
-                {currency}{getNumberTwo(item.price)}
-              </Text>
+              <View style={[styles.colPrice, tw("flex flex-col items-center")]}>
+                {(() => {
+                  const originalPrice = parseFloat(item.originalPrice || item.prices?.originalPrice || item.prices?.price || 0);
+                  if (originalPrice > item.price) {
+                    return (
+                      <Text style={tw("text-[8px] text-gray-400 line-through")}>
+                        {currency}{getNumberTwo(originalPrice)}
+                      </Text>
+                    );
+                  }
+                  return null;
+                })()}
+                <Text style={tw("text-xs font-bold text-gray-500")}>
+                  {currency}{getNumberTwo(item.price)}
+                </Text>
+              </View>
               <Text style={[styles.colAmount, tw("text-xs font-bold text-gray-500")]}>
                 {currency}{getNumberTwo(item.itemTotal)}
               </Text>
@@ -219,9 +235,13 @@ const InvoicePDF = ({ data, globalSetting }) => {
               <Text style={tw("font-bold text-xs uppercase text-gray-600 mb-1")}>
                 Shipping Cost
               </Text>
-              <Text style={tw("text-xs text-gray-500 font-bold")}>
-                {currency}{getNumberTwo(data?.shippingCost)}
-              </Text>
+              {data?.shippingCost === 0 || !data?.shippingCost ? (
+                <Text style={tw("text-xs text-green-600 font-bold")}>FREE</Text>
+              ) : (
+                <Text style={tw("text-xs text-gray-500 font-bold")}>
+                  {currency}{getNumberTwo(data?.shippingCost)}
+                </Text>
+              )}
             </View>
 
             <View style={tw("flex flex-col w-1/4")}>

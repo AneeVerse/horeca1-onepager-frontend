@@ -81,11 +81,11 @@ export default function CloudinaryUploader({
       {hasImage ? (
         <div className="space-y-4">
           {/* Show uploaded image preview */}
-          <div className="relative group">
+          <div className="relative group bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center min-h-[192px]">
             <img
               src={multiple ? imageUrl[0] : imageUrl}
               alt="Category"
-              className="w-full h-48 object-cover rounded-lg border border-gray-200"
+              className="max-w-full max-h-48 object-contain rounded-lg"
             />
             <button
               onClick={() => removeImage(0)}
@@ -147,11 +147,11 @@ export default function CloudinaryUploader({
       {multiple && imageUrl?.length > 1 && (
         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {imageUrl.slice(1).map((url, index) => (
-            <div key={index + 1} className="relative group">
+            <div key={index + 1} className="relative group bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center min-h-[128px]">
               <img
                 src={url}
                 alt={`Upload ${index + 2}`}
-                className="w-full h-32 object-cover rounded-lg border border-gray-200"
+                className="max-w-full max-h-32 object-contain rounded-lg"
               />
               <button
                 onClick={() => removeImage(index + 1)}

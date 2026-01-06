@@ -166,8 +166,14 @@ const Invoice = ({ data, printRef, globalSetting }) => {
               Shipping Cost
             </span>
             <span className="text-sm text-gray-500 font-semibold block">
-              {currency}
-              {getNumberTwo(data?.shippingCost)}
+              {data?.shippingCost === 0 || !data?.shippingCost ? (
+                <span className="text-green-600 font-bold">FREE</span>
+              ) : (
+                <>
+                  {currency}
+                  {getNumberTwo(data?.shippingCost)}
+                </>
+              )}
             </span>
           </div>
           <div className="flex flex-col sm:flex-wrap">
