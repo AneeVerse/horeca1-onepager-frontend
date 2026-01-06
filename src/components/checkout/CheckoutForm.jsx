@@ -100,15 +100,15 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
       // GST-exclusive: Taxable = Gross - GST, where GST = Gross × Tax%
       const itemGrossTotal = itemCurrentPriceGross * quantity;
       let itemTaxableAmount, itemGstAmount;
-      
+
       if (item.taxableRate && item.taxableRate > 0) {
-        // Use stored taxableRate (already calculated as Gross - GST per unit)
+        // Use stored taxableRate
         itemTaxableAmount = item.taxableRate * quantity;
         itemGstAmount = itemGrossTotal - itemTaxableAmount;
       } else {
-        // Fallback: calculate from gross price
-        itemGstAmount = itemGrossTotal * (taxPercent / 100);
-        itemTaxableAmount = itemGrossTotal - itemGstAmount;
+        // Fallback Markup Logic: Taxable = Gross / (1 + Tax/100)
+        itemTaxableAmount = itemGrossTotal / (1 + taxPercent / 100);
+        itemGstAmount = itemGrossTotal - itemTaxableAmount;
       }
 
       totalTaxableAmount += itemTaxableAmount;
@@ -249,9 +249,9 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
       </div>
 
       {/* Cart Drawer */}
-      <CartDrawer 
-        open={cartDrawerOpen} 
-        setOpen={setCartDrawerOpen} 
+      <CartDrawer
+        open={cartDrawerOpen}
+        setOpen={setCartDrawerOpen}
         currency={currency}
       />
 

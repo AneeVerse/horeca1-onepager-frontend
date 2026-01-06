@@ -27,7 +27,7 @@ export default function AddProductPage() {
   const [submitting, setSubmitting] = useState(false);
   // Dynamic bulk tiers state
   const [bulkTiers, setBulkTiers] = useState([
-    { id: 1, quantity: 0, pricePerUnit: 0, taxableRate: 0, promoQuantity: 0, promoPricePerUnit: 0 },
+    { id: 1, quantity: 0, pricePerUnit: 0, taxableRate: 0, promoQuantity: 0, promoPricePerUnit: 0, promoTaxableRate: 0 },
   ]);
 
   const [formData, setFormData] = useState({
@@ -55,8 +55,9 @@ export default function AddProductPage() {
     },
     promoPricing: {
       singleUnit: 0,
-      bulkRate1: { quantity: 0, pricePerUnit: 0 },
-      bulkRate2: { quantity: 0, pricePerUnit: 0 },
+      singleUnitTaxable: 0,
+      bulkRate1: { quantity: 0, pricePerUnit: 0, taxableRate: 0 },
+      bulkRate2: { quantity: 0, pricePerUnit: 0, taxableRate: 0 },
     },
     status: "show",
     isCombination: false,
@@ -68,7 +69,7 @@ export default function AddProductPage() {
     const newId = bulkTiers.length + 1;
     setBulkTiers([
       ...bulkTiers,
-      { id: newId, quantity: 0, pricePerUnit: 0, taxableRate: 0, promoQuantity: 0, promoPricePerUnit: 0 },
+      { id: newId, quantity: 0, pricePerUnit: 0, taxableRate: 0, promoQuantity: 0, promoPricePerUnit: 0, promoTaxableRate: 0 },
     ]);
   };
 
@@ -95,20 +96,16 @@ export default function AddProductPage() {
 
     bulkTiers.forEach((tier, index) => {
       const rateKey = `bulkRate${index + 1}`;
-      // Taxable = Gross - GST, where GST = Gross × Tax%
-      const gst = formData.taxPercent > 0 && tier.pricePerUnit > 0
-        ? tier.pricePerUnit * (formData.taxPercent / 100)
-        : 0;
-      const calculatedTaxable = tier.pricePerUnit - gst;
-      
+
       bulkPricing[rateKey] = {
         quantity: tier.quantity,
         pricePerUnit: tier.pricePerUnit,
-        taxableRate: parseFloat(calculatedTaxable.toFixed(2)),
+        taxableRate: tier.taxableRate,
       };
       promoPricingBulk[rateKey] = {
         quantity: tier.promoQuantity,
         pricePerUnit: tier.promoPricePerUnit,
+        taxableRate: tier.promoTaxableRate,
       };
     });
 
@@ -116,6 +113,7 @@ export default function AddProductPage() {
       bulkPricing,
       promoPricing: {
         singleUnit: formData.promoPricing.singleUnit,
+        singleUnitTaxable: formData.promoPricing.singleUnitTaxable,
         ...promoPricingBulk,
       },
     };
@@ -464,10 +462,8 @@ export default function AddProductPage() {
                     onChange={(e) => {
                       const taxable = parseFloat(e.target.value) || 0;
                       const taxPercent = parseFloat(formData.taxPercent) || 0;
-                      // Taxable = Gross - GST, so Gross = Taxable / (1 - Tax%/100)
-                      const gross = taxPercent > 0 && taxable > 0
-                        ? taxable / (1 - taxPercent / 100)
-                        : taxable;
+                      // Markup Logic: Gross = Taxable * (1 + Tax%/100)
+                      const gross = taxable * (1 + taxPercent / 100);
                       setFormData({
                         ...formData,
                         taxableRate: taxable,
@@ -477,7 +473,7 @@ export default function AddProductPage() {
                         },
                       });
                     }}
-                    placeholder="361.90"
+                    placeholder="10.00"
                     className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
                   />
                 </div>
@@ -495,21 +491,22 @@ export default function AddProductPage() {
                     value={formData.taxPercent}
                     onChange={(e) => {
                       const tax = parseFloat(e.target.value) || 0;
-                      const gross = parseFloat(formData.prices.price) || 0;
-                      // When tax % changes: GST = Gross × Tax%, Taxable = Gross - GST
-                      const gst = gross * (tax / 100);
-                      const taxable = gross - gst;
+                      const taxable = parseFloat(formData.taxableRate) || 0;
+                      // Markup Logic: Gross = Taxable * (1 + Tax%/100)
+                      const gross = taxable * (1 + tax / 100);
                       setFormData({
                         ...formData,
                         taxPercent: tax,
-                        taxableRate: parseFloat(taxable.toFixed(2)),
+                        prices: {
+                          ...formData.prices,
+                          price: parseFloat(gross.toFixed(2)),
+                        },
                       });
-                      // For bulk tiers: Taxable = Gross - GST
+                      // Update bulk tiers: Gross = Taxable * (1 + Tax/100)
                       const updatedTiers = bulkTiers.map(tier => {
-                        if (tier.pricePerUnit > 0) {
-                          const tierGst = tier.pricePerUnit * (tax / 100);
-                          const tierTaxable = tier.pricePerUnit - tierGst;
-                          return { ...tier, taxableRate: parseFloat(tierTaxable.toFixed(2)) };
+                        if (tier.taxableRate > 0) {
+                          const tierGross = tier.taxableRate * (1 + tax / 100);
+                          return { ...tier, pricePerUnit: parseFloat(tierGross.toFixed(2)) };
                         }
                         return tier;
                       });
@@ -529,30 +526,16 @@ export default function AddProductPage() {
                     required
                     min="0"
                     step="0.01"
+                    readOnly
                     value={formData.prices.price}
-                    onChange={(e) => {
-                      const gross = parseFloat(e.target.value) || 0;
-                      const taxPercent = parseFloat(formData.taxPercent) || 0;
-                      // Taxable = Gross - GST, where GST = Gross × Tax%
-                      const gst = gross * (taxPercent / 100);
-                      const taxable = gross - gst;
-                      setFormData({
-                        ...formData,
-                        taxableRate: parseFloat(taxable.toFixed(2)),
-                        prices: {
-                          ...formData.prices,
-                          price: gross,
-                        },
-                      });
-                    }}
-                    placeholder="380.00"
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
+                    placeholder="Auto-calculated"
+                    className="w-full rounded-md border-gray-300 shadow-sm bg-gray-50 cursor-not-allowed sm:text-sm px-3 py-2 border"
                   />
-                  {formData.taxPercent > 0 && formData.prices.price > 0 && (
+                  {formData.taxPercent >= 0 && formData.prices.price > 0 && (
                     <p className="text-xs text-gray-600 mt-1.5 flex items-center gap-1">
                       <span className="font-medium">Taxable: ₹{formData.taxableRate.toFixed(2)}</span>
                       <span>|</span>
-                      <span className="font-medium">GST {formData.taxPercent}%: ₹{((formData.prices.price - formData.taxableRate)).toFixed(2)}</span>
+                      <span className="font-medium">GST {formData.taxPercent}%: ₹{(formData.prices.price - formData.taxableRate).toFixed(2)}</span>
                     </p>
                   )}
                 </div>
@@ -600,375 +583,385 @@ export default function AddProductPage() {
                     Time-based
                   </span>
                 </div>
-                <div className="max-w-xs">
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={formData.promoPricing.singleUnit}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        promoPricing: {
-                          ...formData.promoPricing,
-                          singleUnit: parseFloat(e.target.value) || 0,
-                        },
-                      })
-                    }
-                    placeholder="Enter promo price"
-                    className="w-full rounded-lg border-[#018549]/40 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-4 py-2.5 border bg-white"
-                  />
-                  {formData.promoPricing.singleUnit > 0 && (
-                    <>
-                      <p className="text-xs text-[#016d3b] mt-2 flex items-center gap-1">
-                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                        </svg>
-                        Single unit promo: ₹{formData.promoPricing.singleUnit} per {formData.unit || "unit"}
-                      </p>
-                      {formData.taxPercent > 0 && formData.promoPricing.singleUnit > 0 && (
-                        <p className="text-xs text-[#016d3b] mt-1.5 flex items-center gap-1">
-                          <span className="font-medium">Taxable: ₹{(formData.promoPricing.singleUnit - (formData.promoPricing.singleUnit * (formData.taxPercent / 100))).toFixed(2)}</span>
-                          <span>|</span>
-                          <span className="font-medium">GST {formData.taxPercent}%: ₹{(formData.promoPricing.singleUnit * (formData.taxPercent / 100)).toFixed(2)}</span>
-                        </p>
-                      )}
-                    </>
-                  )}
-                </div>
-              </div>
-
-              {/* Dynamic Bulk Tiers Container */}
-              <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
-                {bulkTiers.map((tier, index) => (
-                  <div
-                    key={tier.id}
-                    className="bg-white border-2 border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
-                  >
-                    {/* Tier Header */}
-                    <div className="bg-gradient-to-r from-gray-50 to-slate-50 px-5 py-3 border-b border-gray-100 flex items-center justify-between">
-                      <h5 className="text-sm font-bold text-gray-800 flex items-center gap-2">
-                        <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
-                          {index + 1}
-                        </span>
-                        Bulk Tier {index + 1}
-                      </h5>
-                      {bulkTiers.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removeBulkTier(tier.id)}
-                          className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Remove this tier"
-                        >
-                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        </button>
-                      )}
-                    </div>
-
-                    {/* Tier Content - Side by Side */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
-                      {/* Left - Regular Bulk Pricing */}
-                      <div className="p-5 bg-gradient-to-br from-blue-50/50 to-indigo-50/50">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                          <h6 className="text-xs font-bold text-blue-900 uppercase tracking-wide">
-                            Regular Bulk Pricing
-                          </h6>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                              Min Quantity
-                            </label>
-                            <input
-                              type="number"
-                              min="0"
-                              value={tier.quantity}
-                              onChange={(e) =>
-                                updateBulkTier(tier.id, "quantity", parseInt(e.target.value) || 0)
-                              }
-                              placeholder="0"
-                              className="w-full rounded-lg border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2.5 border bg-white"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                              Price per Unit
-                            </label>
-                            <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
-                              <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={tier.pricePerUnit}
-                                 onChange={(e) => {
-                                   const newPrice = parseFloat(e.target.value) || 0;
-                                   // Taxable = Gross - GST, where GST = Gross × Tax%
-                                   const calculatedGst = formData.taxPercent > 0 && newPrice > 0
-                                     ? newPrice * (formData.taxPercent / 100)
-                                     : 0;
-                                   const calculatedTaxable = newPrice - calculatedGst;
-                                   // Update both pricePerUnit and taxableRate in a single state update
-                                   setBulkTiers(
-                                     bulkTiers.map((t) =>
-                                       t.id === tier.id 
-                                         ? { ...t, pricePerUnit: newPrice, taxableRate: parseFloat(calculatedTaxable.toFixed(2)) }
-                                         : t
-                                     )
-                                   );
-                                 }}
-                                placeholder="0.00"
-                                className="w-full rounded-lg border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm pl-7 pr-3 py-2.5 border bg-white"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="mt-3">
-                          {(() => {
-                            // Taxable = Gross - GST, where GST = Gross × Tax%
-                            const calculatedGst = formData.taxPercent > 0 && tier.pricePerUnit > 0
-                              ? tier.pricePerUnit * (formData.taxPercent / 100)
-                              : 0;
-                            const calculatedTaxable = tier.pricePerUnit - calculatedGst;
-                            
-                            return (
-                              <>
-                                <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                                  Taxable Rate (per Unit) <span className="text-gray-400 text-[10px]">(auto-calculated)</span>
-                                </label>
-                                <div className="relative">
-                                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    step="0.01"
-                                    value={calculatedTaxable.toFixed(2)}
-                                    readOnly
-                                    className="w-full rounded-lg border-blue-200 shadow-sm bg-gray-50 text-sm pl-7 pr-3 py-2.5 border text-gray-600 cursor-not-allowed"
-                                  />
-                                </div>
-                                {formData.taxPercent > 0 && tier.pricePerUnit > 0 && (
-                                  <p className="text-xs text-gray-500 mt-1">
-                                    <span className="font-medium">Taxable: ₹{calculatedTaxable.toFixed(2)}</span>
-                                    <span className="mx-1">|</span>
-                                    <span className="font-medium">GST {formData.taxPercent}%: ₹{calculatedGst.toFixed(2)}</span>
-                                  </p>
-                                )}
-                              </>
-                            );
-                          })()}
-                        </div>
-                        {tier.quantity > 0 && tier.pricePerUnit > 0 && (
-                          <p className="text-xs text-blue-700 mt-3 bg-blue-100/50 px-3 py-2 rounded-lg">
-                            ₹{tier.pricePerUnit} per {formData.unit || "unit"} for {tier.quantity}+ {formData.unit ? `${formData.unit}s` : "units"}
-                          </p>
-                        )}
-                      </div>
-
-                      {/* Right - Promo Bulk Pricing (6pm-9am) */}
-                      <div className="p-5 bg-gradient-to-br from-[#e6f5ef]/50 to-[#d4f5e5]/50">
-                        <div className="flex items-center gap-2 mb-4">
-                          <div className="w-2 h-2 rounded-full bg-[#018549]"></div>
-                          <h6 className="text-xs font-bold text-[#025155] uppercase tracking-wide">
-                            6pm - 9am Promo Bulk
-                          </h6>
-                          <span className="ml-auto px-2 py-0.5 bg-[#d4f5e5] text-[#018549] text-[10px] font-semibold rounded-full">
-                            PROMO
-                          </span>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                              Min Quantity
-                            </label>
-                            <input
-                              type="number"
-                              min="0"
-                              value={tier.promoQuantity}
-                              onChange={(e) =>
-                                updateBulkTier(tier.id, "promoQuantity", parseInt(e.target.value) || 0)
-                              }
-                              placeholder="0"
-                              className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-3 py-2.5 border bg-white"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-                              Price per Unit
-                            </label>
-                            <div className="relative">
-                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
-                              <input
-                                type="number"
-                                min="0"
-                                step="0.01"
-                                value={tier.promoPricePerUnit}
-                                onChange={(e) =>
-                                  updateBulkTier(tier.id, "promoPricePerUnit", parseFloat(e.target.value) || 0)
-                                }
-                                placeholder="0.00"
-                                className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm pl-7 pr-3 py-2.5 border bg-white"
-                              />
-                            </div>
-                          </div>
-                        </div>
-                          {formData.taxPercent > 0 && tier.promoPricePerUnit > 0 && (
-                            <div className="mt-3">
-                              {(() => {
-                                // Taxable = Gross - GST, where GST = Gross × Tax%
-                                const promoGst = tier.promoPricePerUnit * (formData.taxPercent / 100);
-                                const promoTaxableRate = tier.promoPricePerUnit - promoGst;
-                                return (
-                                  <p className="text-xs text-[#016d3b] flex items-center gap-1">
-                                    <span className="font-medium">Taxable: ₹{promoTaxableRate.toFixed(2)}</span>
-                                    <span>|</span>
-                                    <span className="font-medium">GST {formData.taxPercent}%: ₹{promoGst.toFixed(2)}</span>
-                                  </p>
-                                );
-                              })()}
-                            </div>
-                          )}
-                          {tier.promoQuantity > 0 && tier.promoPricePerUnit > 0 && (
-                            <p className="text-xs text-[#016d3b] mt-3 bg-[#d4f5e5]/50 px-3 py-2 rounded-lg">
-                              ₹{tier.promoPricePerUnit} per {formData.unit || "unit"} for {tier.promoQuantity}+ {formData.unit ? `${formData.unit}s` : "units"}
-                            </p>
-                          )}
-                      </div>
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                      Promo Taxable Rate (Single Unit) *
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={formData.promoPricing.singleUnitTaxable}
+                      onChange={(e) => {
+                        const taxable = parseFloat(e.target.value) || 0;
+                        const taxPercent = parseFloat(formData.taxPercent) || 0;
+                        const gross = taxable * (1 + taxPercent / 100);
+                        setFormData({
+                          ...formData,
+                          promoPricing: {
+                            ...formData.promoPricing,
+                            singleUnitTaxable: taxable,
+                            singleUnit: parseFloat(gross.toFixed(2)),
+                          },
+                        });
+                      }}
+                      placeholder="Enter taxable rate"
+                      className="w-full rounded-lg border-[#018549]/40 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-4 py-2.5 border bg-white"
+                    />
                   </div>
-                ))}
-              </div>
-
-              {/* Add More Button at Bottom (shown when tiers exist) */}
-              {bulkTiers.length > 0 && (
-                <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
-                  <button
-                    type="button"
-                    onClick={addBulkTier}
-                    className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-medium"
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                    </svg>
-                    Add Another Bulk Tier
-                  </button>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                      Promo Gross Rate (Single Unit)
+                    </label>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      readOnly
+                      value={formData.promoPricing.singleUnit}
+                      placeholder="Auto-calculated"
+                      className="w-full rounded-lg border-[#018549]/40 shadow-sm bg-gray-50 cursor-not-allowed text-sm px-4 py-2.5 border"
+                    />
+                  </div>
                 </div>
-              )}
-
-              {/* Tier Count Info */}
-              <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
-                <span className="flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  {bulkTiers.length} tier{bulkTiers.length !== 1 ? 's' : ''} configured
-                </span>
-                {bulkTiers.length > 3 && (
-                  <span className="text-amber-600 flex items-center gap-1">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                    Scroll to see all tiers
-                  </span>
+                {formData.promoPricing.singleUnit > 0 && (
+                  <>
+                    <p className="text-xs text-[#016d3b] mt-2 flex items-center gap-1">
+                      <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Single unit promo: ₹{formData.promoPricing.singleUnit} per {formData.unit || "unit"}
+                    </p>
+                    <p className="text-xs text-[#016d3b] mt-1.5 flex items-center gap-1">
+                      <span className="font-medium">Taxable: ₹{parseFloat(formData.promoPricing.singleUnitTaxable).toFixed(2)}</span>
+                      <span>|</span>
+                      <span className="font-medium">GST {formData.taxPercent}%: ₹{(formData.promoPricing.singleUnit - formData.promoPricing.singleUnitTaxable).toFixed(2)}</span>
+                    </p>
+                  </>
                 )}
               </div>
             </div>
 
-            {/* Stock and Status */}
-            <div className="border-t pt-6">
-              <h4 className="text-base font-semibold text-gray-900 mb-4">
-                Inventory & Status
-              </h4>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Stock Quantity *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="0"
-                    value={formData.stock}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        stock: parseInt(e.target.value) || 0,
-                      })
-                    }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
-                  />
-                </div>
+            {/* Dynamic Bulk Tiers Container */}
+            <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+              {bulkTiers.map((tier, index) => (
+                <div
+                  key={tier.id}
+                  className="bg-white border-2 border-gray-100 rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden"
+                >
+                  {/* Tier Header */}
+                  <div className="bg-gradient-to-r from-gray-50 to-slate-50 px-5 py-3 border-b border-gray-100 flex items-center justify-between">
+                    <h5 className="text-sm font-bold text-gray-800 flex items-center gap-2">
+                      <span className="w-7 h-7 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white text-xs font-bold flex items-center justify-center shadow-sm">
+                        {index + 1}
+                      </span>
+                      Bulk Tier {index + 1}
+                    </h5>
+                    {bulkTiers.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeBulkTier(tier.id)}
+                        className="p-1.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Remove this tier"
+                      >
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Min Order Quantity *
-                  </label>
-                  <input
-                    type="number"
-                    required
-                    min="1"
-                    value={formData.minOrderQuantity}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        minOrderQuantity: parseInt(e.target.value) || 1,
-                      })
-                    }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
-                  />
-                </div>
+                  {/* Tier Content - Side by Side */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-gray-100">
+                    {/* Left - Regular Bulk Pricing */}
+                    <div className="p-5 bg-gradient-to-br from-blue-50/50 to-indigo-50/50">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                        <h6 className="text-xs font-bold text-blue-900 uppercase tracking-wide">
+                          Regular Bulk Pricing
+                        </h6>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            Min Quantity
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={tier.quantity}
+                            onChange={(e) =>
+                              updateBulkTier(tier.id, "quantity", parseInt(e.target.value) || 0)
+                            }
+                            placeholder="0"
+                            className="w-full rounded-lg border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm px-3 py-2.5 border bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            Taxable Rate (per Unit) *
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={tier.taxableRate}
+                              onChange={(e) => {
+                                const taxable = parseFloat(e.target.value) || 0;
+                                const taxPercent = parseFloat(formData.taxPercent) || 0;
+                                const gross = taxable * (1 + taxPercent / 100);
+                                setBulkTiers(prev => prev.map(t => t.id === tier.id ? { ...t, taxableRate: taxable, pricePerUnit: parseFloat(gross.toFixed(2)) } : t));
+                              }}
+                              className="w-full rounded-lg border-blue-200 shadow-sm focus:border-blue-500 focus:ring-blue-500 text-sm pl-7 pr-3 py-2.5 border bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3">
+                        <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                          Price per Unit
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            readOnly
+                            value={tier.pricePerUnit}
+                            placeholder="Auto-calculated"
+                            className="w-full rounded-lg border-blue-200 shadow-sm bg-gray-50 cursor-not-allowed text-sm pl-7 pr-3 py-2.5 border"
+                          />
+                        </div>
+                        {formData.taxPercent >= 0 && tier.pricePerUnit > 0 && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            <span className="font-medium">Taxable: ₹{parseFloat(tier.taxableRate).toFixed(2)}</span>
+                            <span className="mx-1">|</span>
+                            <span className="font-medium">GST {formData.taxPercent}%: ₹{(tier.pricePerUnit - tier.taxableRate).toFixed(2)}</span>
+                          </p>
+                        )}
+                      </div>
+                      {tier.quantity > 0 && tier.pricePerUnit > 0 && (
+                        <p className="text-xs text-blue-700 mt-3 bg-blue-100/50 px-3 py-2 rounded-lg">
+                          ₹{tier.pricePerUnit} per {formData.unit || "unit"} for {tier.quantity}+ {formData.unit ? `${formData.unit}s` : "units"}
+                        </p>
+                      )}
+                    </div>
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Published
-                  </label>
-                  <select
-                    value={formData.status}
-                    onChange={(e) =>
-                      setFormData({ ...formData, status: e.target.value })
-                    }
-                    className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
-                  >
-                    <option value="show">Yes</option>
-                    <option value="hide">No</option>
-                  </select>
+                    {/* Right - Promo Bulk Pricing (6pm-9am) */}
+                    <div className="p-5 bg-gradient-to-br from-[#e6f5ef]/50 to-[#d4f5e5]/50">
+                      <div className="flex items-center gap-2 mb-4">
+                        <div className="w-2 h-2 rounded-full bg-[#018549]"></div>
+                        <h6 className="text-xs font-bold text-[#025155] uppercase tracking-wide">
+                          6pm - 9am Promo Bulk
+                        </h6>
+                        <span className="ml-auto px-2 py-0.5 bg-[#d4f5e5] text-[#018549] text-[10px] font-semibold rounded-full">
+                          PROMO
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            Min Quantity
+                          </label>
+                          <input
+                            type="number"
+                            min="0"
+                            value={tier.promoQuantity}
+                            onChange={(e) =>
+                              updateBulkTier(tier.id, "promoQuantity", parseInt(e.target.value) || 0)
+                            }
+                            placeholder="0"
+                            className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm px-3 py-2.5 border bg-white"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                            Promo Taxable Rate (per Unit) *
+                          </label>
+                          <div className="relative">
+                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                            <input
+                              type="number"
+                              min="0"
+                              step="0.01"
+                              value={tier.promoTaxableRate}
+                              onChange={(e) => {
+                                const taxable = parseFloat(e.target.value) || 0;
+                                const taxPercent = parseFloat(formData.taxPercent) || 0;
+                                const gross = taxable * (1 + taxPercent / 100);
+                                setBulkTiers(prev => prev.map(t => t.id === tier.id ? { ...t, promoTaxableRate: taxable, promoPricePerUnit: parseFloat(gross.toFixed(2)) } : t));
+                              }}
+                              className="w-full rounded-lg border-emerald-200 shadow-sm focus:border-[#018549] focus:ring-[#018549] text-sm pl-7 pr-3 py-2.5 border bg-white"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      <div className="mt-3">
+                        <label className="block text-xs font-medium text-gray-600 mb-1.5">
+                          Price per Unit
+                        </label>
+                        <div className="relative">
+                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm">₹</span>
+                          <input
+                            type="number"
+                            min="0"
+                            step="0.01"
+                            readOnly
+                            value={tier.promoPricePerUnit}
+                            placeholder="Auto-calculated"
+                            className="w-full rounded-lg border-emerald-200 shadow-sm bg-gray-50 cursor-not-allowed text-sm pl-7 pr-3 py-2.5 border"
+                          />
+                        </div>
+                        {formData.taxPercent >= 0 && tier.promoPricePerUnit > 0 && (
+                          <p className="text-xs text-[#016d3b] mt-1.5 flex items-center gap-1">
+                            <span className="font-medium">Taxable: ₹{parseFloat(tier.promoTaxableRate).toFixed(2)}</span>
+                            <span>|</span>
+                            <span className="font-medium">GST {formData.taxPercent}%: ₹{(tier.promoPricePerUnit - tier.promoTaxableRate).toFixed(2)}</span>
+                          </p>
+                        )}
+                      </div>
+                      {tier.promoQuantity > 0 && tier.promoPricePerUnit > 0 && (
+                        <p className="text-xs text-[#016d3b] mt-3 bg-[#d4f5e5]/50 px-3 py-2 rounded-lg">
+                          ₹{tier.promoPricePerUnit} per {formData.unit || "unit"} for {tier.promoQuantity}+ {formData.unit ? `${formData.unit}s` : "units"}
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
+              ))}
+            </div>
+
+            {/* Add More Button at Bottom (shown when tiers exist) */}
+            {bulkTiers.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-dashed border-gray-200">
+                <button
+                  type="button"
+                  onClick={addBulkTier}
+                  className="w-full py-3 border-2 border-dashed border-gray-300 rounded-xl text-gray-500 hover:text-blue-600 hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-200 flex items-center justify-center gap-2 text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Add Another Bulk Tier
+                </button>
               </div>
+            )}
+
+            {/* Tier Count Info */}
+            <div className="mt-4 flex items-center justify-between text-xs text-gray-500">
+              <span className="flex items-center gap-1">
+                <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                {bulkTiers.length} tier{bulkTiers.length !== 1 ? 's' : ''} configured
+              </span>
+              {bulkTiers.length > 3 && (
+                <span className="text-amber-600 flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  Scroll to see all tiers
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="mt-8 flex items-center justify-end gap-4 border-t pt-6">
-            <Link
-              href="/admin/products"
-              className="inline-flex justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-            >
-              Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={submitting}
-              className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm ${submitting
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-[#016d3b] hover:bg-[#018549]"
-                }`}
-            >
-              {submitting ? (
-                <>
-                  <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                  Adding...
-                </>
-              ) : (
-                "Add Product"
-              )}
-            </button>
+          {/* Stock and Status */}
+          <div className="border-t pt-6">
+            <h4 className="text-base font-semibold text-gray-900 mb-4">
+              Inventory & Status
+            </h4>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Stock Quantity *
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="0"
+                  value={formData.stock}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      stock: parseInt(e.target.value) || 0,
+                    })
+                  }
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Min Order Quantity *
+                </label>
+                <input
+                  type="number"
+                  required
+                  min="1"
+                  value={formData.minOrderQuantity}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      minOrderQuantity: parseInt(e.target.value) || 1,
+                    })
+                  }
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Published
+                </label>
+                <select
+                  value={formData.status}
+                  onChange={(e) =>
+                    setFormData({ ...formData, status: e.target.value })
+                  }
+                  className="w-full rounded-md border-gray-300 shadow-sm focus:border-[#018549] focus:ring-[#018549] sm:text-sm px-3 py-2 border"
+                >
+                  <option value="show">Yes</option>
+                  <option value="hide">No</option>
+                </select>
+              </div>
+            </div>
           </div>
-        </form>
       </div>
-    </div>
+
+      {/* Form Actions */}
+      <div className="mt-8 flex items-center justify-end gap-4 border-t pt-6">
+        <Link
+          href="/admin/products"
+          className="inline-flex justify-center rounded-md bg-white px-4 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+        >
+          Cancel
+        </Link>
+        <button
+          type="submit"
+          disabled={submitting}
+          className={`inline-flex justify-center rounded-md px-4 py-2 text-sm font-semibold text-white shadow-sm ${submitting
+            ? "bg-gray-400 cursor-not-allowed"
+            : "bg-[#016d3b] hover:bg-[#018549]"
+            }`}
+        >
+          {submitting ? (
+            <>
+              <div className="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+              Adding...
+            </>
+          ) : (
+            "Add Product"
+          )}
+        </button>
+      </div>
+    </form>
+      </div >
+    </div >
   );
 }
 

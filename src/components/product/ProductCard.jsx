@@ -17,6 +17,7 @@ import Cookies from "js-cookie";
 import Price from "@components/common/Price";
 import Stock from "@components/common/Stock";
 import { notifyError } from "@utils/toast";
+import { getTaxableRate } from "@utils/pricing";
 import Rating from "@components/common/Rating";
 import useAddToCart from "@hooks/useAddToCart";
 import { useSetting } from "@context/SettingContext";
@@ -162,6 +163,9 @@ const ProductCard = ({ product, attributes }) => {
     // Determine the correct price based on TOTAL quantity (bulk pricing is only for price calculation)
     const calculatedPrice = getPriceForQuantity(p, totalQuantity);
 
+    // Get taxable rate based on active bulk tier for the quantity
+    const taxableRate = getTaxableRate(product, totalQuantity, isPromoTime);
+
     const newItem = {
       ...updatedProduct,
       title: showingTranslateValue(p?.title),
@@ -179,6 +183,9 @@ const ProductCard = ({ product, attributes }) => {
       brand: product.brand,
       minOrderQuantity: product.minOrderQuantity || 1,
       stock: p.stock || p.quantity,
+      // Tax information for checkout GST calculation
+      taxPercent: product.taxPercent || 0,
+      taxableRate: taxableRate,
     };
 
     if (existingItem) {
@@ -231,6 +238,7 @@ const ProductCard = ({ product, attributes }) => {
     if (cartItem.price !== newPrice) {
       removeItem(cartItem.id);
       const { slug, variants, categories, description, ...updatedProduct } = product;
+      const taxableRate = getTaxableRate(product, newQuantity, isPromoTime);
       const updatedItem = {
         ...updatedProduct,
         title: showingTranslateValue(product?.title),
@@ -246,6 +254,8 @@ const ProductCard = ({ product, attributes }) => {
         brand: product.brand,
         minOrderQuantity: product.minOrderQuantity || 1,
         stock: product.stock || product.quantity,
+        taxPercent: product.taxPercent || 0,
+        taxableRate: taxableRate,
       };
       addItem(updatedItem, newQuantity);
     } else {
@@ -274,6 +284,7 @@ const ProductCard = ({ product, attributes }) => {
     if (cartItem.price !== newPrice) {
       removeItem(cartItem.id);
       const { slug, variants, categories, description, ...updatedProduct } = product;
+      const taxableRate = getTaxableRate(product, newQuantity, isPromoTime);
       const updatedItem = {
         ...updatedProduct,
         title: showingTranslateValue(product?.title),
@@ -289,6 +300,8 @@ const ProductCard = ({ product, attributes }) => {
         brand: product.brand,
         minOrderQuantity: product.minOrderQuantity || 1,
         stock: product.stock || product.quantity,
+        taxPercent: product.taxPercent || 0,
+        taxableRate: taxableRate,
       };
       requestAnimationFrame(() => {
         addItem(updatedItem, newQuantity);
@@ -351,6 +364,7 @@ const ProductCard = ({ product, attributes }) => {
     if (cartItem.price !== newPrice) {
       removeItem(cartItem.id);
       const { slug, variants, categories, description, ...updatedProduct } = product;
+      const taxableRate = getTaxableRate(product, newQuantity, isPromoTime);
       const updatedItem = {
         ...updatedProduct,
         title: showingTranslateValue(product?.title),
@@ -365,6 +379,8 @@ const ProductCard = ({ product, attributes }) => {
         unit: product.unit,
         brand: product.brand,
         stock: product.stock || product.quantity,
+        taxPercent: product.taxPercent || 0,
+        taxableRate: taxableRate,
       };
       pendingAddRef.current = { item: updatedItem, quantity: newQuantity };
     } else {

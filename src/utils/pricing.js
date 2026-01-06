@@ -36,13 +36,15 @@ export const getActiveBulkTier = (product, quantity, isPromoTime = false) => {
     if (tierQuantity > 0 && quantity >= tierQuantity && tierQuantity > highestQuantity) {
       if (tierPricePerUnit > 0) {
         highestQuantity = tierQuantity;
-        // GST-exclusive: Taxable rate = Price itself
-        let taxableRate = tier.taxableRate || tierPricePerUnit;
-        
+        // Priority: stored taxableRate, otherwise calculate from gross
+        // Markup Logic: Taxable = Gross / (1 + Tax/100)
+        const taxPercent = parseFloat(product.taxPercent) || 0;
+        let taxableRate = tier.taxableRate || (tierPricePerUnit / (1 + taxPercent / 100));
+
         activeTier = {
           quantity: tierQuantity,
           pricePerUnit: tierPricePerUnit,
-          taxableRate: taxableRate,
+          taxableRate: parseFloat(taxableRate.toFixed(2)),
           tierIndex: rateIndex,
         };
       }
@@ -66,26 +68,30 @@ export const getTaxableRate = (product, quantity, isPromoTime = false) => {
     return 0;
   }
 
-  // Try to get from active bulk tier
+  const taxPercent = parseFloat(product.taxPercent) || 0;
+
+  // 1. Try to get from active bulk tier first (highest priority)
   const activeTier = getActiveBulkTier(product, quantity, isPromoTime);
   if (activeTier && activeTier.taxableRate > 0) {
     return activeTier.taxableRate;
   }
 
-  // Fallback to product-level taxableRate
+  // 2. Check for promo single unit pricing during promo time
+  if (isPromoTime && product.promoPricing?.singleUnit > 0) {
+    if (product.promoPricing.singleUnitTaxable > 0) {
+      return product.promoPricing.singleUnitTaxable;
+    }
+    // Markup Logic: Taxable = Gross / (1 + Tax%/100)
+    return product.promoPricing.singleUnit / (1 + taxPercent / 100);
+  }
+
+  // 3. Fallback to product-level taxableRate
   if (product.taxableRate > 0) {
     return product.taxableRate;
   }
 
-  // Get base price - use promo single unit during promo time if available, otherwise regular price
-  let basePrice = product.prices?.price || product.price || 0;
-  if (isPromoTime && product.promoPricing?.singleUnit > 0) {
-    basePrice = product.promoPricing.singleUnit;
-  }
-  
-  // GST-exclusive: Taxable rate = Price itself (but we need to calculate Taxable = Gross - GST)
-  // Since we don't have GST here, we'll use the stored taxableRate or calculate from base price
-  // For now, return base price as taxable rate (will be recalculated elsewhere if needed)
-  return basePrice;
+  // 4. Calculate from base gross price
+  const basePrice = product.prices?.price || product.price || 0;
+  return basePrice / (1 + taxPercent / 100);
 };
 

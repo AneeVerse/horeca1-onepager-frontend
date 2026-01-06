@@ -39,7 +39,7 @@ const CheckoutCartScreen = () => {
     shippingCost,
   } = useCheckoutSubmit({});
   const { currency } = useUtilsFunction();
-  
+
   const closeCartDrawer = () => {
     setCartDrawerOpen(false);
   };
@@ -59,16 +59,25 @@ const CheckoutCartScreen = () => {
       const itemOriginalPrice = item.originalPrice || item.prices?.originalPrice || item.price;
       const itemCurrentPrice = item.price;
       const quantity = item.quantity || 1;
-      const taxPercent = item.taxPercent || 0;
+      const taxPercent = parseFloat(item.taxPercent) || 0;
 
       originalTotal += itemOriginalPrice * quantity;
       currentTotal += itemCurrentPrice * quantity;
 
-      // Calculate taxable amount and GST using stored taxableRate from cart item
-      // Fallback to calculation if taxableRate not available
-      const itemTaxableRate = item.taxableRate || (itemCurrentPrice / (1 + taxPercent / 100));
-      const itemTaxableAmount = itemTaxableRate * quantity;
-      const itemTax = itemTaxableAmount * (taxPercent / 100);
+      // Calculate taxable amount and GST
+      // For GST-inclusive prices: GST = Gross - Taxable, where Taxable = Gross / (1 + Tax%)
+      const itemGrossTotal = itemCurrentPrice * quantity;
+      let itemTaxableAmount, itemTax;
+
+      if (item.taxableRate && item.taxableRate > 0) {
+        // Use stored taxableRate (already calculated as Gross - GST per unit)
+        itemTaxableAmount = item.taxableRate * quantity;
+        itemTax = itemGrossTotal - itemTaxableAmount;
+      } else {
+        // Fallback: calculate from gross price
+        itemTax = itemGrossTotal * (taxPercent / 100);
+        itemTaxableAmount = itemGrossTotal - itemTax;
+      }
 
       totalTaxableAmount += itemTaxableAmount;
       totalTax += itemTax;
