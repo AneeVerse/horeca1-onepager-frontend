@@ -21,7 +21,7 @@ import ImageWithFallback from "@components/common/ImageWithFallBack";
 
 const DiscountedCard = ({ product, attributes, currency }) => {
   const [modalOpen, setModalOpen] = useState(false);
-  const { items, addItem, updateItemQuantity, inCart } = useCart();
+  const { items, addItem, updateItemQuantity, removeItem, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
   const router = useRouter();
@@ -93,9 +93,15 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                         className="flex flex-col w-7 min-[300px]:w-8 min-[345px]:w-9 sm:w-11 h-16 min-[300px]:h-18 min-[345px]:h-20 sm:h-22 items-center p-0.5 min-[300px]:p-1 justify-between bg-[#018549] text-white ring-1 min-[345px]:ring-2 ring-white rounded-full"
                       >
                         <button
-                          onClick={() =>
-                            updateItemQuantity(item.id, item.quantity - 1)
-                          }
+                          onClick={() => {
+                            const minQty = product?.minOrderQuantity || item?.minOrderQuantity || 1;
+                            // If quantity is at or below minimum, remove item (go to 0)
+                            if (item.quantity <= minQty) {
+                              removeItem(item.id);
+                            } else {
+                              updateItemQuantity(item.id, item.quantity - 1);
+                            }
+                          }}
                         >
                           <span className="text-sm min-[300px]:text-base min-[345px]:text-lg sm:text-xl cursor-pointer">
                             <IoRemove />

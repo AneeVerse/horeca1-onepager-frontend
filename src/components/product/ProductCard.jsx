@@ -270,8 +270,10 @@ const ProductCard = ({ product, attributes }) => {
       e.preventDefault();
       e.stopPropagation();
     }
-    if (cartItem.quantity <= 1) {
-      // Remove item when quantity reaches 0
+    const minQty = product?.minOrderQuantity || cartItem?.minOrderQuantity || 1;
+    
+    // If quantity is at or below minimum, remove item (go to 0)
+    if (cartItem.quantity <= minQty) {
       removeItem(cartItem.id);
       return;
     }
@@ -329,6 +331,7 @@ const ProductCard = ({ product, attributes }) => {
   const handleQuantityInputBlur = (cartItem) => {
     const inputValue = quantityInputs[cartItem.id] || cartItem.quantity.toString();
     const availableStock = product.stock || product.quantity || 9999;
+    const minQty = product?.minOrderQuantity || cartItem?.minOrderQuantity || 1;
     let newQuantity = parseInt(inputValue, 10);
 
     if (isNaN(newQuantity) || newQuantity < 0) {
@@ -340,6 +343,17 @@ const ProductCard = ({ product, attributes }) => {
     if (newQuantity > availableStock) {
       notifyError("Insufficient stock!");
       newQuantity = availableStock;
+    }
+
+    // If quantity is below minimum (but > 0), remove item (go to 0)
+    if (newQuantity > 0 && newQuantity < minQty) {
+      removeItem(cartItem.id);
+      setQuantityInputs(prev => {
+        const updated = { ...prev };
+        delete updated[cartItem.id];
+        return updated;
+      });
+      return;
     }
 
     // If quantity is 0, remove item
@@ -679,7 +693,7 @@ const ProductCard = ({ product, attributes }) => {
                         <span className="text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm leading-none -mt-0.5">+</span>
                       </div>
                       {minQty > 1 && (
-                        <span className="text-[5px] min-[300px]:text-[6px] min-[345px]:text-[8px] sm:text-[9px] text-[#065f46]/70 font-medium">Qty {minQty}</span>
+                        <span className="text-[5px] min-[300px]:text-[6px] min-[345px]:text-[8px] sm:text-[9px] text-[#065f46]/70 font-medium">Min Qty: {minQty}</span>
                       )}
                     </button>
                   );

@@ -89,8 +89,11 @@ const CartItem = ({ item, currency }) => {
       e.stopPropagation();
     }
     const minQty = item?.minOrderQuantity || 1;
+    
+    // Prevent going below minimum quantity - stay at minQty instead of removing
     if (item.quantity <= minQty) {
-      removeItem(item.id);
+      // Already at minimum, don't allow going below
+      notifyError(`Minimum order quantity is ${minQty}`);
       return;
     }
 
@@ -129,9 +132,10 @@ const CartItem = ({ item, currency }) => {
     let newQuantity = parseInt(inputValue, 10);
 
     if (isNaN(newQuantity) || newQuantity <= 0) {
-      // Reset to 0/Remove if invalid or 0
-      removeItem(item.id);
-      return;
+      // If invalid or 0, set to minimum quantity (don't remove)
+      newQuantity = minQty;
+      setInputValue(minQty.toString());
+      notifyError(`Minimum order quantity is ${minQty}`);
     }
 
     if (newQuantity > availableStock) {
@@ -141,8 +145,7 @@ const CartItem = ({ item, currency }) => {
     }
 
     if (newQuantity < minQty) {
-      // If below min quantity, reset to min quantity or remove? 
-      // User said "they cant check out", so let's force minQty if they are trying to buy it.
+      // If below min quantity, force to min quantity
       const newPrice = getPriceForQuantity(item, minQty);
       const now = new Date();
       const hours = now.getHours();
@@ -150,6 +153,7 @@ const CartItem = ({ item, currency }) => {
       const taxableRate = getTaxableRate(item, minQty, isPromoTime);
       updateItem(item.id, { price: newPrice, quantity: minQty, taxableRate: taxableRate });
       setInputValue(minQty.toString());
+      notifyError(`Minimum order quantity is ${minQty}`);
       return;
     }
 

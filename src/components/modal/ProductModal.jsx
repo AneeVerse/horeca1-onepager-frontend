@@ -298,6 +298,15 @@ const ProductModal = ({
             ? (selectVariant?.quantity || product?.variant?.quantity || product?.stock || 0)
             : (stock || product?.stock || product?.quantity || 0);
 
+        // Check minimum order quantity
+        const minQty = product?.minOrderQuantity || 1;
+        
+        // If quantity is below minimum, set to minimum (but allow 0 to remove from cart)
+        if (item > 0 && item < minQty) {
+            setItem(minQty);
+            return;
+        }
+
         if (item === 0) {
             if (cartItem) {
                 removeItem(cartItem.id);
@@ -308,7 +317,7 @@ const ProductModal = ({
 
         if (item > availableStock) {
             notifyError("Insufficient stock!");
-            setItem(Math.max(1, availableStock));
+            setItem(Math.max(minQty, availableStock));
             return;
         }
 
@@ -387,7 +396,7 @@ const ProductModal = ({
                                 <Stock In stock={stock} />
                                 {product?.minOrderQuantity > 1 && (
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
-                                        Min Order Qty: {product.minOrderQuantity}
+                                        Min Qty: {product.minOrderQuantity}
                                     </span>
                                 )}
                             </div>
