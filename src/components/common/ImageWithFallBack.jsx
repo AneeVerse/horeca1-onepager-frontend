@@ -30,7 +30,7 @@ const ImageWithFallback = ({
       height: "100%",
       ...propStyle,
     };
-    
+
     return (
       <img
         src={hasError ? fallback : imgSrc}
@@ -50,10 +50,10 @@ const ImageWithFallback = ({
 
   // For Next.js Image component - use key to force re-render on error
   const imageSrc = hasError || !src ? fallback : (src || fallback);
-  
+
   // Extract className and style to merge properly
   const { className: propClassName, style: propStyle, ...restProps } = props;
-  const mergedClassName = `object-contain transition duration-150 ease-linear transform group-hover:scale-105 p-2 ${propClassName || ""}`;
+  const mergedClassName = `object-contain transition duration-150 ease-linear transform group-hover:scale-110 p-2 ${propClassName || ""}`;
   const mergedStyle = {
     objectFit: "contain",
     ...propStyle,

@@ -453,13 +453,13 @@ const ProductCard = ({ product, attributes }) => {
         />
       )}
 
-      <div className="group relative flex flex-col overflow-hidden rounded-sm min-[300px]:rounded-md min-[345px]:rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-primary-500 w-full h-full">
+      <div className={`group relative flex flex-col overflow-hidden rounded-sm min-[300px]:rounded-md min-[345px]:rounded-lg sm:rounded-xl border bg-white transition-all duration-100 ease-in-out w-full h-full ${isPromoTime ? 'border-[#fda4af] hover:border-[#fb7185]' : 'border-[#86efac] hover:border-[#22c55e]'}`}>
         <div className="w-full flex justify-between">
           <Discount product={product} />
         </div>
         <div className="relative w-full aspect-[4/3.5] min-[300px]:aspect-[4/3] min-[345px]:aspect-[4/3] sm:aspect-square">
           <div
-            className="relative block w-full h-full overflow-hidden bg-gray-100 cursor-pointer"
+            className="relative block w-full h-full overflow-hidden bg-gray-100 cursor-pointer rounded-t-sm min-[300px]:rounded-t-md min-[345px]:rounded-t-lg sm:rounded-t-xl"
             onClick={() => {
               handleModalOpen(!modalOpen, product._id);
               handleLogEvent(
@@ -510,7 +510,7 @@ const ProductCard = ({ product, attributes }) => {
 
           {/* Bulk Pricing Display - Only show when NOT promo time */}
           {!isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0) && (
-            <div className="bg-gray-50 rounded-sm min-[300px]:rounded-md p-0.5 min-[300px]:p-1 min-[345px]:p-1.5 sm:p-2.5 mb-0.5 min-[300px]:mb-1 min-[345px]:mb-1.5 sm:mb-2 space-y-0.5 min-[345px]:space-y-1 sm:space-y-1.5">
+            <div className="bg-[#f0fdf4] border border-[#86efac] rounded-sm min-[300px]:rounded-md p-0.5 min-[300px]:p-1 min-[345px]:p-1.5 sm:p-2.5 mb-0.5 min-[300px]:mb-1 min-[345px]:mb-1.5 sm:mb-2 space-y-0.5 min-[345px]:space-y-1 sm:space-y-1.5">
               {product?.bulkPricing?.bulkRate1?.quantity > 0 && product?.bulkPricing?.bulkRate1?.pricePerUnit > 0 && (
                 <div className="flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 sm:gap-2">
                   <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-primary-600 font-medium leading-tight flex-1 min-w-0">
@@ -525,7 +525,7 @@ const ProductCard = ({ product, attributes }) => {
                       handleAddItem(product, product.bulkPricing.bulkRate1.quantity, true);
                       // Cart drawer should only open when user clicks cart icon in navbar
                     }}
-                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-0.5 py-0.5 min-[300px]:px-1 min-[345px]:px-1.5 min-[345px]:py-0.5 sm:px-0 sm:py-0"
+                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] sm:text-xs font-bold text-[#065f46] bg-[#d1fae5] hover:bg-[#a7f3d0] transition-all whitespace-nowrap px-1.5 py-0.5 min-[300px]:px-2 min-[345px]:px-2.5 rounded border border-[#86efac]/50"
                   >
                     +{product.bulkPricing.bulkRate1.quantity}
                   </button>
@@ -543,7 +543,7 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleAddItem(product, product.bulkPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] sm:text-xs font-semibold text-[#018549] hover:text-[#016d3b] transition-colors whitespace-nowrap px-0.5 py-0.5 min-[300px]:px-1 min-[345px]:px-1.5 min-[345px]:py-0.5 sm:px-0 sm:py-0"
+                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] sm:text-xs font-bold text-[#065f46] bg-[#d1fae5] hover:bg-[#a7f3d0] transition-all whitespace-nowrap px-1.5 py-0.5 min-[300px]:px-2 min-[345px]:px-2.5 rounded border border-[#86efac]/50"
                   >
                     +{product.bulkPricing.bulkRate2.quantity}
                   </button>
@@ -607,9 +607,9 @@ const ProductCard = ({ product, attributes }) => {
                 </span>
               </div>
             ) : (
-              <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-gray-900">
+              <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#065f46]">
                 {currency}{product?.isCombination ? product?.variants[0]?.price : product?.prices?.price}
-                {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-gray-400">/{product.unit}</span>}
+                {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-[#22c55e]">/{product.unit}</span>}
               </span>
             )}
           </div>
