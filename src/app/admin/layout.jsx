@@ -12,6 +12,7 @@ import {
   ShoppingCartIcon,
   UsersIcon,
   MapPinIcon,
+  PhotoIcon,
   ArrowRightOnRectangleIcon,
 } from "@heroicons/react/24/outline";
 import { isAdminAuthenticated, logoutAdmin } from "@services/AdminAuthService";
@@ -23,6 +24,7 @@ const navigation = [
   { name: "Orders", href: "/admin/orders", icon: ShoppingCartIcon },
   { name: "Customers", href: "/admin/customers", icon: UsersIcon },
   { name: "PIN Codes", href: "/admin/pincodes", icon: MapPinIcon },
+  { name: "Banners", href: "/admin/banners", icon: PhotoIcon },
 ];
 
 export default function AdminLayout({ children }) {

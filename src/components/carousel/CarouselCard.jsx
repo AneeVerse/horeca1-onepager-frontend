@@ -10,6 +10,54 @@ import "swiper/css/pagination";
 import "swiper/css/navigation";
 
 const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
+  // Handle single banner - render without carousel
+  if (!sliderData || sliderData.length === 0) {
+    return null;
+  }
+
+  // Single banner - render as static image
+  if (sliderData.length === 1) {
+    const item = sliderData[0];
+    return (
+      <div className="w-full">
+        <div className="h-auto lg:h-[280px] relative rounded-2xl overflow-hidden dark:bg-zinc-900">
+          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-auto lg:h-[280px] rounded-2xl overflow-hidden">
+            {item.mobileImage ? (
+              <>
+                <Image
+                  width={950}
+                  height={280}
+                  src={item.mobileImage}
+                  alt={item.title || "Banner"}
+                  className="object-cover w-full h-auto lg:hidden rounded-2xl"
+                  priority
+                />
+                <Image
+                  width={950}
+                  height={280}
+                  src={item.image}
+                  alt={item.title || "Banner"}
+                  className="object-cover w-full h-[280px] hidden lg:block rounded-2xl"
+                  priority
+                />
+              </>
+            ) : (
+              <Image
+                width={950}
+                height={280}
+                src={item.image}
+                alt={item.title || "Banner"}
+                className="object-cover w-full h-auto lg:h-[280px] rounded-2xl"
+                priority
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Multiple banners - render as carousel
   return (
     <div className="w-full">
       <Swiper
