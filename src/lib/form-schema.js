@@ -130,7 +130,10 @@ const checkoutFormSchema = (shippingOptions) => {
       .string()
       .min(2, { message: "Name must be at least 2 characters long." })
       .trim(),
-    email: z.string().min(1, { message: "Email is required." }).email({ message: "Please enter a valid email." }).trim(),
+    email: z.union([
+      z.string().email({ message: "Please enter a valid email." }),
+      z.literal('')
+    ]).optional(),
     contact: z
       .string()
       .min(10, { message: "Contact must be at least 10 characters long." })
