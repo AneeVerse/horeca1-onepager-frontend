@@ -271,7 +271,7 @@ const ProductCard = ({ product, attributes }) => {
       e.stopPropagation();
     }
     const minQty = product?.minOrderQuantity || cartItem?.minOrderQuantity || 1;
-    
+
     // If quantity is at or below minimum, remove item (go to 0)
     if (cartItem.quantity <= minQty) {
       removeItem(cartItem.id);
@@ -593,113 +593,110 @@ const ProductCard = ({ product, attributes }) => {
             </div>
           )}
 
-          {/* Price and Add Button Row */}
-          <div className="flex items-center justify-between mt-auto pt-0.5 min-[345px]:pt-1 sm:pt-1.5 gap-1 min-[300px]:gap-1.5 min-[345px]:gap-2">
-            <div className="flex flex-col min-w-0 flex-shrink">
-              {isPromoTime && product?.promoPricing?.singleUnit > 0 ? (
-                <div className="flex flex-col">
-                  <span className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-xs font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-400 px-0.5 min-[300px]:px-1 min-[345px]:px-1.5 py-0.5 rounded shadow-sm w-fit mb-0.5">PROMO</span>
-                  <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-primary-600">
-                    {currency}{product.promoPricing.singleUnit}
-                    {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-primary-500">/{product.unit}</span>}
-                  </span>
-                </div>
-              ) : (
-                <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-gray-900">
-                  {currency}{product?.isCombination ? product?.variants[0]?.price : product?.prices?.price}
-                  {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-gray-400">/{product.unit}</span>}
+          {/* Price Section */}
+          <div className="flex flex-col mt-auto pt-0.5 min-[345px]:pt-1 sm:pt-1.5">
+            {isPromoTime && product?.promoPricing?.singleUnit > 0 ? (
+              <div className="flex flex-col">
+                <span className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-xs font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-400 px-0.5 min-[300px]:px-1 min-[345px]:px-1.5 py-0.5 rounded shadow-sm w-fit mb-0.5">PROMO</span>
+                <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-primary-600">
+                  {currency}{product.promoPricing.singleUnit}
+                  {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-primary-500">/{product.unit}</span>}
                 </span>
-              )}
-            </div>
+              </div>
+            ) : (
+              <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-gray-900">
+                {currency}{product?.isCombination ? product?.variants[0]?.price : product?.prices?.price}
+                {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-gray-400">/{product.unit}</span>}
+              </span>
+            )}
+          </div>
 
-            <div className="flex-shrink-0 ml-auto">
-              {/* Force string comparison for cart check */}
-              {inCart(`${product.id || product._id}`) ? (() => {
-                const cartItem = items.find((item) => item.id === `${product.id || product._id}`);
-                return cartItem ? (
-                  <div
-                    key={cartItem.id}
-                    className="flex items-center h-4 min-[300px]:h-5 min-[345px]:h-6 sm:h-7 bg-[#d1fae5] border border-[#5ee9b5] rounded-full overflow-hidden shadow-sm max-w-min"
+          {/* Full Width Add Button */}
+          <div className="w-full mt-1 min-[300px]:mt-1.5 min-[345px]:mt-2 sm:mt-2.5">
+            {/* Force string comparison for cart check */}
+            {inCart(`${product.id || product._id}`) ? (() => {
+              const cartItem = items.find((item) => item.id === `${product.id || product._id}`);
+              return cartItem ? (
+                <div
+                  key={cartItem.id}
+                  className="flex items-center justify-center h-6 min-[300px]:h-7 min-[345px]:h-8 sm:h-9 bg-[#d1fae5] border border-[#5ee9b5] rounded-md overflow-hidden shadow-sm w-full"
+                >
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleDecrementQuantity(cartItem, e);
+                    }}
+                    className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
+                    style={{ color: '#065f46' }}
                   >
-                    <button
+                    <IoRemove size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
+                  </button>
+
+                  <div className="flex-1 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
+                    <input
+                      type="text"
+                      value={quantityInputs[cartItem.id] !== undefined ? quantityInputs[cartItem.id] : cartItem.quantity}
+                      onChange={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleQuantityInputChange(cartItem.id, e.target.value);
+                      }}
+                      onBlur={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleQuantityInputBlur(cartItem);
+                      }}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        handleQuantityInputKeyDown(cartItem, e);
+                      }}
                       onClick={(e) => {
                         e.preventDefault();
                         e.stopPropagation();
-                        handleDecrementQuantity(cartItem, e);
                       }}
-                      className="w-3.5 min-[300px]:w-4 min-[345px]:w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
-                      style={{ color: '#065f46' }}
-                    >
-                      <IoRemove size={7} className="min-[300px]:size-[8px] min-[345px]:size-[10px] stroke-2" />
-                    </button>
-
-                    <div className="w-5 min-[300px]:w-6 min-[345px]:w-7 sm:w-9 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
-                      <input
-                        type="text"
-                        value={quantityInputs[cartItem.id] !== undefined ? quantityInputs[cartItem.id] : cartItem.quantity}
-                        onChange={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleQuantityInputChange(cartItem.id, e.target.value);
-                        }}
-                        onBlur={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          handleQuantityInputBlur(cartItem);
-                        }}
-                        onKeyDown={(e) => {
-                          e.stopPropagation();
-                          handleQuantityInputKeyDown(cartItem, e);
-                        }}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                        }}
-                        className="quantity-input w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] font-bold text-[#065f46] p-0"
-                      />
-                    </div>
-
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        cartItem?.variants?.length > 0
-                          ? handleAddItem(cartItem)
-                          : handleIncrementQuantity(cartItem, e);
-                      }}
-                      className="w-3.5 min-[300px]:w-4 min-[345px]:w-5 sm:w-6 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
-                      style={{ color: '#065f46' }}
-                    >
-                      <IoAdd size={7} className="min-[300px]:size-[8px] min-[345px]:size-[10px] stroke-2" />
-                    </button>
+                      className="quantity-input w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#065f46] p-0"
+                    />
                   </div>
-                ) : null;
-              })() : (
-                (() => {
-                  // Use specific minOrderQuantity from admin panel, default to 1
-                  const minQty = product?.minOrderQuantity || 1;
-                  return (
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        // Open quick view modal where minQty will be enforced
-                        handleAddItem(product, minQty, false);
-                      }}
-                      className="flex flex-col items-center gap-0 bg-[#d1fae5] border border-[#5ee9b5] px-1.5 min-[300px]:px-2 min-[345px]:px-4 sm:px-6 py-0.5 min-[300px]:py-1 min-[345px]:py-1.5 sm:py-2 rounded-full transition-all hover:bg-[#b9f6e1] hover:shadow-md group flex-shrink-0"
-                    >
-                      <div className="flex items-center gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 text-[#065f46] font-black">
-                        <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs tracking-wider">ADD</span>
-                        <span className="text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm leading-none -mt-0.5">+</span>
-                      </div>
-                      {minQty > 1 && (
-                        <span className="text-[5px] min-[300px]:text-[6px] min-[345px]:text-[8px] sm:text-[9px] text-[#065f46]/70 font-medium">Min Qty: {minQty}</span>
-                      )}
-                    </button>
-                  );
-                })()
-              )}
-            </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      cartItem?.variants?.length > 0
+                        ? handleAddItem(cartItem)
+                        : handleIncrementQuantity(cartItem, e);
+                    }}
+                    className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
+                    style={{ color: '#065f46' }}
+                  >
+                    <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
+                  </button>
+                </div>
+              ) : null;
+            })() : (
+              (() => {
+                // Use specific minOrderQuantity from admin panel, default to 1
+                const minQty = product?.minOrderQuantity || 1;
+                return (
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      // Open quick view modal where minQty will be enforced
+                      handleAddItem(product, minQty, false);
+                    }}
+                    className="w-full flex items-center justify-center gap-1 min-[300px]:gap-1.5 bg-[#d1fae5] border border-[#5ee9b5] py-1 min-[300px]:py-1.5 min-[345px]:py-2 sm:py-2.5 rounded-md transition-all hover:bg-[#b9f6e1] hover:shadow-md"
+                  >
+                    <span className="text-[9px] min-[300px]:text-[10px] min-[345px]:text-xs sm:text-sm font-bold text-[#065f46] tracking-wide">Add</span>
+                    <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] text-[#065f46]" />
+                    {minQty > 1 && (
+                      <span className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-[10px] text-[#065f46]/70 font-medium ml-0.5">(Min: {minQty})</span>
+                    )}
+                  </button>
+                );
+              })()
+            )}
           </div>
         </div>
         {/* product info end */}

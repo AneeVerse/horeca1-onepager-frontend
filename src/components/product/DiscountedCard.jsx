@@ -51,12 +51,21 @@ const DiscountedCard = ({ product, attributes, currency }) => {
         />
       )}
 
-      <div className="group relative flex flex-col overflow-hidden rounded-sm min-[300px]:rounded-md min-[345px]:rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-[#018549] ">
+      <div className="group relative flex flex-col overflow-hidden rounded-sm min-[300px]:rounded-md min-[345px]:rounded-lg sm:rounded-xl border bg-white border-gray-100 transition-all duration-100 ease-in-out hover:border-[#018549] w-full h-full">
         <div className="w-full flex justify-between">
           <Discount product={product} />
         </div>
-        <div className="relative w-full h-24 min-[300px]:h-28 min-[345px]:h-36 sm:h-48 lg:h-48 xl:h-52">
-          <div className="relative block w-full h-full overflow-hidden bg-gray-100">
+        <div className="relative w-full aspect-[4/3.5] min-[300px]:aspect-[4/3] min-[345px]:aspect-[4/3] sm:aspect-square">
+          <div
+            className="relative block w-full h-full overflow-hidden bg-gray-100 cursor-pointer"
+            onClick={() => {
+              handleModalOpen(!modalOpen, product._id);
+              handleLogEvent(
+                "product",
+                `opened ${showingTranslateValue(product?.title)} product modal via image click`
+              );
+            }}
+          >
             <ImageWithFallback
               fill
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
@@ -82,68 +91,17 @@ const DiscountedCard = ({ product, attributes, currency }) => {
               <span className="ms-1 hidden xl:block lg:block">Quick View</span>
             </button>
           </div>
-          <div className="absolute bottom-1 min-[300px]:bottom-2 min-[345px]:bottom-3 right-1 min-[300px]:right-2 min-[345px]:right-3 z-10 flex items-center justify-center rounded-full bg-white text-gray-700 shadow-lg transition-all duration-300 ease-in-out hover:bg-gray-100 hover:text-[#018549]">
-            {inCart(product._id) ? (
-              <div>
-                {items.map(
-                  (item) =>
-                    item.id === product._id && (
-                      <div
-                        key={item.id}
-                        className="flex flex-col w-7 min-[300px]:w-8 min-[345px]:w-9 sm:w-11 h-16 min-[300px]:h-18 min-[345px]:h-20 sm:h-22 items-center p-0.5 min-[300px]:p-1 justify-between bg-[#018549] text-white ring-1 min-[345px]:ring-2 ring-white rounded-full"
-                      >
-                        <button
-                          onClick={() => {
-                            const minQty = product?.minOrderQuantity || item?.minOrderQuantity || 1;
-                            // If quantity is at or below minimum, remove item (go to 0)
-                            if (item.quantity <= minQty) {
-                              removeItem(item.id);
-                            } else {
-                              updateItemQuantity(item.id, item.quantity - 1);
-                            }
-                          }}
-                        >
-                          <span className="text-sm min-[300px]:text-base min-[345px]:text-lg sm:text-xl cursor-pointer">
-                            <IoRemove />
-                          </span>
-                        </button>
-                        <p className="text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm px-0.5 min-[345px]:px-1 font-medium">
-                          {item.quantity}
-                        </p>
-                        <button
-                          onClick={() =>
-                            item?.variants?.length > 0
-                              ? handleAddItem(item)
-                              : handleIncreaseQuantity(item)
-                          }
-                        >
-                          <span className="text-xs min-[300px]:text-sm min-[345px]:text-base sm:text-lg cursor-pointer">
-                            <IoAdd />
-                          </span>
-                        </button>
-                      </div>
-                    )
-                )}{" "}
-              </div>
-            ) : (
-              <button
-                onClick={() => handleAddItem(product)}
-                aria-label="cart"
-                className="w-7 h-7 min-[300px]:w-8 min-[300px]:h-8 min-[345px]:w-9 min-[345px]:h-9 sm:w-11 sm:h-11 flex items-center justify-center rounded-full cursor-pointer border min-[345px]:border-2 bg-[#018549] text-white border-gray-10 font-medium transition-colors duration-300 hover:border-accent hover:bg-[#016d3b] hover:border-[#018549] hover:text-gray-50 focus:border-[#018549] focus:bg-[#018549] focus:text-gray-50"
-              >
-                {" "}
-                <IoBagAdd className="text-sm min-[300px]:text-base min-[345px]:text-lg sm:text-xl" />
-              </button>
-            )}
-          </div>
         </div>
-        <div className="flex flex-1 flex-col space-y-0.5 min-[300px]:space-y-1 min-[345px]:space-y-1.5 sm:space-y-2 px-1 min-[300px]:px-2 min-[345px]:px-3 sm:px-4 pt-0.5 min-[300px]:pt-1 min-[345px]:pt-1.5 sm:pt-2 pb-2 min-[300px]:pb-4 min-[345px]:pb-6 sm:pb-8">
-          <div className="relative mb-0.5 min-[345px]:mb-1">
-            <div className="text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm font-medium text-gray-800 line-clamp-2 min-[345px]:line-clamp-1">
-              {showingTranslateValue(product?.title)}
-            </div>
+
+        {/* Product Info */}
+        <div className="flex flex-1 flex-col px-1 min-[300px]:px-1.5 min-[345px]:px-2 sm:px-3 pt-0.5 min-[300px]:pt-1 min-[345px]:pt-1.5 sm:pt-2 pb-1 min-[300px]:pb-1.5 min-[345px]:pb-2 sm:pb-3">
+          {/* Product Title */}
+          <div className="h-6 min-[300px]:h-7 min-[345px]:h-10 sm:h-12 text-[8px] min-[300px]:text-[9px] min-[345px]:text-xs sm:text-sm font-semibold text-gray-800 line-clamp-2 leading-tight min-[345px]:leading-tight sm:leading-snug mb-0.5">
+            {showingTranslateValue(product?.title)}
           </div>
-          <div className="flex gap-0.5 items-center">
+
+          {/* Rating */}
+          <div className="flex gap-0.5 items-center mb-0.5 min-[345px]:mb-1">
             <Rating
               size="md"
               showReviews={true}
@@ -152,21 +110,90 @@ const DiscountedCard = ({ product, attributes, currency }) => {
             />
           </div>
 
-          <PriceTwo
-            card
-            product={product}
-            currency={currency}
-            price={
-              product?.isCombination
-                ? product?.variants[0]?.price
-                : product?.prices?.price
-            }
-            originalPrice={
-              product?.isCombination
-                ? product?.variants[0]?.originalPrice
-                : product?.prices?.originalPrice
-            }
-          />
+          {/* Price Section */}
+          <div className="flex flex-col mt-auto pt-0.5 min-[345px]:pt-1 sm:pt-1.5">
+            <PriceTwo
+              card
+              product={product}
+              currency={currency}
+              price={
+                product?.isCombination
+                  ? product?.variants[0]?.price
+                  : product?.prices?.price
+              }
+              originalPrice={
+                product?.isCombination
+                  ? product?.variants[0]?.originalPrice
+                  : product?.prices?.originalPrice
+              }
+            />
+          </div>
+
+          {/* Full Width Add Button */}
+          <div className="w-full mt-1 min-[300px]:mt-1.5 min-[345px]:mt-2 sm:mt-2.5">
+            {inCart(product._id) ? (
+              <>
+                {items.map(
+                  (item) =>
+                    item.id === product._id && (
+                      <div
+                        key={item.id}
+                        className="flex items-center justify-center h-6 min-[300px]:h-7 min-[345px]:h-8 sm:h-9 bg-[#d1fae5] border border-[#5ee9b5] rounded-md overflow-hidden shadow-sm w-full"
+                      >
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const minQty = product?.minOrderQuantity || item?.minOrderQuantity || 1;
+                            if (item.quantity <= minQty) {
+                              removeItem(item.id);
+                            } else {
+                              updateItemQuantity(item.id, item.quantity - 1);
+                            }
+                          }}
+                          className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
+                          style={{ color: '#065f46' }}
+                        >
+                          <IoRemove size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
+                        </button>
+
+                        <div className="flex-1 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
+                          <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#065f46]">
+                            {item.quantity}
+                          </span>
+                        </div>
+
+                        <button
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            item?.variants?.length > 0
+                              ? handleAddItem(item)
+                              : handleIncreaseQuantity(item);
+                          }}
+                          className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
+                          style={{ color: '#065f46' }}
+                        >
+                          <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
+                        </button>
+                      </div>
+                    )
+                )}
+              </>
+            ) : (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleAddItem(product);
+                }}
+                className="w-full flex items-center justify-center gap-1 min-[300px]:gap-1.5 bg-[#d1fae5] border border-[#5ee9b5] py-1 min-[300px]:py-1.5 min-[345px]:py-2 sm:py-2.5 rounded-md transition-all hover:bg-[#b9f6e1] hover:shadow-md"
+              >
+                <span className="text-[9px] min-[300px]:text-[10px] min-[345px]:text-xs sm:text-sm font-bold text-[#065f46] tracking-wide">Add</span>
+                <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] text-[#065f46]" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </>

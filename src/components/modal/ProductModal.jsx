@@ -300,7 +300,7 @@ const ProductModal = ({
 
         // Check minimum order quantity
         const minQty = product?.minOrderQuantity || 1;
-        
+
         // If quantity is below minimum, set to minimum (but allow 0 to remove from cart)
         if (item > 0 && item < minQty) {
             setItem(minQty);
@@ -357,283 +357,364 @@ const ProductModal = ({
             handleCloseModal={() => setModalOpen(false)}
         >
             <div className="inline-block overflow-y-auto h-full align-middle transition-all transform w-full">
-                <div data-modal-content className="lg:flex flex-col lg:flex-row md:flex-row w-full overflow-hidden">
-                    {/* Left Side: Product Image */}
-                    <div className="w-full lg:w-[40%] flex-shrink-0">
-                        <div data-product-image-container className="flex-shrink-0 flex items-center justify-center w-full aspect-square bg-gray-50 rounded-lg overflow-hidden relative">
+                <div data-modal-content className="w-full overflow-hidden">
+                    {/* Mobile Layout: Image Left, Details Right */}
+                    <div className="lg:hidden flex flex-row gap-3 mb-4">
+                        {/* Mobile: Small Image on Left */}
+                        <div className="flex-shrink-0 w-20 h-20 min-[345px]:w-24 min-[345px]:h-24 sm:w-28 sm:h-28 rounded-lg overflow-hidden bg-gray-100">
                             {product.image?.[0] ? (
                                 <Image
                                     src={selectedImage || product.image[0]}
-                                    width={420}
-                                    height={420}
+                                    width={112}
+                                    height={112}
                                     alt="product"
-                                    className="object-contain w-full h-full"
+                                    className="object-cover w-full h-full"
                                 />
                             ) : (
                                 <Image
                                     src="https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
-                                    width={420}
-                                    height={420}
+                                    width={112}
+                                    height={112}
                                     alt="product Image"
-                                    className="object-contain w-full h-full"
+                                    className="object-cover w-full h-full"
                                 />
                             )}
                         </div>
+
+                        {/* Mobile: Product Title and Info on Right */}
+                        <div className="flex-1 flex flex-col justify-center min-w-0">
+                            <h2 className="text-heading text-sm min-[345px]:text-base sm:text-lg font-semibold leading-tight line-clamp-2 mb-1">
+                                {showingTranslateValue(product?.title)}
+                            </h2>
+                            <div className="flex items-center gap-2 text-[10px] min-[345px]:text-xs text-gray-500">
+                                {product?.unit && <span>{product.unit}</span>}
+                                <span className="text-gray-300">|</span>
+                                <Stock In stock={stock} />
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Right Side: Product Details */}
-                    <div className="w-full lg:w-[60%] pt-6 lg:pt-0 lg:pl-7 xl:pl-10">
-                        {/* Header Content: Category, Stock, Title */}
-                        <div className="flex flex-col gap-1 mb-1.5">
-                            <div className="flex items-baseline gap-2 flex-wrap">
-                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Category:</span>
-                                <Link
-                                    href={`/search?category=${category_name}&_id=${product?.category?._id}`}
-                                    className="text-[10px] font-bold uppercase tracking-wider text-primary-600 hover:text-primary-700"
-                                >
-                                    {category_name}
-                                </Link>
-                                <Stock In stock={stock} />
-                                {product?.minOrderQuantity > 1 && (
-                                    <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
-                                        Min Qty: {product.minOrderQuantity}
-                                    </span>
+                    {/* Desktop Layout: Keep Original */}
+                    <div className="hidden lg:flex flex-row w-full">
+                        {/* Left Side: Product Image */}
+                        <div className="w-[40%] flex-shrink-0">
+                            <div data-product-image-container className="flex-shrink-0 flex items-center justify-center w-full aspect-square bg-gray-50 rounded-lg overflow-hidden relative">
+                                {product.image?.[0] ? (
+                                    <Image
+                                        src={selectedImage || product.image[0]}
+                                        width={420}
+                                        height={420}
+                                        alt="product"
+                                        className="object-contain w-full h-full"
+                                    />
+                                ) : (
+                                    <Image
+                                        src="https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
+                                        width={420}
+                                        height={420}
+                                        alt="product Image"
+                                        className="object-contain w-full h-full"
+                                    />
                                 )}
                             </div>
                         </div>
 
-                        <h2 className="text-heading text-lg md:text-xl lg:text-xl font-medium mb-2">
-                            {showingTranslateValue(product?.title)}
-                        </h2>
-
-                        {/* Price and Discount */}
-                        <div className="flex items-center justify-between my-4">
-                            <div className="flex items-center">
-                                <Price
-                                    price={getPriceForQuantity(product, item)}
-                                    product={product}
-                                    currency={currency}
-                                    originalPrice={originalPrice}
-                                />
-                                <span className="ml-2">
-                                    <Discount slug product={product} discount={discount} />
-                                </span>
+                        {/* Right Side: Product Details (Desktop) */}
+                        <div className="w-[60%] pl-7 xl:pl-10">
+                            {/* Header Content: Category, Stock, Title */}
+                            <div className="flex flex-col gap-1 mb-1.5">
+                                <div className="flex items-baseline gap-2 flex-wrap">
+                                    <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Category:</span>
+                                    <Link
+                                        href={`/search?category=${category_name}&_id=${product?.category?._id}`}
+                                        className="text-[10px] font-bold uppercase tracking-wider text-primary-600 hover:text-primary-700"
+                                    >
+                                        {category_name}
+                                    </Link>
+                                    <Stock In stock={stock} />
+                                    {product?.minOrderQuantity > 1 && (
+                                        <span className="text-[10px] font-bold uppercase tracking-wider text-orange-600 bg-orange-50 px-2 py-0.5 rounded-full border border-orange-100">
+                                            Min Qty: {product.minOrderQuantity}
+                                        </span>
+                                    )}
+                                </div>
                             </div>
-                            {/* Quantity Selector */}
-                            <div
-                                className="group flex items-center rounded-full overflow-hidden flex-shrink-0 border bg-[#d1fae5]"
-                                style={{ borderColor: '#5ee9b5' }}
-                            >
-                                <button
-                                    onClick={() => {
-                                        const minQty = product?.minOrderQuantity || 1;
-                                        if (item <= minQty) {
-                                            setItem(0);
-                                            setQuantityInput('0');
-                                        } else {
-                                            const newQty = item - 1;
-                                            setItem(newQty);
-                                            setQuantityInput(newQty.toString());
-                                        }
-                                    }}
-                                    disabled={item <= 0}
-                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-e hover:bg-[#b9f6e1]"
-                                    style={{ borderRightColor: '#5ee9b533' }}
-                                >
-                                    <FiMinus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
-                                </button>
-                                <input
-                                    type="number"
-                                    min="0"
-                                    max={product.quantity || 9999}
-                                    value={quantityInput}
-                                    onChange={(e) => {
-                                        const value = e.target.value;
-                                        setQuantityInput(value); // Update local state immediately for responsive typing
 
-                                        const numValue = parseInt(value, 10);
-                                        if (value === '' || isNaN(numValue)) {
-                                            // Allow empty or invalid input while typing
-                                            return;
-                                        }
-                                        if (numValue >= 0) {
-                                            const maxQuantity = product.quantity || 9999;
-                                            setItem(Math.min(numValue, maxQuantity));
-                                        }
-                                    }}
-                                    onBlur={(e) => {
-                                        const value = e.target.value;
-                                        const numValue = parseInt(value, 10);
-                                        const minQty = product?.minOrderQuantity || 1;
-                                        if (value === '' || isNaN(numValue) || numValue <= 0) {
-                                            setItem(0);
-                                            setQuantityInput('0');
-                                        } else if (numValue < minQty) {
-                                            // Jump to minQty if they try to enter something between 0 and minQty
-                                            setItem(minQty);
-                                            setQuantityInput(minQty.toString());
-                                            notifyError(`Minimum order quantity for this product is ${minQty}`);
-                                        } else {
-                                            const maxQuantity = product.quantity || 9999;
-                                            const finalValue = Math.min(numValue, maxQuantity);
-                                            setItem(finalValue);
-                                            setQuantityInput(finalValue.toString());
-                                        }
-                                    }}
-                                    onKeyDown={(e) => {
-                                        // Allow backspace, delete, arrow keys, etc.
-                                        if (e.key === 'Enter') {
-                                            e.target.blur();
-                                        }
-                                    }}
-                                    className="font-bold text-[10px] px-3 min-w-[2.5rem] text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-                                />
-                                <button
-                                    onClick={() => {
-                                        const minQty = product?.minOrderQuantity || 1;
-                                        const maxQuantity = product.quantity || 9999;
-                                        if (item === 0) {
-                                            setItem(minQty);
-                                            setQuantityInput(minQty.toString());
-                                        } else if (item < maxQuantity) {
-                                            const newQty = item + 1;
-                                            setItem(newQty);
-                                            setQuantityInput(newQty.toString());
-                                        }
-                                    }}
-                                    disabled={product.quantity <= item}
-                                    className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-8 md:w-10 text-heading border-s hover:bg-[#b9f6e1]"
-                                    style={{ borderLeftColor: '#5ee9b533' }}
+                            <h2 className="text-heading text-xl font-medium mb-2">
+                                {showingTranslateValue(product?.title)}
+                            </h2>
+
+                            {/* Price and Discount (Desktop) */}
+                            <div className="flex items-center justify-between my-4">
+                                <div className="flex items-center">
+                                    <Price
+                                        price={getPriceForQuantity(product, item)}
+                                        product={product}
+                                        currency={currency}
+                                        originalPrice={originalPrice}
+                                    />
+                                    <span className="ml-2">
+                                        <Discount slug product={product} discount={discount} />
+                                    </span>
+                                </div>
+                                {/* Quantity Selector (Desktop) */}
+                                <div
+                                    className="group flex items-center rounded-full overflow-hidden flex-shrink-0 border bg-[#d1fae5]"
+                                    style={{ borderColor: '#5ee9b5' }}
                                 >
-                                    <FiPlus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
-                                </button>
+                                    <button
+                                        onClick={() => {
+                                            const minQty = product?.minOrderQuantity || 1;
+                                            if (item <= minQty) {
+                                                setItem(0);
+                                                setQuantityInput('0');
+                                            } else {
+                                                const newQty = item - 1;
+                                                setItem(newQty);
+                                                setQuantityInput(newQty.toString());
+                                            }
+                                        }}
+                                        disabled={item <= 0}
+                                        className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-10 text-heading border-e hover:bg-[#b9f6e1]"
+                                        style={{ borderRightColor: '#5ee9b533' }}
+                                    >
+                                        <FiMinus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
+                                    </button>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        max={product.quantity || 9999}
+                                        value={quantityInput}
+                                        onChange={(e) => {
+                                            const value = e.target.value;
+                                            setQuantityInput(value);
+                                            const numValue = parseInt(value, 10);
+                                            if (value === '' || isNaN(numValue)) return;
+                                            if (numValue >= 0) {
+                                                const maxQuantity = product.quantity || 9999;
+                                                setItem(Math.min(numValue, maxQuantity));
+                                            }
+                                        }}
+                                        onBlur={(e) => {
+                                            const value = e.target.value;
+                                            const numValue = parseInt(value, 10);
+                                            const minQty = product?.minOrderQuantity || 1;
+                                            if (value === '' || isNaN(numValue) || numValue <= 0) {
+                                                setItem(0);
+                                                setQuantityInput('0');
+                                            } else if (numValue < minQty) {
+                                                setItem(minQty);
+                                                setQuantityInput(minQty.toString());
+                                                notifyError(`Minimum order quantity for this product is ${minQty}`);
+                                            } else {
+                                                const maxQuantity = product.quantity || 9999;
+                                                const finalValue = Math.min(numValue, maxQuantity);
+                                                setItem(finalValue);
+                                                setQuantityInput(finalValue.toString());
+                                            }
+                                        }}
+                                        onKeyDown={(e) => {
+                                            if (e.key === 'Enter') e.target.blur();
+                                        }}
+                                        className="font-bold text-[10px] px-3 min-w-[2.5rem] text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                    />
+                                    <button
+                                        onClick={() => {
+                                            const minQty = product?.minOrderQuantity || 1;
+                                            const maxQuantity = product.quantity || 9999;
+                                            if (item === 0) {
+                                                setItem(minQty);
+                                                setQuantityInput(minQty.toString());
+                                            } else if (item < maxQuantity) {
+                                                const newQty = item + 1;
+                                                setItem(newQty);
+                                                setQuantityInput(newQty.toString());
+                                            }
+                                        }}
+                                        disabled={product.quantity <= item}
+                                        className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-10 text-heading border-s hover:bg-[#b9f6e1]"
+                                        style={{ borderLeftColor: '#5ee9b533' }}
+                                    >
+                                        <FiPlus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        {/* Bulk Pricing Display - Hide during promo time */}
-                        {(() => {
-                            const shouldShowBulk = !isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0);
-                            if (!shouldShowBulk) return null;
+                    {/* Mobile: Price and Quantity Selector Row */}
+                    <div className="lg:hidden flex items-center justify-between mb-4">
+                        <div className="flex items-center">
+                            <Price
+                                price={getPriceForQuantity(product, item)}
+                                product={product}
+                                currency={currency}
+                                originalPrice={originalPrice}
+                            />
+                        </div>
+                        {/* Quantity Selector (Mobile) */}
+                        <div
+                            className="group flex items-center rounded-full overflow-hidden flex-shrink-0 border bg-[#d1fae5]"
+                            style={{ borderColor: '#5ee9b5' }}
+                        >
+                            <button
+                                onClick={() => {
+                                    const minQty = product?.minOrderQuantity || 1;
+                                    if (item <= minQty) {
+                                        setItem(0);
+                                        setQuantityInput('0');
+                                    } else {
+                                        const newQty = item - 1;
+                                        setItem(newQty);
+                                        setQuantityInput(newQty.toString());
+                                    }
+                                }}
+                                disabled={item <= 0}
+                                className="flex items-center cursor-pointer justify-center py-1.5 px-2 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-7 sm:w-8 text-heading border-e hover:bg-[#b9f6e1]"
+                                style={{ borderRightColor: '#5ee9b533' }}
+                            >
+                                <FiMinus style={{ color: '#065f46' }} className="text-sm sm:text-base stroke-[3]" />
+                            </button>
+                            <input
+                                type="number"
+                                min="0"
+                                max={product.quantity || 9999}
+                                value={quantityInput}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setQuantityInput(value);
+                                    const numValue = parseInt(value, 10);
+                                    if (value === '' || isNaN(numValue)) return;
+                                    if (numValue >= 0) {
+                                        const maxQuantity = product.quantity || 9999;
+                                        setItem(Math.min(numValue, maxQuantity));
+                                    }
+                                }}
+                                onBlur={(e) => {
+                                    const value = e.target.value;
+                                    const numValue = parseInt(value, 10);
+                                    const minQty = product?.minOrderQuantity || 1;
+                                    if (value === '' || isNaN(numValue) || numValue <= 0) {
+                                        setItem(0);
+                                        setQuantityInput('0');
+                                    } else if (numValue < minQty) {
+                                        setItem(minQty);
+                                        setQuantityInput(minQty.toString());
+                                        notifyError(`Minimum order quantity for this product is ${minQty}`);
+                                    } else {
+                                        const maxQuantity = product.quantity || 9999;
+                                        const finalValue = Math.min(numValue, maxQuantity);
+                                        setItem(finalValue);
+                                        setQuantityInput(finalValue.toString());
+                                    }
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') e.target.blur();
+                                }}
+                                className="font-bold text-xs px-2 w-10 text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                            />
+                            <button
+                                onClick={() => {
+                                    const minQty = product?.minOrderQuantity || 1;
+                                    const maxQuantity = product.quantity || 9999;
+                                    if (item === 0) {
+                                        setItem(minQty);
+                                        setQuantityInput(minQty.toString());
+                                    } else if (item < maxQuantity) {
+                                        const newQty = item + 1;
+                                        setItem(newQty);
+                                        setQuantityInput(newQty.toString());
+                                    }
+                                }}
+                                disabled={product.quantity <= item}
+                                className="flex items-center cursor-pointer justify-center py-1.5 px-2 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-7 sm:w-8 text-heading border-s hover:bg-[#b9f6e1]"
+                                style={{ borderLeftColor: '#5ee9b533' }}
+                            >
+                                <FiPlus style={{ color: '#065f46' }} className="text-sm sm:text-base stroke-[3]" />
+                            </button>
+                        </div>
+                    </div>
 
-                            // Determine state
-                            const activeTier = determineActiveBulkTier(product?.bulkPricing, item);
-                            const isTier1Active = activeTier?.tier === 'bulkRate1';
-                            const isTier2Active = activeTier?.tier === 'bulkRate2';
+                    {/* Bulk Pricing Display - Hide during promo time */}
+                    {(() => {
+                        const shouldShowBulk = !isPromoTime && product?.bulkPricing && (product?.bulkPricing?.bulkRate1?.quantity > 0 || product?.bulkPricing?.bulkRate2?.quantity > 0);
+                        if (!shouldShowBulk) return null;
 
-                            const tier1Savings = calculateSavingsForTier(product?.bulkPricing?.bulkRate1?.quantity, product?.bulkPricing?.bulkRate1?.pricePerUnit, item);
-                            const tier2Savings = calculateSavingsForTier(product?.bulkPricing?.bulkRate2?.quantity, product?.bulkPricing?.bulkRate2?.pricePerUnit, item);
+                        // Determine state
+                        const activeTier = determineActiveBulkTier(product?.bulkPricing, item);
+                        const isTier1Active = activeTier?.tier === 'bulkRate1';
+                        const isTier2Active = activeTier?.tier === 'bulkRate2';
 
-                            // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
-                            if (isTier2Active) {
-                                return (
-                                    <div className="bg-gray-50 rounded-lg p-3 mb-4">
-                                        {tier2Savings ? (
-                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                <span className="text-sm font-semibold text-green-700">
-                                                    {currency}{tier2Savings.amount} saved on {tier2Savings.quantity} {tier2Savings.unit}
-                                                </span>
-                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                                                <span className="text-sm font-semibold text-green-700">Bulk Price Applied</span>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-bold text-green-700">
-                                                        {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                    </span>
-                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            }
+                        const tier1Savings = calculateSavingsForTier(product?.bulkPricing?.bulkRate1?.quantity, product?.bulkPricing?.bulkRate1?.pricePerUnit, item);
+                        const tier2Savings = calculateSavingsForTier(product?.bulkPricing?.bulkRate2?.quantity, product?.bulkPricing?.bulkRate2?.pricePerUnit, item);
 
-                            // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner, show tier 2 with Add button
-                            if (isTier1Active) {
-                                return (
-                                    <div className="bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
-                                        <h4 className="text-sm font-semibold text-gray-700 mb-2">Bulk Pricing</h4>
-                                        {/* Tier 1 Savings Banner */}
-                                        {tier1Savings ? (
-                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                <span className="text-sm font-semibold text-green-700">
-                                                    {currency}{tier1Savings.amount} saved on {tier1Savings.quantity} {tier1Savings.unit}
-                                                </span>
-                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                    </svg>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                                                <span className="text-sm font-semibold text-green-700">Bulk Price Applied</span>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-bold text-green-700">
-                                                        {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
-                                                    </span>
-                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {/* Tier 2 - Show with Add button */}
-                                        {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-primary-600 font-medium">
-                                                    Buy {product.bulkPricing.bulkRate2.quantity}+ {product.unit || "units"}
-                                                </span>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm font-bold text-primary-700">
-                                                        {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                    </span>
-                                                    <button
-                                                        onClick={() => setItem(product.bulkPricing.bulkRate2.quantity)}
-                                                        className="text-xs font-semibold text-white bg-[#018549] hover:bg-[#016d3b] px-3 py-1 rounded transition-colors"
-                                                    >
-                                                        Add {product.bulkPricing.bulkRate2.quantity}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-                                );
-                            }
-
-                            // Scenario 3: No tier active - show all tiers with Add buttons
+                        // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
+                        if (isTier2Active) {
                             return (
-                                <div className="bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
-                                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Bulk Pricing</h4>
-                                    {product?.bulkPricing?.bulkRate1?.quantity > 0 && product?.bulkPricing?.bulkRate1?.pricePerUnit > 0 && (
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm text-primary-600 font-medium">
-                                                Buy {product.bulkPricing.bulkRate1.quantity}+ {product.unit || "units"}
+                                <div className="bg-gray-50 rounded-lg p-3 mb-4">
+                                    {tier2Savings ? (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-green-700">
+                                                {currency}{tier2Savings.amount} saved on {tier2Savings.quantity} {tier2Savings.unit}
                                             </span>
-                                            <div className="flex items-center gap-3">
-                                                <span className="text-sm font-bold text-primary-700">
-                                                    {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                            <span className="text-sm font-semibold text-green-700">Bulk Price Applied</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold text-green-700">
+                                                    {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
                                                 </span>
-                                                <button
-                                                    onClick={() => setItem(product.bulkPricing.bulkRate1.quantity)}
-                                                    className="text-xs font-semibold text-white bg-[#018549] hover:bg-[#016d3b] px-3 py-1 rounded transition-colors"
-                                                >
-                                                    Add {product.bulkPricing.bulkRate1.quantity}
-                                                </button>
+                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
                                             </div>
                                         </div>
                                     )}
+                                </div>
+                            );
+                        }
+
+                        // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner, show tier 2 with Add button
+                        if (isTier1Active) {
+                            return (
+                                <div className="bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
+                                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Bulk Pricing</h4>
+                                    {/* Tier 1 Savings Banner */}
+                                    {tier1Savings ? (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                            <span className="text-sm font-semibold text-green-700">
+                                                {currency}{tier1Savings.amount} saved on {tier1Savings.quantity} {tier1Savings.unit}
+                                            </span>
+                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                            <span className="text-sm font-semibold text-green-700">Bulk Price Applied</span>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-sm font-bold text-green-700">
+                                                    {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                                </span>
+                                                <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* Tier 2 - Show with Add button */}
                                     {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
                                         <div className="flex items-center justify-between">
                                             <span className="text-sm text-primary-600 font-medium">
@@ -654,171 +735,74 @@ const ProductModal = ({
                                     )}
                                 </div>
                             );
-                        })()}
+                        }
 
-                        {/* Savings Banner - Show directly below bulk pricing */}
-
-                        {/* Promo Bulk Pricing Display - Premium Unified Happy Hour Design */}
-                        {product?.promoPricing && (product?.promoPricing?.singleUnit > 0 || product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
-                            <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-lg p-3 mb-4 space-y-2 border border-white/10 shadow-lg relative overflow-hidden group">
-                                <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl -mr-12 -mt-12"></div>
-
-                                <h4 className="relative z-10 text-sm font-semibold text-white mb-2 flex items-center gap-2">
-                                    <span className="text-[10px] font-black text-[#018549] bg-emerald-300 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(110,231,183,0.3)]">PROMO</span>
-                                </h4>
-                                {product?.promoPricing?.singleUnit > 0 && (
-                                    <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-2">
-                                        <span className="text-xs text-emerald-100 font-medium">Single Unit Price</span>
-                                        <span className="text-sm font-black text-emerald-300">
-                                            {currency}{product.promoPricing.singleUnit}/{product.unit || "unit"}
+                        // Scenario 3: No tier active - show all tiers with Add buttons
+                        return (
+                            <div className="bg-gray-50 rounded-lg p-3 mb-4 space-y-2">
+                                <h4 className="text-sm font-semibold text-gray-700 mb-2">Bulk Pricing</h4>
+                                {product?.bulkPricing?.bulkRate1?.quantity > 0 && product?.bulkPricing?.bulkRate1?.pricePerUnit > 0 && (
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-primary-600 font-medium">
+                                            Buy {product.bulkPricing.bulkRate1.quantity}+ {product.unit || "units"}
                                         </span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-sm font-bold text-primary-700">
+                                                {currency}{product.bulkPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                            </span>
+                                            <button
+                                                onClick={() => setItem(product.bulkPricing.bulkRate1.quantity)}
+                                                className="text-xs font-semibold text-white bg-[#018549] hover:bg-[#016d3b] px-3 py-1 rounded transition-colors"
+                                            >
+                                                Add {product.bulkPricing.bulkRate1.quantity}
+                                            </button>
+                                        </div>
                                     </div>
                                 )}
-                                {(() => {
-                                    // Only check for active tier during promo time
-                                    if (!isPromoTime) {
-                                        // Show all promo bulk pricing tiers with Add buttons (but they'll show error on click)
-                                        return (
-                                            <>
-                                                {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
-                                                    <div className="relative z-10 flex items-center justify-between py-1 border-b border-white/5">
-                                                        <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate1.quantity}+ {product.unit || "units"}</span>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-sm font-black text-emerald-300">
-                                                                {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
-                                                            </span>
-                                                            <button
-                                                                onClick={() => {
-                                                                    notifyError("Come at 6pm to get this offer!");
-                                                                }}
-                                                                className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                            >
-                                                                Add {product.promoPricing.bulkRate1.quantity}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                                                    <div className="relative z-10 flex items-center justify-between pt-1">
-                                                        <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-sm font-black text-emerald-300">
-                                                                {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                            </span>
-                                                            <button
-                                                                onClick={() => {
-                                                                    notifyError("Come at 6pm to get this offer!");
-                                                                }}
-                                                                className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                            >
-                                                                Add {product.promoPricing.bulkRate2.quantity}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </>
-                                        );
-                                    }
+                                {product?.bulkPricing?.bulkRate2?.quantity > 0 && product?.bulkPricing?.bulkRate2?.pricePerUnit > 0 && (
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-sm text-primary-600 font-medium">
+                                            Buy {product.bulkPricing.bulkRate2.quantity}+ {product.unit || "units"}
+                                        </span>
+                                        <div className="flex items-center gap-3">
+                                            <span className="text-sm font-bold text-primary-700">
+                                                {currency}{product.bulkPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
+                                            </span>
+                                            <button
+                                                onClick={() => setItem(product.bulkPricing.bulkRate2.quantity)}
+                                                className="text-xs font-semibold text-white bg-[#018549] hover:bg-[#016d3b] px-3 py-1 rounded transition-colors"
+                                            >
+                                                Add {product.bulkPricing.bulkRate2.quantity}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })()}
 
-                                    // During promo time, check tier activation status
-                                    const isPromoTier1Active = product?.promoPricing?.bulkRate1?.quantity > 0 &&
-                                        item >= product.promoPricing.bulkRate1.quantity &&
-                                        (!product.promoPricing.bulkRate2?.quantity || item < product.promoPricing.bulkRate2.quantity);
-                                    const isPromoTier2Active = product?.promoPricing?.bulkRate2?.quantity > 0 &&
-                                        item >= product.promoPricing.bulkRate2.quantity;
+                    {/* Savings Banner - Show directly below bulk pricing */}
 
-                                    const promoTier1Savings = isPromoTier1Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
-                                    const promoTier2Savings = isPromoTier2Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
+                    {/* Promo Bulk Pricing Display - Premium Unified Happy Hour Design */}
+                    {product?.promoPricing && (product?.promoPricing?.singleUnit > 0 || product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
+                        <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-lg p-3 mb-4 space-y-2 border border-white/10 shadow-lg relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl -mr-12 -mt-12"></div>
 
-                                    // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
-                                    if (isPromoTier2Active) {
-                                        return (
-                                            <>
-                                                {promoTier2Savings ? (
-                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                        <span className="text-sm font-semibold text-green-700">
-                                                            {currency}{promoTier2Savings.amount} saved on {promoTier2Savings.quantity} {promoTier2Savings.unit}
-                                                        </span>
-                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                                                        <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-sm font-bold text-green-700">
-                                                                {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                            </span>
-                                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </>
-                                        );
-                                    }
-
-                                    // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner if exists, show tier 2 with Add button
-                                    if (isPromoTier1Active) {
-                                        return (
-                                            <>
-                                                {/* Tier 1 Savings Banner */}
-                                                {promoTier1Savings ? (
-                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                        <span className="text-sm font-semibold text-green-700">
-                                                            {currency}{promoTier1Savings.amount} saved on {promoTier1Savings.quantity} {promoTier1Savings.unit}
-                                                        </span>
-                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                                                        <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
-                                                        <div className="flex items-center gap-2">
-                                                            <span className="text-sm font-bold text-green-700">
-                                                                {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
-                                                            </span>
-                                                            <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                                {/* Tier 2 - Show with Add button */}
-                                                {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                                                    <div className="relative z-10 flex items-center justify-between pt-1">
-                                                        <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-sm font-black text-emerald-300">
-                                                                {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                            </span>
-                                                            <button
-                                                                onClick={() => {
-                                                                    setItem(product.promoPricing.bulkRate2.quantity);
-                                                                }}
-                                                                className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                            >
-                                                                Add {product.promoPricing.bulkRate2.quantity}
-                                                            </button>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </>
-                                        );
-                                    }
-
-                                    // Scenario 3: No tier active - show all promo bulk pricing tiers with Add buttons
+                            <h4 className="relative z-10 text-sm font-semibold text-white mb-2 flex items-center gap-2">
+                                <span className="text-[10px] font-black text-[#018549] bg-emerald-300 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(110,231,183,0.3)]">PROMO</span>
+                            </h4>
+                            {product?.promoPricing?.singleUnit > 0 && (
+                                <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-2">
+                                    <span className="text-xs text-emerald-100 font-medium">Single Unit Price</span>
+                                    <span className="text-sm font-black text-emerald-300">
+                                        {currency}{product.promoPricing.singleUnit}/{product.unit || "unit"}
+                                    </span>
+                                </div>
+                            )}
+                            {(() => {
+                                // Only check for active tier during promo time
+                                if (!isPromoTime) {
+                                    // Show all promo bulk pricing tiers with Add buttons (but they'll show error on click)
                                     return (
                                         <>
                                             {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
@@ -830,7 +814,7 @@ const ProductModal = ({
                                                         </span>
                                                         <button
                                                             onClick={() => {
-                                                                setItem(product.promoPricing.bulkRate1.quantity);
+                                                                notifyError("Come at 6pm to get this offer!");
                                                             }}
                                                             className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
                                                         >
@@ -839,6 +823,104 @@ const ProductModal = ({
                                                     </div>
                                                 </div>
                                             )}
+                                            {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
+                                                <div className="relative z-10 flex items-center justify-between pt-1">
+                                                    <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
+                                                    <div className="flex items-center gap-3">
+                                                        <span className="text-sm font-black text-emerald-300">
+                                                            {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
+                                                        </span>
+                                                        <button
+                                                            onClick={() => {
+                                                                notifyError("Come at 6pm to get this offer!");
+                                                            }}
+                                                            className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
+                                                        >
+                                                            Add {product.promoPricing.bulkRate2.quantity}
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </>
+                                    );
+                                }
+
+                                // During promo time, check tier activation status
+                                const isPromoTier1Active = product?.promoPricing?.bulkRate1?.quantity > 0 &&
+                                    item >= product.promoPricing.bulkRate1.quantity &&
+                                    (!product.promoPricing.bulkRate2?.quantity || item < product.promoPricing.bulkRate2.quantity);
+                                const isPromoTier2Active = product?.promoPricing?.bulkRate2?.quantity > 0 &&
+                                    item >= product.promoPricing.bulkRate2.quantity;
+
+                                const promoTier1Savings = isPromoTier1Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
+                                const promoTier2Savings = isPromoTier2Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
+
+                                // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
+                                if (isPromoTier2Active) {
+                                    return (
+                                        <>
+                                            {promoTier2Savings ? (
+                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                                    <span className="text-sm font-semibold text-green-700">
+                                                        {currency}{promoTier2Savings.amount} saved on {promoTier2Savings.quantity} {promoTier2Savings.unit}
+                                                    </span>
+                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                                    <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-bold text-green-700">
+                                                            {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
+                                                        </span>
+                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </>
+                                    );
+                                }
+
+                                // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner if exists, show tier 2 with Add button
+                                if (isPromoTier1Active) {
+                                    return (
+                                        <>
+                                            {/* Tier 1 Savings Banner */}
+                                            {promoTier1Savings ? (
+                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
+                                                    <span className="text-sm font-semibold text-green-700">
+                                                        {currency}{promoTier1Savings.amount} saved on {promoTier1Savings.quantity} {promoTier1Savings.unit}
+                                                    </span>
+                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
+                                                    <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-bold text-green-700">
+                                                            {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                                        </span>
+                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
+                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                            {/* Tier 2 - Show with Add button */}
                                             {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
                                                 <div className="relative z-10 flex items-center justify-between pt-1">
                                                     <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
@@ -859,35 +941,77 @@ const ProductModal = ({
                                             )}
                                         </>
                                     );
-                                })()}
-                            </div>
-                        )}
+                                }
 
-                        {/* Variants */}
-                        <div className="mb-6">
-                            {variantTitle?.map((a) => (
-                                <span key={a._id} className="mb-2 block">
-                                    <h4 className="text-sm py-1 text-gray-800 font-medium">
-                                        {showingTranslateValue(a?.name)}:
-                                    </h4>
-                                    <VariantList
-                                        att={a._id}
-                                        option={a.option}
-                                        setValue={setValue}
-                                        varTitle={variantTitle}
-                                        variants={product?.variants}
-                                        setSelectVa={setSelectVa}
-                                        selectVariant={selectVariant}
-                                        setSelectVariant={setSelectVariant}
-                                    />
-                                </span>
-                            ))}
+                                // Scenario 3: No tier active - show all promo bulk pricing tiers with Add buttons
+                                return (
+                                    <>
+                                        {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
+                                            <div className="relative z-10 flex items-center justify-between py-1 border-b border-white/5">
+                                                <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate1.quantity}+ {product.unit || "units"}</span>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-sm font-black text-emerald-300">
+                                                        {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => {
+                                                            setItem(product.promoPricing.bulkRate1.quantity);
+                                                        }}
+                                                        className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
+                                                    >
+                                                        Add {product.promoPricing.bulkRate1.quantity}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
+                                            <div className="relative z-10 flex items-center justify-between pt-1">
+                                                <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
+                                                <div className="flex items-center gap-3">
+                                                    <span className="text-sm font-black text-emerald-300">
+                                                        {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
+                                                    </span>
+                                                    <button
+                                                        onClick={() => {
+                                                            setItem(product.promoPricing.bulkRate2.quantity);
+                                                        }}
+                                                        className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
+                                                    >
+                                                        Add {product.promoPricing.bulkRate2.quantity}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                );
+                            })()}
                         </div>
+                    )}
 
-                        {/* Tags */}
-                        <div className="flex items-center mt-6">
-                            <Tags product={product} />
-                        </div>
+                    {/* Variants */}
+                    <div className="mb-6">
+                        {variantTitle?.map((a) => (
+                            <span key={a._id} className="mb-2 block">
+                                <h4 className="text-sm py-1 text-gray-800 font-medium">
+                                    {showingTranslateValue(a?.name)}:
+                                </h4>
+                                <VariantList
+                                    att={a._id}
+                                    option={a.option}
+                                    setValue={setValue}
+                                    varTitle={variantTitle}
+                                    variants={product?.variants}
+                                    setSelectVa={setSelectVa}
+                                    selectVariant={selectVariant}
+                                    setSelectVariant={setSelectVariant}
+                                />
+                            </span>
+                        ))}
+                    </div>
+
+                    {/* Tags */}
+                    <div className="flex items-center mt-6">
+                        <Tags product={product} />
                     </div>
                 </div>
             </div>
