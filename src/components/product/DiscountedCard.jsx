@@ -24,8 +24,30 @@ const DiscountedCard = ({ product, attributes, currency }) => {
   const { items, addItem, updateItemQuantity, removeItem, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
+  const [isPromoTime, setIsPromoTime] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
+
+  // Check if current time is between 6pm (18:00) and 9am (09:00)
+  // Supports NEXT_PUBLIC_TEST_HOUR env for testing (e.g., "19" for 7pm)
+  useEffect(() => {
+    const checkPromoTime = () => {
+      // Check for test hour override from env
+      const testHour = process.env.NEXT_PUBLIC_TEST_HOUR;
+      let hours;
+      if (testHour !== undefined && testHour !== "") {
+        hours = parseInt(testHour, 10);
+      } else {
+        const now = new Date();
+        hours = now.getHours();
+      }
+      // 6pm (18:00) to midnight (23:59) or midnight (00:00) to 9am (08:59)
+      setIsPromoTime(hours >= 18 || hours < 9);
+    };
+    checkPromoTime();
+    const interval = setInterval(checkPromoTime, 60000); // Check every minute
+    return () => clearInterval(interval);
+  }, []);
 
   // console.log('attributes in product cart',attributes)
 
@@ -127,6 +149,50 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                   : product?.prices?.originalPrice
               }
             />
+            {/* Promo Bulk Pricing Display (6pm-9am) - Unified Happy Hour Design */}
+            {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
+              <div className="bg-gradient-to-br from-[#881337] via-[#9d174d] to-[#be123c] rounded-sm min-[300px]:rounded-md p-1.5 min-[300px]:p-2 mb-1.5 min-[300px]:mb-2 space-y-1.5 border border-white/10 shadow-lg relative overflow-hidden group">
+                {/* Subtle Decorative Glow */}
+                <div className="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-full blur-xl -mr-8 -mt-8"></div>
+
+                {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
+                  <div className="relative z-10 flex items-center justify-between gap-1">
+                    <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-rose-50 font-medium leading-tight flex-1">
+                      <span className="hidden min-[345px]:inline">{currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+</span>
+                      <span className="min-[345px]:hidden">{currency}{product.promoPricing.bulkRate1.pricePerUnit}</span>
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddItem(product); // In DiscountedCard, all Add buttons currently open the modal
+                      }}
+                      className="text-[7px] min-[300px]:text-[8px] font-bold text-white bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded border border-white/10 transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                    >
+                      +{product.promoPricing.bulkRate1.quantity}
+                    </button>
+                  </div>
+                )}
+                {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
+                  <div className="relative z-10 flex items-center justify-between gap-1">
+                    <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-rose-50 font-medium leading-tight flex-1">
+                      <span className="hidden min-[345px]:inline">{currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+</span>
+                      <span className="min-[345px]:hidden">{currency}{product.promoPricing.bulkRate2.pricePerUnit}</span>
+                    </span>
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        handleAddItem(product);
+                      }}
+                      className="text-[7px] min-[300px]:text-[8px] font-bold text-white bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded border border-white/10 transition-all shadow-sm active:scale-95 whitespace-nowrap"
+                    >
+                      +{product.promoPricing.bulkRate2.quantity}
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           {/* Full Width Add Button */}
@@ -138,7 +204,10 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                     item.id === product._id && (
                       <div
                         key={item.id}
-                        className="flex items-center justify-center h-6 min-[300px]:h-7 min-[345px]:h-8 sm:h-9 bg-[#d1fae5] border border-[#5ee9b5] rounded-md overflow-hidden shadow-sm w-full"
+                        className={`flex items-center justify-center h-6 min-[300px]:h-7 min-[345px]:h-8 sm:h-9 rounded-md overflow-hidden shadow-sm w-full ${isPromoTime
+                          ? "bg-[#ffe4e6] border border-[#fda4af]"
+                          : "bg-[#d1fae5] border border-[#5ee9b5]"
+                          }`}
                       >
                         <button
                           onClick={(e) => {
@@ -151,14 +220,19 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                               updateItemQuantity(item.id, item.quantity - 1);
                             }
                           }}
-                          className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
-                          style={{ color: '#065f46' }}
+                          className={`w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center transition-colors border-r ${isPromoTime
+                            ? "hover:bg-[#fecdd3] border-[#fda4af]/30"
+                            : "hover:bg-[#b9f6e1] border-[#5ee9b5]/30"
+                            }`}
+                          style={{ color: isPromoTime ? "#be123c" : "#065f46" }}
                         >
                           <IoRemove size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
                         </button>
 
-                        <div className="flex-1 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
-                          <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#065f46]">
+                        <div className={`flex-1 h-full flex items-center justify-center bg-white border-x ${isPromoTime ? "border-[#fda4af]/20" : "border-[#5ee9b5]/20"
+                          }`}>
+                          <span className={`text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold ${isPromoTime ? "text-[#be123c]" : "text-[#065f46]"
+                            }`}>
                             {item.quantity}
                           </span>
                         </div>
@@ -171,8 +245,11 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                               ? handleAddItem(item)
                               : handleIncreaseQuantity(item);
                           }}
-                          className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
-                          style={{ color: '#065f46' }}
+                          className={`w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center transition-colors border-l ${isPromoTime
+                            ? "hover:bg-[#fecdd3] border-[#fda4af]/30"
+                            : "hover:bg-[#b9f6e1] border-[#5ee9b5]/30"
+                            }`}
+                          style={{ color: isPromoTime ? "#be123c" : "#065f46" }}
                         >
                           <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
                         </button>
@@ -187,10 +264,18 @@ const DiscountedCard = ({ product, attributes, currency }) => {
                   e.stopPropagation();
                   handleAddItem(product);
                 }}
-                className="w-full flex items-center justify-center gap-1 min-[300px]:gap-1.5 bg-[#d1fae5] border border-[#5ee9b5] py-1 min-[300px]:py-1.5 min-[345px]:py-2 sm:py-2.5 rounded-md transition-all hover:bg-[#b9f6e1] hover:shadow-md"
+                className={`w-full flex items-center justify-center gap-1 min-[300px]:gap-1.5 py-1 min-[300px]:py-1.5 min-[345px]:py-2 sm:py-2.5 rounded-md transition-all hover:shadow-md ${isPromoTime
+                  ? "bg-[#ffe4e6] border border-[#fda4af] hover:bg-[#fecdd3]"
+                  : "bg-[#d1fae5] border border-[#5ee9b5] hover:bg-[#b9f6e1]"
+                  }`}
               >
-                <span className="text-[9px] min-[300px]:text-[10px] min-[345px]:text-xs sm:text-sm font-bold text-[#065f46] tracking-wide">Add</span>
-                <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] text-[#065f46]" />
+                <span className={`text-[9px] min-[300px]:text-[10px] min-[345px]:text-xs sm:text-sm font-bold tracking-wide ${isPromoTime ? "text-[#be123c]" : "text-[#065f46]"}`}>
+                  Add
+                </span>
+                <IoAdd
+                  size={12}
+                  className={`min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] ${isPromoTime ? "text-[#be123c]" : "text-[#065f46]"}`}
+                />
               </button>
             )}
           </div>

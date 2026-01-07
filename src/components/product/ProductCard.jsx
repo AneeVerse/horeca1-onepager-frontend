@@ -46,10 +46,18 @@ const ProductCard = ({ product, attributes }) => {
   const currency = globalSetting?.default_currency || "₹";
 
   // Check if current time is between 6pm (18:00) and 9am (09:00)
+  // Supports NEXT_PUBLIC_TEST_HOUR env for testing (e.g., "19" for 7pm)
   useEffect(() => {
     const checkPromoTime = () => {
-      const now = new Date();
-      const hours = now.getHours();
+      // Check for test hour override from env
+      const testHour = process.env.NEXT_PUBLIC_TEST_HOUR;
+      let hours;
+      if (testHour !== undefined && testHour !== '') {
+        hours = parseInt(testHour, 10);
+      } else {
+        const now = new Date();
+        hours = now.getHours();
+      }
       // 6pm (18:00) to midnight (23:59) or midnight (00:00) to 9am (08:59)
       setIsPromoTime(hours >= 18 || hours < 9);
     };
@@ -546,17 +554,13 @@ const ProductCard = ({ product, attributes }) => {
 
           {/* Promo Bulk Pricing Display (6pm-9am) - Unified Happy Hour Design */}
           {isPromoTime && product?.promoPricing && (product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
-            <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-sm min-[300px]:rounded-md p-0.5 min-[300px]:p-1 min-[345px]:p-1.5 sm:p-2 mb-0.5 min-[300px]:mb-1 min-[345px]:mb-1.5 sm:mb-2 space-y-0.5 min-[345px]:space-y-1 sm:space-y-1.5 border border-white/10 shadow-lg relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-[#881337] via-[#9d174d] to-[#be123c] rounded-sm min-[300px]:rounded-md p-1.5 min-[300px]:p-2 mb-1.5 min-[300px]:mb-2 space-y-1.5 border border-white/10 shadow-lg relative overflow-hidden group">
               {/* Subtle Decorative Glow */}
-              <div className="absolute top-0 right-0 w-10 min-[300px]:w-16 h-10 min-[300px]:h-16 bg-emerald-400/10 rounded-full blur-xl -mr-6 min-[300px]:-mr-8 -mt-6 min-[300px]:-mt-8"></div>
-
-              <div className="relative z-10 flex items-center gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5 mb-0.5 min-[345px]:mb-1">
-                <span className="text-[5px] min-[300px]:text-[6px] min-[345px]:text-[8px] font-black text-[#018549] bg-emerald-300 px-0.5 min-[345px]:px-1 py-0.5 rounded leading-none">PROMO</span>
-              </div>
+              <div className="absolute top-0 right-0 w-16 h-16 bg-white/5 rounded-full blur-xl -mr-8 -mt-8"></div>
 
               {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
-                <div className="relative z-10 flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5">
-                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
+                <div className="relative z-10 flex items-center justify-between gap-1">
+                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-rose-50 font-medium leading-tight flex-1">
                     <span className="hidden min-[345px]:inline">{currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate1.quantity}+</span>
                     <span className="min-[345px]:hidden">{currency}{product.promoPricing.bulkRate1.pricePerUnit}</span>
                   </span>
@@ -566,15 +570,15 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleAddItem(product, product.promoPricing.bulkRate1.quantity, true);
                     }}
-                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-1 min-[300px]:px-1.5 min-[345px]:px-2 py-0.5 rounded border border-white/10 transition-colors"
+                    className="text-[7px] min-[300px]:text-[8px] font-bold text-white bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded border border-white/10 transition-all shadow-sm active:scale-95 whitespace-nowrap"
                   >
                     +{product.promoPricing.bulkRate1.quantity}
                   </button>
                 </div>
               )}
               {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                <div className="relative z-10 flex items-center justify-between gap-0.5 min-[300px]:gap-1 min-[345px]:gap-1.5">
-                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-emerald-100 font-medium leading-tight flex-1">
+                <div className="relative z-10 flex items-center justify-between gap-1">
+                  <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs text-rose-50 font-medium leading-tight flex-1">
                     <span className="hidden min-[345px]:inline">{currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"} for {product.promoPricing.bulkRate2.quantity}+</span>
                     <span className="min-[345px]:hidden">{currency}{product.promoPricing.bulkRate2.pricePerUnit}</span>
                   </span>
@@ -584,7 +588,7 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleAddItem(product, product.promoPricing.bulkRate2.quantity, true);
                     }}
-                    className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-1 min-[300px]:px-1.5 min-[345px]:px-2 py-0.5 rounded border border-white/10 transition-colors"
+                    className="text-[7px] min-[300px]:text-[8px] font-bold text-white bg-white/10 hover:bg-white/20 px-1.5 py-0.5 rounded border border-white/10 transition-all shadow-sm active:scale-95 whitespace-nowrap"
                   >
                     +{product.promoPricing.bulkRate2.quantity}
                   </button>
@@ -597,10 +601,9 @@ const ProductCard = ({ product, attributes }) => {
           <div className="flex flex-col mt-auto pt-0.5 min-[345px]:pt-1 sm:pt-1.5">
             {isPromoTime && product?.promoPricing?.singleUnit > 0 ? (
               <div className="flex flex-col">
-                <span className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-xs font-semibold text-white bg-gradient-to-r from-primary-500 to-primary-400 px-0.5 min-[300px]:px-1 min-[345px]:px-1.5 py-0.5 rounded shadow-sm w-fit mb-0.5">PROMO</span>
-                <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-primary-600">
+                <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#be123c]">
                   {currency}{product.promoPricing.singleUnit}
-                  {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-primary-500">/{product.unit}</span>}
+                  {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-[#fda4af]">/{product.unit}</span>}
                 </span>
               </div>
             ) : (
@@ -619,7 +622,10 @@ const ProductCard = ({ product, attributes }) => {
               return cartItem ? (
                 <div
                   key={cartItem.id}
-                  className="flex items-center justify-center h-6 min-[300px]:h-7 min-[345px]:h-8 sm:h-9 bg-[#d1fae5] border border-[#5ee9b5] rounded-md overflow-hidden shadow-sm w-full"
+                  className={`flex items-center justify-center h-6 min-[300px]:h-7 min-[345px]:h-8 sm:h-9 rounded-md overflow-hidden shadow-sm w-full ${isPromoTime
+                    ? 'bg-[#ffe4e6] border border-[#fda4af]'
+                    : 'bg-[#d1fae5] border border-[#5ee9b5]'
+                    }`}
                 >
                   <button
                     onClick={(e) => {
@@ -627,13 +633,17 @@ const ProductCard = ({ product, attributes }) => {
                       e.stopPropagation();
                       handleDecrementQuantity(cartItem, e);
                     }}
-                    className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-r border-[#5ee9b5]/30"
-                    style={{ color: '#065f46' }}
+                    className={`w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center transition-colors border-r ${isPromoTime
+                      ? 'hover:bg-[#fecdd3] border-[#fda4af]/30'
+                      : 'hover:bg-[#b9f6e1] border-[#5ee9b5]/30'
+                      }`}
+                    style={{ color: isPromoTime ? '#be123c' : '#065f46' }}
                   >
                     <IoRemove size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
                   </button>
 
-                  <div className="flex-1 h-full flex items-center justify-center bg-white border-x border-[#5ee9b5]/20">
+                  <div className={`flex-1 h-full flex items-center justify-center bg-white border-x ${isPromoTime ? 'border-[#fda4af]/20' : 'border-[#5ee9b5]/20'
+                    }`}>
                     <input
                       type="text"
                       value={quantityInputs[cartItem.id] !== undefined ? quantityInputs[cartItem.id] : cartItem.quantity}
@@ -655,7 +665,8 @@ const ProductCard = ({ product, attributes }) => {
                         e.preventDefault();
                         e.stopPropagation();
                       }}
-                      className="quantity-input w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#065f46] p-0"
+                      className={`quantity-input w-full h-full text-center bg-transparent border-none outline-none focus:ring-0 text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold p-0 ${isPromoTime ? 'text-[#be123c]' : 'text-[#065f46]'
+                        }`}
                     />
                   </div>
 
@@ -667,8 +678,11 @@ const ProductCard = ({ product, attributes }) => {
                         ? handleAddItem(cartItem)
                         : handleIncrementQuantity(cartItem, e);
                     }}
-                    className="w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center hover:bg-[#b9f6e1] transition-colors border-l border-[#5ee9b5]/30"
-                    style={{ color: '#065f46' }}
+                    className={`w-8 min-[300px]:w-9 min-[345px]:w-10 sm:w-12 h-full flex items-center justify-center transition-colors border-l ${isPromoTime
+                      ? 'hover:bg-[#fecdd3] border-[#fda4af]/30'
+                      : 'hover:bg-[#b9f6e1] border-[#5ee9b5]/30'
+                      }`}
+                    style={{ color: isPromoTime ? '#be123c' : '#065f46' }}
                   >
                     <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] stroke-2" />
                   </button>
@@ -686,12 +700,18 @@ const ProductCard = ({ product, attributes }) => {
                       // Open quick view modal where minQty will be enforced
                       handleAddItem(product, minQty, false);
                     }}
-                    className="w-full flex items-center justify-center gap-1 min-[300px]:gap-1.5 bg-[#d1fae5] border border-[#5ee9b5] py-1 min-[300px]:py-1.5 min-[345px]:py-2 sm:py-2.5 rounded-md transition-all hover:bg-[#b9f6e1] hover:shadow-md"
+                    className={`w-full flex items-center justify-center gap-1 min-[300px]:gap-1.5 py-1 min-[300px]:py-1.5 min-[345px]:py-2 sm:py-2.5 rounded-md transition-all hover:shadow-md ${isPromoTime
+                      ? 'bg-[#ffe4e6] border border-[#fda4af] hover:bg-[#fecdd3]'
+                      : 'bg-[#d1fae5] border border-[#5ee9b5] hover:bg-[#b9f6e1]'
+                      }`}
                   >
-                    <span className="text-[9px] min-[300px]:text-[10px] min-[345px]:text-xs sm:text-sm font-bold text-[#065f46] tracking-wide">Add</span>
-                    <IoAdd size={12} className="min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] text-[#065f46]" />
+                    <span className={`text-[9px] min-[300px]:text-[10px] min-[345px]:text-xs sm:text-sm font-bold tracking-wide ${isPromoTime ? 'text-[#be123c]' : 'text-[#065f46]'
+                      }`}>Add</span>
+                    <IoAdd size={12} className={`min-[300px]:size-[14px] min-[345px]:size-[16px] sm:size-[18px] ${isPromoTime ? 'text-[#be123c]' : 'text-[#065f46]'
+                      }`} />
                     {minQty > 1 && (
-                      <span className="text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-[10px] text-[#065f46]/70 font-medium ml-0.5">(Min: {minQty})</span>
+                      <span className={`text-[6px] min-[300px]:text-[7px] min-[345px]:text-[9px] sm:text-[10px] font-medium ml-0.5 ${isPromoTime ? 'text-[#be123c]/70' : 'text-[#065f46]/70'
+                        }`}>(Min: {minQty})</span>
                     )}
                   </button>
                 );

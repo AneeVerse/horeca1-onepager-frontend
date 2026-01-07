@@ -65,9 +65,14 @@ const ProductModal = ({
 
     useEffect(() => {
         const checkPromoTime = () => {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
+            const testHour = process.env.NEXT_PUBLIC_TEST_HOUR;
+            let hours;
+            if (testHour !== undefined && testHour !== '') {
+                hours = parseInt(testHour, 10);
+            } else {
+                const now = new Date();
+                hours = now.getHours();
+            }
             const isPromo = hours >= 18 || hours < 9;
             setIsPromoTime(isPromo);
         };
@@ -356,7 +361,7 @@ const ProductModal = ({
             bottomCloseBtn={false}
             handleCloseModal={() => setModalOpen(false)}
         >
-            <div className="inline-block overflow-y-auto h-full align-middle transition-all transform w-full">
+            <div className="inline-block overflow-y-auto h-full align-middle transition-all transform w-full max-w-2xl mx-auto">
                 <div data-modal-content className="w-full overflow-hidden">
                     {/* Mobile Layout: Image Left, Details Right */}
                     <div className="lg:hidden flex flex-row gap-3 mb-4">
@@ -394,35 +399,35 @@ const ProductModal = ({
                         </div>
                     </div>
 
-                    {/* Desktop Layout: Keep Original */}
-                    <div className="hidden lg:flex flex-row w-full">
-                        {/* Left Side: Product Image */}
-                        <div className="w-[40%] flex-shrink-0">
-                            <div data-product-image-container className="flex-shrink-0 flex items-center justify-center w-full aspect-square bg-gray-50 rounded-lg overflow-hidden relative">
+                    {/* Desktop Layout: Compact Layout */}
+                    <div className="hidden lg:flex flex-row w-full gap-5">
+                        {/* Left Side: Product Image (Fixed Smaller) */}
+                        <div className="w-[200px] flex-shrink-0">
+                            <div data-product-image-container className="flex-shrink-0 flex items-center justify-center w-full aspect-square bg-gray-50 rounded-lg overflow-hidden relative border border-gray-100">
                                 {product.image?.[0] ? (
                                     <Image
                                         src={selectedImage || product.image[0]}
-                                        width={420}
-                                        height={420}
+                                        width={200}
+                                        height={200}
                                         alt="product"
-                                        className="object-contain w-full h-full"
+                                        className="object-contain w-full h-full p-2"
                                     />
                                 ) : (
                                     <Image
                                         src="https://res.cloudinary.com/ahossain/image/upload/v1655097002/placeholder_kvepfp.png"
-                                        width={420}
-                                        height={420}
+                                        width={200}
+                                        height={200}
                                         alt="product Image"
-                                        className="object-contain w-full h-full"
+                                        className="object-contain w-full h-full p-2"
                                     />
                                 )}
                             </div>
                         </div>
 
-                        {/* Right Side: Product Details (Desktop) */}
-                        <div className="w-[60%] pl-7 xl:pl-10">
+                        {/* Right Side: Product Details (Compact) */}
+                        <div className="flex-1 min-w-0">
                             {/* Header Content: Category, Stock, Title */}
-                            <div className="flex flex-col gap-1 mb-1.5">
+                            <div className="flex flex-col gap-1 mb-2">
                                 <div className="flex items-baseline gap-2 flex-wrap">
                                     <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Category:</span>
                                     <Link
@@ -440,7 +445,7 @@ const ProductModal = ({
                                 </div>
                             </div>
 
-                            <h2 className="text-heading text-xl font-medium mb-2">
+                            <h2 className="text-heading text-lg font-bold mb-3 leading-tight">
                                 {showingTranslateValue(product?.title)}
                             </h2>
 
@@ -459,8 +464,8 @@ const ProductModal = ({
                                 </div>
                                 {/* Quantity Selector (Desktop) */}
                                 <div
-                                    className="group flex items-center rounded-full overflow-hidden flex-shrink-0 border bg-[#d1fae5]"
-                                    style={{ borderColor: '#5ee9b5' }}
+                                    className={`group flex items-center rounded-full overflow-hidden flex-shrink-0 border ${isPromoTime ? 'bg-[#ffe4e6] border-[#fda4af]' : 'bg-[#d1fae5] border-[#5ee9b5]'
+                                        }`}
                                 >
                                     <button
                                         onClick={() => {
@@ -475,10 +480,10 @@ const ProductModal = ({
                                             }
                                         }}
                                         disabled={item <= 0}
-                                        className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-10 text-heading border-e hover:bg-[#b9f6e1]"
-                                        style={{ borderRightColor: '#5ee9b533' }}
+                                        className={`flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-10 text-heading border-e ${isPromoTime ? 'hover:bg-[#fecdd3] border-[#fda4af]/30' : 'hover:bg-[#b9f6e1] border-[#5ee9b5]/30'
+                                            }`}
                                     >
-                                        <FiMinus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
+                                        <FiMinus style={{ color: isPromoTime ? '#be123c' : '#065f46' }} className="text-lg stroke-[3]" />
                                     </button>
                                     <input
                                         type="number"
@@ -516,7 +521,8 @@ const ProductModal = ({
                                         onKeyDown={(e) => {
                                             if (e.key === 'Enter') e.target.blur();
                                         }}
-                                        className="font-bold text-[10px] px-3 min-w-[2.5rem] text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                        className={`font-bold text-[10px] px-3 min-w-[2.5rem] text-center border-y-0 border-x outline-none focus:outline-none focus:ring-0 bg-white ${isPromoTime ? 'text-[#be123c] border-[#fda4af]/30' : 'text-[#065f46] border-[#5ee9b5]/30'
+                                            } [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                                     />
                                     <button
                                         onClick={() => {
@@ -532,10 +538,10 @@ const ProductModal = ({
                                             }
                                         }}
                                         disabled={product.quantity <= item}
-                                        className="flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-10 text-heading border-s hover:bg-[#b9f6e1]"
-                                        style={{ borderLeftColor: '#5ee9b533' }}
+                                        className={`flex items-center cursor-pointer justify-center py-2 px-3 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-10 text-heading border-s ${isPromoTime ? 'hover:bg-[#fecdd3] border-[#fda4af]/30' : 'hover:bg-[#b9f6e1] border-[#5ee9b5]/30'
+                                            }`}
                                     >
-                                        <FiPlus style={{ color: '#065f46' }} className="text-lg stroke-[3]" />
+                                        <FiPlus style={{ color: isPromoTime ? '#be123c' : '#065f46' }} className="text-lg stroke-[3]" />
                                     </button>
                                 </div>
                             </div>
@@ -554,8 +560,8 @@ const ProductModal = ({
                         </div>
                         {/* Quantity Selector (Mobile) */}
                         <div
-                            className="group flex items-center rounded-full overflow-hidden flex-shrink-0 border bg-[#d1fae5]"
-                            style={{ borderColor: '#5ee9b5' }}
+                            className={`group flex items-center rounded-full overflow-hidden flex-shrink-0 border ${isPromoTime ? 'bg-[#ffe4e6] border-[#fda4af]' : 'bg-[#d1fae5] border-[#5ee9b5]'
+                                }`}
                         >
                             <button
                                 onClick={() => {
@@ -570,10 +576,10 @@ const ProductModal = ({
                                     }
                                 }}
                                 disabled={item <= 0}
-                                className="flex items-center cursor-pointer justify-center py-1.5 px-2 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-7 sm:w-8 text-heading border-e hover:bg-[#b9f6e1]"
-                                style={{ borderRightColor: '#5ee9b533' }}
+                                className={`flex items-center cursor-pointer justify-center py-1.5 px-2 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-7 sm:w-8 text-heading border-e ${isPromoTime ? 'hover:bg-[#fecdd3] border-[#fda4af]/30' : 'hover:bg-[#b9f6e1] border-[#5ee9b5]/30'
+                                    }`}
                             >
-                                <FiMinus style={{ color: '#065f46' }} className="text-sm sm:text-base stroke-[3]" />
+                                <FiMinus style={{ color: isPromoTime ? '#be123c' : '#065f46' }} className="text-sm sm:text-base stroke-[3]" />
                             </button>
                             <input
                                 type="number"
@@ -611,7 +617,8 @@ const ProductModal = ({
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter') e.target.blur();
                                 }}
-                                className="font-bold text-xs px-2 w-10 text-center border-y-0 border-x border-[#5ee9b533] outline-none focus:outline-none focus:ring-0 bg-white text-[#065f46] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                                className={`font-bold text-xs px-2 w-10 text-center border-y-0 border-x outline-none focus:outline-none focus:ring-0 bg-white ${isPromoTime ? 'text-[#be123c] border-[#fda4af]/30' : 'text-[#065f46] border-[#5ee9b5]/30'
+                                    } [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none`}
                             />
                             <button
                                 onClick={() => {
@@ -627,10 +634,10 @@ const ProductModal = ({
                                     }
                                 }}
                                 disabled={product.quantity <= item}
-                                className="flex items-center cursor-pointer justify-center py-1.5 px-2 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-7 sm:w-8 text-heading border-s hover:bg-[#b9f6e1]"
-                                style={{ borderLeftColor: '#5ee9b533' }}
+                                className={`flex items-center cursor-pointer justify-center py-1.5 px-2 h-full flex-shrink-0 transition ease-in-out duration-300 focus:outline-none w-7 sm:w-8 text-heading border-s ${isPromoTime ? 'hover:bg-[#fecdd3] border-[#fda4af]/30' : 'hover:bg-[#b9f6e1] border-[#5ee9b5]/30'
+                                    }`}
                             >
-                                <FiPlus style={{ color: '#065f46' }} className="text-sm sm:text-base stroke-[3]" />
+                                <FiPlus style={{ color: isPromoTime ? '#be123c' : '#065f46' }} className="text-sm sm:text-base stroke-[3]" />
                             </button>
                         </div>
                     </div>
@@ -784,207 +791,72 @@ const ProductModal = ({
                     {/* Savings Banner - Show directly below bulk pricing */}
 
                     {/* Promo Bulk Pricing Display - Premium Unified Happy Hour Design */}
+                    {/* Promo Bulk Pricing Display - Premium Unified Happy Hour Design */}
                     {product?.promoPricing && (product?.promoPricing?.singleUnit > 0 || product?.promoPricing?.bulkRate1?.quantity > 0 || product?.promoPricing?.bulkRate2?.quantity > 0) && (
-                        <div className="bg-gradient-to-br from-[#025155] via-[#025155] to-[#018549] rounded-lg p-3 mb-4 space-y-2 border border-white/10 shadow-lg relative overflow-hidden group">
-                            <div className="absolute top-0 right-0 w-24 h-24 bg-emerald-400/10 rounded-full blur-2xl -mr-12 -mt-12"></div>
+                        <div className="rounded-lg p-3.5 mb-5 space-y-3 border shadow-xl relative overflow-hidden group transition-all duration-500 bg-gradient-to-br from-[#881337] via-[#9d174d] to-[#be123c] border-white/20">
+                            {/* Decorative Animated Glow */}
+                            <div className="absolute top-0 right-0 w-32 h-32 rounded-full blur-3xl -mr-16 -mt-16 transition-colors duration-500 bg-rose-400/20"></div>
 
-                            <h4 className="relative z-10 text-sm font-semibold text-white mb-2 flex items-center gap-2">
-                                <span className="text-[10px] font-black text-[#018549] bg-emerald-300 px-2 py-0.5 rounded shadow-[0_0_10px_rgba(110,231,183,0.3)]">PROMO</span>
-                            </h4>
+                            <div className="relative z-10 flex items-center mb-1">
+                                <span className="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1.5 transition-colors duration-500 text-[#be123c] bg-[#ffe4e6]">
+                                    <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-[#be123c]"></span>
+                                    PROMO
+                                </span>
+                            </div>
+
                             {product?.promoPricing?.singleUnit > 0 && (
-                                <div className="relative z-10 flex items-center justify-between border-b border-white/5 pb-2">
-                                    <span className="text-xs text-emerald-100 font-medium">Single Unit Price</span>
-                                    <span className="text-sm font-black text-emerald-300">
-                                        {currency}{product.promoPricing.singleUnit}/{product.unit || "unit"}
+                                <div className="relative z-10 flex items-center justify-between border-b border-white/10 pb-3">
+                                    <span className="text-xs font-semibold text-rose-100">Single Unit Price</span>
+                                    <span className="text-sm font-black transition-colors duration-500 text-[#fbcfe8]">
+                                        {currency}{product.promoPricing.singleUnit}/{product.unit || "Pc"}
                                     </span>
                                 </div>
                             )}
-                            {(() => {
-                                // Only check for active tier during promo time
-                                if (!isPromoTime) {
-                                    // Show all promo bulk pricing tiers with Add buttons (but they'll show error on click)
-                                    return (
-                                        <>
-                                            {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
-                                                <div className="relative z-10 flex items-center justify-between py-1 border-b border-white/5">
-                                                    <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate1.quantity}+ {product.unit || "units"}</span>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-sm font-black text-emerald-300">
-                                                            {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
-                                                        </span>
-                                                        <button
-                                                            onClick={() => {
-                                                                notifyError("Come at 6pm to get this offer!");
-                                                            }}
-                                                            className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                        >
-                                                            Add {product.promoPricing.bulkRate1.quantity}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                                                <div className="relative z-10 flex items-center justify-between pt-1">
-                                                    <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-sm font-black text-emerald-300">
-                                                            {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                        </span>
-                                                        <button
-                                                            onClick={() => {
-                                                                notifyError("Come at 6pm to get this offer!");
-                                                            }}
-                                                            className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                        >
-                                                            Add {product.promoPricing.bulkRate2.quantity}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-                                }
 
-                                // During promo time, check tier activation status
-                                const isPromoTier1Active = product?.promoPricing?.bulkRate1?.quantity > 0 &&
-                                    item >= product.promoPricing.bulkRate1.quantity &&
-                                    (!product.promoPricing.bulkRate2?.quantity || item < product.promoPricing.bulkRate2.quantity);
-                                const isPromoTier2Active = product?.promoPricing?.bulkRate2?.quantity > 0 &&
-                                    item >= product.promoPricing.bulkRate2.quantity;
+                            <div className="space-y-3">
+                                {(() => {
+                                    // Base tiers
+                                    const tiers = [
+                                        { data: product?.promoPricing?.bulkRate1, id: 1 },
+                                        { data: product?.promoPricing?.bulkRate2, id: 2 }
+                                    ];
 
-                                const promoTier1Savings = isPromoTier1Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate1.quantity, product.promoPricing.bulkRate1.pricePerUnit, item) : null;
-                                const promoTier2Savings = isPromoTier2Active ? calculatePromoSavingsForTier(product.promoPricing.bulkRate2.quantity, product.promoPricing.bulkRate2.pricePerUnit, item) : null;
+                                    return tiers.map(({ data, id }) => {
+                                        if (!data || data.quantity <= 0 || data.pricePerUnit <= 0) return null;
 
-                                // Scenario 2: Tier 2 active - hide entire section, show savings banner if exists
-                                if (isPromoTier2Active) {
-                                    return (
-                                        <>
-                                            {promoTier2Savings ? (
-                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                    <span className="text-sm font-semibold text-green-700">
-                                                        {currency}{promoTier2Savings.amount} saved on {promoTier2Savings.quantity} {promoTier2Savings.unit}
-                                                    </span>
-                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                                                    <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-bold text-green-700">
-                                                            {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                        </span>
-                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-                                }
+                                        const isActive = isPromoTime && (
+                                            (id === 1 && item >= data.quantity && (!product.promoPricing.bulkRate2?.quantity || item < product.promoPricing.bulkRate2.quantity)) ||
+                                            (id === 2 && item >= data.quantity)
+                                        );
 
-                                // Scenario 1: Tier 1 active - hide tier 1 row, show tier 1 savings banner if exists, show tier 2 with Add button
-                                if (isPromoTier1Active) {
-                                    return (
-                                        <>
-                                            {/* Tier 1 Savings Banner */}
-                                            {promoTier1Savings ? (
-                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2">
-                                                    <span className="text-sm font-semibold text-green-700">
-                                                        {currency}{promoTier1Savings.amount} saved on {promoTier1Savings.quantity} {promoTier1Savings.unit}
-                                                    </span>
-                                                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                        <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <div className="relative z-10 bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center justify-between">
-                                                    <span className="text-sm font-semibold text-green-700">Promo Bulk Price Applied</span>
-                                                    <div className="flex items-center gap-2">
-                                                        <span className="text-sm font-bold text-green-700">
-                                                            {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
-                                                        </span>
-                                                        <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full flex-shrink-0">
-                                                            <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            )}
-                                            {/* Tier 2 - Show with Add button */}
-                                            {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                                                <div className="relative z-10 flex items-center justify-between pt-1">
-                                                    <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-sm font-black text-emerald-300">
-                                                            {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                        </span>
-                                                        <button
-                                                            onClick={() => {
-                                                                setItem(product.promoPricing.bulkRate2.quantity);
-                                                            }}
-                                                            className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                        >
-                                                            Add {product.promoPricing.bulkRate2.quantity}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </>
-                                    );
-                                }
-
-                                // Scenario 3: No tier active - show all promo bulk pricing tiers with Add buttons
-                                return (
-                                    <>
-                                        {product?.promoPricing?.bulkRate1?.quantity > 0 && product?.promoPricing?.bulkRate1?.pricePerUnit > 0 && (
-                                            <div className="relative z-10 flex items-center justify-between py-1 border-b border-white/5">
-                                                <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate1.quantity}+ {product.unit || "units"}</span>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm font-black text-emerald-300">
-                                                        {currency}{product.promoPricing.bulkRate1.pricePerUnit}/{product.unit || "unit"}
+                                        return (
+                                            <div key={id} className={`relative z-10 flex items-center justify-between rounded-lg p-2 transition-all duration-300 ${isActive ? 'bg-white/15 ring-1 ring-white/30' : ''}`}>
+                                                <span className="text-xs font-medium text-rose-50">
+                                                    Buy {data.quantity}+ {product.unit || "Pc"}
+                                                </span>
+                                                <div className="flex items-center gap-4">
+                                                    <span className="text-sm font-bold transition-colors duration-500 text-[#fce7f3]">
+                                                        {currency}{data.pricePerUnit}/{product.unit || "Pc"}
                                                     </span>
                                                     <button
-                                                        onClick={() => {
-                                                            setItem(product.promoPricing.bulkRate1.quantity);
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            if (!isPromoTime) {
+                                                                notifyError("Offer starts at 6 PM!");
+                                                            } else {
+                                                                setItem(data.quantity);
+                                                            }
                                                         }}
-                                                        className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
+                                                        className="text-[10px] font-black px-4 py-2 rounded-md transition-all active:scale-95 shadow-lg whitespace-nowrap border text-white bg-white/10 hover:bg-white/25 border-white/20"
                                                     >
-                                                        Add {product.promoPricing.bulkRate1.quantity}
+                                                        Add {data.quantity}
                                                     </button>
                                                 </div>
                                             </div>
-                                        )}
-                                        {product?.promoPricing?.bulkRate2?.quantity > 0 && product?.promoPricing?.bulkRate2?.pricePerUnit > 0 && (
-                                            <div className="relative z-10 flex items-center justify-between pt-1">
-                                                <span className="text-xs text-emerald-100 font-medium">Buy {product.promoPricing.bulkRate2.quantity}+ {product.unit || "units"}</span>
-                                                <div className="flex items-center gap-3">
-                                                    <span className="text-sm font-black text-emerald-300">
-                                                        {currency}{product.promoPricing.bulkRate2.pricePerUnit}/{product.unit || "unit"}
-                                                    </span>
-                                                    <button
-                                                        onClick={() => {
-                                                            setItem(product.promoPricing.bulkRate2.quantity);
-                                                        }}
-                                                        className="text-[10px] font-black text-white bg-white/10 hover:bg-white/20 px-3 py-1 rounded transition-colors border border-white/10"
-                                                    >
-                                                        Add {product.promoPricing.bulkRate2.quantity}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </>
-                                );
-                            })()}
+                                        );
+                                    });
+                                })()}
+                            </div>
                         </div>
                     )}
 
