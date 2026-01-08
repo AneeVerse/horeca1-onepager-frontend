@@ -800,7 +800,7 @@ const ProductModal = ({
                             <div className="relative z-10 flex items-center mb-1">
                                 <span className="text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm flex items-center gap-1.5 transition-colors duration-500 text-[#be123c] bg-[#ffe4e6]">
                                     <span className="w-1.5 h-1.5 rounded-full animate-pulse bg-[#be123c]"></span>
-                                    PROMO
+                                    PROMO - 6pm to 9am
                                 </span>
                             </div>
 
