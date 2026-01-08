@@ -20,8 +20,8 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
     const item = sliderData[0];
     return (
       <div className="w-full">
-        <div className="min-h-[180px] h-auto lg:h-[280px] relative rounded-lg lg:rounded-2xl overflow-hidden dark:bg-zinc-900">
-          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full min-h-[180px] h-auto lg:h-[280px] rounded-lg lg:rounded-2xl overflow-hidden">
+        <div className="h-auto lg:h-[280px] relative rounded-lg lg:rounded-2xl overflow-hidden dark:bg-zinc-900">
+          <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-auto lg:h-[280px] rounded-lg lg:rounded-2xl overflow-hidden">
             {item.mobileImage ? (
               <>
                 <Image
@@ -29,7 +29,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.mobileImage}
                   alt={item.title || "Banner"}
-                  className="object-cover w-full min-h-[180px] h-auto lg:hidden rounded-lg"
+                  className="w-full h-auto lg:hidden rounded-lg"
                   priority
                 />
                 <Image
@@ -47,7 +47,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                 height={280}
                 src={item.image}
                 alt={item.title || "Banner"}
-                className="object-cover w-full min-h-[180px] h-auto lg:h-[280px] rounded-lg lg:rounded-2xl"
+                className="w-full h-auto lg:object-cover lg:h-[280px] rounded-lg lg:rounded-2xl"
                 priority
               />
             )}
@@ -85,10 +85,10 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
       >
         {sliderData?.map((item, i) => (
           <SwiperSlide
-            className="min-h-[180px] h-auto lg:h-[280px] relative rounded-lg lg:rounded-2xl overflow-hidden dark:bg-zinc-900"
+            className="h-auto lg:h-[280px] relative rounded-lg lg:rounded-2xl overflow-hidden dark:bg-zinc-900"
             key={i + 1}
           >
-            <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full min-h-[180px] h-auto lg:h-[280px] rounded-lg lg:rounded-2xl overflow-hidden">
+            <div className="text-sm text-gray-600 hover:text-primary-600 dark:bg-zinc-900 relative w-full h-auto lg:h-[280px] rounded-lg lg:rounded-2xl overflow-hidden">
               {item.mobileImage ? (
                 <>
                   <Image
@@ -96,7 +96,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                     height={280}
                     src={item.mobileImage}
                     alt={item.title || "Banner"}
-                    className="object-cover w-full min-h-[180px] h-auto lg:hidden rounded-lg"
+                    className="w-full h-auto lg:hidden rounded-lg"
                     priority
                   />
                   <Image
@@ -114,7 +114,7 @@ const CarouselCard = ({ storeCustomizationSetting, sliderData }) => {
                   height={280}
                   src={item.image}
                   alt={item.title || "Banner"}
-                  className="object-cover w-full min-h-[180px] h-auto lg:h-[280px] rounded-lg lg:rounded-2xl"
+                  className="w-full h-auto lg:object-cover lg:h-[280px] rounded-lg lg:rounded-2xl"
                   priority
                 />
               )}
