@@ -25,8 +25,10 @@ const checkIsPromoTime = () => {
  */
 const getCorrectPriceForItem = (item, isPromoTime) => {
     const quantity = item.quantity || 1;
-    // Use originalPrice or prices.price as base (the non-promo price)
-    const basePrice = item.originalPrice || item.prices?.price || item.prices?.originalPrice || 0;
+    // Use prices.price (Selling Price) as the primary base.
+    // Fallback to item.price (current stored), then originalPrice.
+    // We must NOT prioritize originalPrice because it is often the MRP (higher than selling price).
+    const basePrice = item.prices?.price || item.price || item.originalPrice || 0;
     const promoSinglePrice = item.promoPricing?.singleUnit || 0;
 
     // Check promo pricing first if promo time
