@@ -21,12 +21,16 @@ import AddressManager from "@components/checkout/AddressManager";
 import CartDrawer from "@components/drawer/CartDrawer";
 import { SidebarContext } from "@context/SidebarContext";
 import ImageWithFallback from "@components/common/ImageWithFallBack";
+import useCartPriceSync from "@hooks/useCartPriceSync";
 
 const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const { cartDrawerOpen, setCartDrawerOpen } = useContext(SidebarContext);
+
+  // Sync cart prices when promo time changes
+  useCartPriceSync();
 
   useEffect(() => setMounted(true), []);
 

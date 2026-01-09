@@ -10,10 +10,14 @@ import CartItem from "@components/cart/CartItem";
 import { getUserSession } from "@lib/auth-client";
 import { FiShoppingCart } from "react-icons/fi";
 import Image from "next/image";
+import useCartPriceSync from "@hooks/useCartPriceSync";
 
 const Cart = ({ setOpen, currency }) => {
   const router = useRouter();
   const { isEmpty, items, cartTotal } = useCart();
+
+  // Sync cart prices when promo time changes
+  useCartPriceSync();
 
   // Use state to reactively track user session
   const [userInfo, setUserInfo] = useState(null);

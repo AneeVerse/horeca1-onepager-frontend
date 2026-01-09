@@ -8,10 +8,14 @@ import { useCart } from "react-use-cart";
 //internal import
 import CartDrawer from "@components/drawer/CartDrawer";
 import { SidebarContext } from "@context/SidebarContext";
+import useCartPriceSync from "@hooks/useCartPriceSync";
 
 const StickyCart = ({ currency }) => {
   const { totalItems, cartTotal } = useCart();
   const { cartDrawerOpen, setCartDrawerOpen } = React.useContext(SidebarContext);
+
+  // Sync cart prices when promo time changes (runs continuously)
+  useCartPriceSync();
 
   // Draggable floating position
   const [pos, setPos] = useState({ x: 0, y: 0 });

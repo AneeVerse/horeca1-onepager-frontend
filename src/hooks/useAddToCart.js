@@ -71,7 +71,11 @@ const useAddToCart = () => {
       brand: product.brand,
       taxPercent: product.taxPercent || 0,
       taxableRate: taxableRate,
-      originalPrice: product.prices?.originalPrice || product.originalPrice || product.price,
+      originalPrice: product.prices?.originalPrice || product.originalPrice || product.prices?.price || product.price,
+      // Store pricing structures for dynamic price calculation based on promo time
+      bulkPricing: product.bulkPricing || null,
+      promoPricing: product.promoPricing || null,
+      prices: product.prices || { price: product.price, originalPrice: product.originalPrice },
     };
 
     if (result !== undefined) {

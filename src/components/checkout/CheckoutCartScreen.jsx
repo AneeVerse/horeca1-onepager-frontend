@@ -18,6 +18,7 @@ import useUtilsFunction from "@hooks/useUtilsFunction";
 import { useSetting } from "@context/SettingContext";
 import { Input } from "@components/ui/input";
 import { Button } from "@components/ui/button";
+import useCartPriceSync from "@hooks/useCartPriceSync";
 
 const CheckoutCartScreen = () => {
   const router = useRouter();
@@ -25,6 +26,9 @@ const CheckoutCartScreen = () => {
   const userInfo = getUserSession();
   const { storeCustomization } = useSetting();
   const { showingTranslateValue } = useUtilsFunction();
+
+  // Sync cart prices when promo time changes
+  useCartPriceSync();
 
   const {
     total,
