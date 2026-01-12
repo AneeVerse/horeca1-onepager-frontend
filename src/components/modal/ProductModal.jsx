@@ -63,21 +63,14 @@ const ProductModal = ({
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [modalOpen, product]);
 
+    const { checkIsPromoTime } = require("@utils/date");
+
     useEffect(() => {
-        const checkPromoTime = () => {
-            const testHour = process.env.NEXT_PUBLIC_TEST_HOUR;
-            let hours;
-            if (testHour !== undefined && testHour !== '') {
-                hours = parseInt(testHour, 10);
-            } else {
-                const now = new Date();
-                hours = now.getHours();
-            }
-            const isPromo = hours >= 18 || hours < 9;
-            setIsPromoTime(isPromo);
+        const updatePromoTime = () => {
+            setIsPromoTime(checkIsPromoTime());
         };
-        checkPromoTime();
-        const interval = setInterval(checkPromoTime, 60000);
+        updatePromoTime();
+        const interval = setInterval(updatePromoTime, 30000);
         return () => clearInterval(interval);
     }, []);
 

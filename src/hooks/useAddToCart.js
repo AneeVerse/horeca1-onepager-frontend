@@ -54,10 +54,8 @@ const useAddToCart = () => {
 
     const { variants, categories, description, ...updatedProduct } = product;
 
-    // Determine if promo time (6pm-9am)
-    const now = new Date();
-    const hours = now.getHours();
-    const isPromoTime = hours >= 18 || hours < 9;
+    const { checkIsPromoTime } = require("@utils/date");
+    const isPromoTime = checkIsPromoTime();
 
     // Get taxable rate based on active bulk tier for the quantity being added
     const taxableRate = getTaxableRate(product, quantityToAdd, isPromoTime);

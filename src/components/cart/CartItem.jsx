@@ -11,10 +11,9 @@ import { getActiveBulkTier, getTaxableRate } from "@utils/pricing";
 
 // Helper function to calculate the appropriate price based on total quantity and bulk pricing
 const getPriceForQuantity = (item, totalQuantity) => {
-  // Check if current time is promo time (6pm-9am)
-  const now = new Date();
-  const hours = now.getHours();
-  const isPromoTime = hours >= 18 || hours < 9;
+  // Check if current time is promo time (6pm-9am IST)
+  const { checkIsPromoTime } = require("@utils/date");
+  const isPromoTime = checkIsPromoTime();
 
   // Get base price (regular product price, not bulk)
   const basePrice = item.prices?.price || item.price || 0;
@@ -71,11 +70,9 @@ const CartItem = ({ item, currency }) => {
 
     const newQuantity = item.quantity === 0 ? minQty : item.quantity + 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
-    
-    // Get taxable rate based on active bulk tier
-    const now = new Date();
-    const hours = now.getHours();
-    const isPromoTime = hours >= 18 || hours < 9;
+
+    const { checkIsPromoTime } = require("@utils/date");
+    const isPromoTime = checkIsPromoTime();
     const taxableRate = getTaxableRate(item, newQuantity, isPromoTime);
 
     // Always update price and taxableRate when quantity changes to ensure correct pricing
@@ -89,7 +86,7 @@ const CartItem = ({ item, currency }) => {
       e.stopPropagation();
     }
     const minQty = item?.minOrderQuantity || 1;
-    
+
     // Prevent going below minimum quantity - stay at minQty instead of removing
     if (item.quantity <= minQty) {
       // Already at minimum, don't allow going below
@@ -99,11 +96,9 @@ const CartItem = ({ item, currency }) => {
 
     const newQuantity = item.quantity - 1;
     const newPrice = getPriceForQuantity(item, newQuantity);
-    
-    // Get taxable rate based on active bulk tier
-    const now = new Date();
-    const hours = now.getHours();
-    const isPromoTime = hours >= 18 || hours < 9;
+
+    const { checkIsPromoTime } = require("@utils/date");
+    const isPromoTime = checkIsPromoTime();
     const taxableRate = getTaxableRate(item, newQuantity, isPromoTime);
 
     // Always update price and taxableRate when quantity changes to ensure correct pricing
@@ -146,10 +141,8 @@ const CartItem = ({ item, currency }) => {
 
     if (newQuantity < minQty) {
       // If below min quantity, force to min quantity
-      const newPrice = getPriceForQuantity(item, minQty);
-      const now = new Date();
-      const hours = now.getHours();
-      const isPromoTime = hours >= 18 || hours < 9;
+      const { checkIsPromoTime } = require("@utils/date");
+      const isPromoTime = checkIsPromoTime();
       const taxableRate = getTaxableRate(item, minQty, isPromoTime);
       updateItem(item.id, { price: newPrice, quantity: minQty, taxableRate: taxableRate });
       setInputValue(minQty.toString());
@@ -163,10 +156,8 @@ const CartItem = ({ item, currency }) => {
       return;
     }
 
-    const newPrice = getPriceForQuantity(item, newQuantity);
-    const now = new Date();
-    const hours = now.getHours();
-    const isPromoTime = hours >= 18 || hours < 9;
+    const { checkIsPromoTime } = require("@utils/date");
+    const isPromoTime = checkIsPromoTime();
     const taxableRate = getTaxableRate(item, newQuantity, isPromoTime);
 
     // Always update price and taxableRate when quantity changes to ensure correct pricing

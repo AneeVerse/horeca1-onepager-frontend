@@ -7,18 +7,26 @@ const PromoTimerCard = () => {
   const [isPromoTime, setIsPromoTime] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
+  const { checkIsPromoTime, getCurrentISTHour } = require("@utils/date");
+
   useEffect(() => {
     const updateTime = () => {
       const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
+      // Get current time in IST for consistent countdown
+      const istOptions = { timeZone: "Asia/Kolkata", hour12: false };
+      const istHour = parseInt(now.toLocaleString("en-US", { ...istOptions, hour: "numeric" }), 10);
+      const istMinute = parseInt(now.toLocaleString("en-US", { ...istOptions, minute: "numeric" }), 10);
+      const istSecond = parseInt(now.toLocaleString("en-US", { ...istOptions, second: "numeric" }), 10);
 
-      // 6pm (18:00) to midnight (23:59) or midnight (00:00) to 9am (08:59)
-      const isPromo = hours >= 18 || hours < 9;
+      // We still respect the test hour if it's set
+      const hours = getCurrentISTHour();
+      const minutes = istMinute;
+      const seconds = istSecond;
+
+      const isPromo = checkIsPromoTime();
       setIsPromoTime(isPromo);
 
-      // Calculate time remaining
+      // Calculate time remaining based on IST
       if (isPromo) {
         // Calculate time until promo ends (9am)
         let remainingHours, remainingMinutes, remainingSeconds;

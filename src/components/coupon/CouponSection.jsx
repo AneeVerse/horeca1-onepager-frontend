@@ -11,12 +11,19 @@ import { baseURL } from "@services/CommonService";
 const SaleCountdownTimer = () => {
   const [timeRemaining, setTimeRemaining] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
+  const { getCurrentISTHour } = require("@utils/date");
+
   useEffect(() => {
     const updateTimer = () => {
       const now = new Date();
-      const hours = now.getHours();
-      const minutes = now.getMinutes();
-      const seconds = now.getSeconds();
+      // Get current time in IST for consistent countdown
+      const istOptions = { timeZone: "Asia/Kolkata", hour12: false };
+      const istMinute = parseInt(now.toLocaleString("en-US", { ...istOptions, minute: "numeric" }), 10);
+      const istSecond = parseInt(now.toLocaleString("en-US", { ...istOptions, second: "numeric" }), 10);
+
+      const hours = getCurrentISTHour();
+      const minutes = istMinute;
+      const seconds = istSecond;
 
       // Calculate time until 6pm (18:00)
       let remainingHours, remainingMinutes, remainingSeconds;
@@ -141,13 +148,12 @@ const CouponSection = () => {
           ) : (
             coupons?.slice(0, 2).map((coupon) => {
               const isExpired = dayjs().isAfter(dayjs(coupon.endTime));
-              
+
               return (
                 <div
                   key={coupon._id}
-                  className={`bg-white rounded-lg shadow-sm border ${
-                    isExpired ? "border-gray-200 opacity-60" : "border-emerald-100"
-                  } overflow-hidden`}
+                  className={`bg-white rounded-lg shadow-sm border ${isExpired ? "border-gray-200 opacity-60" : "border-emerald-100"
+                    } overflow-hidden`}
                 >
                   <div className="flex items-start gap-3 p-3">
                     {/* Coupon Logo */}
@@ -171,11 +177,10 @@ const CouponSection = () => {
                           Sale: 6pm - 9am
                         </span>
                         <span
-                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                            isExpired
+                          className={`text-xs px-2 py-0.5 rounded-full font-medium ${isExpired
                               ? "bg-red-100 text-red-600"
                               : "bg-emerald-100 text-[#018549]"
-                          }`}
+                            }`}
                         >
                           {isExpired ? "Expired" : "Upcoming"}
                         </span>

@@ -42,27 +42,17 @@ const ProductCard = ({ product, attributes }) => {
   const { items, addItem, updateItemQuantity, removeItem, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
   const { showingTranslateValue } = useUtilsFunction();
+  const { checkIsPromoTime } = require("@utils/date");
 
   const currency = globalSetting?.default_currency || "₹";
 
-  // Check if current time is between 6pm (18:00) and 9am (09:00)
-  // Supports NEXT_PUBLIC_TEST_HOUR env for testing (e.g., "19" for 7pm)
+  // Check if current time is promo time (6pm-9am IST)
   useEffect(() => {
-    const checkPromoTime = () => {
-      // Check for test hour override from env
-      const testHour = process.env.NEXT_PUBLIC_TEST_HOUR;
-      let hours;
-      if (testHour !== undefined && testHour !== '') {
-        hours = parseInt(testHour, 10);
-      } else {
-        const now = new Date();
-        hours = now.getHours();
-      }
-      // 6pm (18:00) to midnight (23:59) or midnight (00:00) to 9am (08:59)
-      setIsPromoTime(hours >= 18 || hours < 9);
+    const updatePromoTime = () => {
+      setIsPromoTime(checkIsPromoTime());
     };
-    checkPromoTime();
-    const interval = setInterval(checkPromoTime, 60000); // Check every minute
+    updatePromoTime();
+    const interval = setInterval(updatePromoTime, 30000); // Check every 30 seconds
     return () => clearInterval(interval);
   }, []);
 

@@ -4,21 +4,11 @@ import { useEffect, useRef, useCallback, useState } from "react";
 import { useCart } from "react-use-cart";
 import { getTaxableRate } from "@utils/pricing";
 
+import { checkIsPromoTime } from "@utils/date";
+
 /**
- * Helper function to check if current time is promo time (6pm-9am)
+ * Helper function to calculate the correct price for an item based on promo time
  */
-const checkIsPromoTime = () => {
-    // Check for test hour override
-    const testHour = typeof window !== 'undefined' && process.env.NEXT_PUBLIC_TEST_HOUR;
-    let hours;
-    if (testHour !== undefined && testHour !== '') {
-        hours = parseInt(testHour, 10);
-    } else {
-        const now = new Date();
-        hours = now.getHours();
-    }
-    return hours >= 18 || hours < 9;
-};
 
 /**
  * Helper function to calculate the correct price for an item based on promo time
@@ -65,7 +55,7 @@ const getCorrectPriceForItem = (item, isPromoTime) => {
  */
 const useCartPriceSync = () => {
     const { items, updateItem } = useCart();
-    const [isPromoTime, setIsPromoTime] = useState(checkIsPromoTime());
+    const [isPromoTime, setIsPromoTime] = useState(false);
     const lastSyncRef = useRef(0);
     const isUpdatingRef = useRef(false);
 
