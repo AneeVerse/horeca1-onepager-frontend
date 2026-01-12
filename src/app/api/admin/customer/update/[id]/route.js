@@ -10,7 +10,7 @@ export async function PUT(request, { params }) {
         const { id } = resolvedParams;
 
         const body = await request.json();
-        const { name, phone, email, address } = body;
+        const { name, phone, email, address, city, country, zipCode } = body;
 
         if (!id) {
             return NextResponse.json(
@@ -38,6 +38,9 @@ export async function PUT(request, { params }) {
                 phone,
                 email: email || undefined,
                 address: address || undefined,
+                city: city || undefined,
+                country: country || undefined,
+                zipCode: zipCode || undefined,
             }),
         });
 
@@ -60,6 +63,9 @@ export async function PUT(request, { params }) {
                     phone: data.phone,
                     email: data.email,
                     address: data.address,
+                    city: data.city,
+                    country: data.country,
+                    zipCode: data.zipCode,
                     createdAt: data.createdAt,
                     status: "Active",
                 },

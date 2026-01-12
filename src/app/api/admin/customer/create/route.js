@@ -6,7 +6,7 @@ const apiBase = baseURL.endsWith('/v1') ? baseURL : `${baseURL}/v1`;
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { name, phone, email, address } = body;
+        const { name, phone, email, address, city, country, zipCode } = body;
 
         // Validate required fields
         if (!name || !phone) {
@@ -27,6 +27,9 @@ export async function POST(request) {
                 phone,
                 email: email || undefined,
                 address: address || undefined,
+                city: city || undefined,
+                country: country || undefined,
+                zipCode: zipCode || undefined,
             }),
         });
 

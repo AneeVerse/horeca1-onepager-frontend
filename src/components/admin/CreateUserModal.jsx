@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { XMarkIcon, UserPlusIcon } from "@heroicons/react/24/outline";
+import { lookupPincode } from "@utils/pincode";
 
 export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
     const [formData, setFormData] = useState({
@@ -9,9 +10,13 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
         phone: "",
         email: "",
         address: "",
+        zipCode: "",
+        city: "",
+        country: "", // State
     });
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
+    const [pincodeLoading, setPincodeLoading] = useState(false);
     const [submitError, setSubmitError] = useState(null);
 
     const handleChange = (e) => {
@@ -20,6 +25,44 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
         // Clear error for this field when user starts typing
         if (errors[name]) {
             setErrors((prev) => ({ ...prev, [name]: null }));
+        }
+    };
+
+    const handlePincodeChange = async (e) => {
+        const value = e.target.value;
+        const pincode = value.replace(/\D/g, "");
+
+        setFormData(prev => ({ ...prev, zipCode: pincode }));
+
+        if (errors.zipCode) {
+            setErrors(prev => ({ ...prev, zipCode: null }));
+        }
+
+        if (pincode.length === 6) {
+            setPincodeLoading(true);
+            const result = await lookupPincode(pincode);
+            if (result.success) {
+                setFormData(prev => ({
+                    ...prev,
+                    city: result.district || result.city,
+                    country: result.state,
+                }));
+                setErrors(prev => ({ ...prev, zipCode: null }));
+            } else {
+                setFormData(prev => ({
+                    ...prev,
+                    city: "",
+                    country: "",
+                }));
+                // Specific message as requested by user
+                setErrors(prev => ({ ...prev, zipCode: "We do not deliver to this location." }));
+            }
+            setPincodeLoading(false);
+        } else if (pincode.length > 0 && pincode.length < 6) {
+            // Clear city/state while typing if it's not a full PIN yet, or keep previous?
+            // Better to keep previous until we know it's a new 6-digit PIN.
+            // But if they backspace, we might want to clear.
+            // For now, let's strictly validate on 6 chars.
         }
     };
 
@@ -41,6 +84,14 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
         // Email validation (optional, but must be valid if provided)
         if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
             newErrors.email = "Please enter a valid email address";
+        }
+
+        // Address validation (optional, but if provided, PIN must be valid)
+        if (formData.zipCode && formData.zipCode.length !== 6) {
+            newErrors.zipCode = "PIN Code must be 6 digits";
+        } else if (errors.zipCode) {
+            // Prevent submission if the "We do not deliver..." error is present
+            newErrors.zipCode = errors.zipCode;
         }
 
         setErrors(newErrors);
@@ -67,6 +118,9 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                     phone: formData.phone.trim(),
                     email: formData.email.trim() || undefined,
                     address: formData.address.trim() || undefined,
+                    zipCode: formData.zipCode.trim() || undefined,
+                    city: formData.city.trim() || undefined,
+                    country: formData.country.trim() || undefined,
                 }),
             });
 
@@ -82,6 +136,9 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                 phone: "",
                 email: "",
                 address: "",
+                zipCode: "",
+                city: "",
+                country: "",
             });
             setErrors({});
 
@@ -107,6 +164,9 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                 phone: "",
                 email: "",
                 address: "",
+                zipCode: "",
+                city: "",
+                country: "",
             });
             setErrors({});
             setSubmitError(null);
@@ -126,7 +186,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
 
             {/* Modal */}
             <div className="flex min-h-full items-center justify-center p-4">
-                <div className="relative w-full max-w-md transform overflow-hidden rounded-lg bg-white shadow-xl transition-all">
+                <div className="relative w-full max-w-2xl transform overflow-hidden rounded-lg bg-white shadow-xl transition-all">
                     {/* Header */}
                     <div className="bg-gradient-to-r from-blue-600 to-blue-700 px-6 py-4">
                         <div className="flex items-center justify-between">
@@ -155,42 +215,44 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                             </div>
                         )}
 
-                        {/* Name Field */}
-                        <div className="mb-4">
-                            <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                                Name <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="text"
-                                id="name"
-                                name="name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                disabled={loading}
-                                className={`block w-full rounded-md border ${errors.name ? "border-red-300" : "border-gray-300"
-                                    } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
-                                placeholder="Enter customer name"
-                            />
-                            {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
-                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            {/* Name Field */}
+                            <div>
+                                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    value={formData.name}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    className={`block w-full rounded-md border ${errors.name ? "border-red-300" : "border-gray-300"
+                                        } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                                    placeholder="Enter customer name"
+                                />
+                                {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name}</p>}
+                            </div>
 
-                        {/* Phone Field */}
-                        <div className="mb-4">
-                            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone <span className="text-red-500">*</span>
-                            </label>
-                            <input
-                                type="tel"
-                                id="phone"
-                                name="phone"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                disabled={loading}
-                                className={`block w-full rounded-md border ${errors.phone ? "border-red-300" : "border-gray-300"
-                                    } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
-                                placeholder="Enter phone number"
-                            />
-                            {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+                            {/* Phone Field */}
+                            <div>
+                                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Phone <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="tel"
+                                    id="phone"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    className={`block w-full rounded-md border ${errors.phone ? "border-red-300" : "border-gray-300"
+                                        } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                                    placeholder="Enter phone number"
+                                />
+                                {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
+                            </div>
                         </div>
 
                         {/* Email Field */}
@@ -212,21 +274,83 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                             {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
                         </div>
 
-                        {/* Address Field */}
-                        <div className="mb-6">
-                            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                                Address <span className="text-gray-400 text-xs">(Optional)</span>
-                            </label>
-                            <textarea
-                                id="address"
-                                name="address"
-                                value={formData.address}
-                                onChange={handleChange}
-                                disabled={loading}
-                                rows={3}
-                                className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
-                                placeholder="Enter customer address"
-                            />
+                        <div className="border-t border-gray-100 my-4 pt-4">
+                            <h4 className="text-sm font-semibold text-gray-900 mb-4">Address Details <span className="text-gray-400 text-xs font-normal">(Optional)</span></h4>
+
+                            {/* PIN Code, City, State Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                <div>
+                                    <label htmlFor="zipCode" className="block text-sm font-medium text-gray-700 mb-1">
+                                        PIN Code
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type="text"
+                                            id="zipCode"
+                                            name="zipCode"
+                                            maxLength={6}
+                                            value={formData.zipCode}
+                                            onChange={handlePincodeChange}
+                                            disabled={loading}
+                                            className={`block w-full rounded-md border ${errors.zipCode ? "border-red-300 ring-1 ring-red-300" : "border-gray-300"} px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                                            placeholder="6-digit PIN"
+                                        />
+                                        {pincodeLoading && (
+                                            <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600" />
+                                            </div>
+                                        )}
+                                    </div>
+                                    {errors.zipCode && <p className="mt-1 text-xs text-red-600">{errors.zipCode}</p>}
+                                </div>
+                                <div>
+                                    <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-1">
+                                        City
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="city"
+                                        name="city"
+                                        value={formData.city}
+                                        onChange={handleChange}
+                                        disabled={loading}
+                                        className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="City"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+                                        State
+                                    </label>
+                                    <input
+                                        type="text"
+                                        id="country"
+                                        name="country"
+                                        value={formData.country}
+                                        onChange={handleChange}
+                                        disabled={loading}
+                                        className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed"
+                                        placeholder="State"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Address Field */}
+                            <div className="mb-6">
+                                <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Complete Address
+                                </label>
+                                <textarea
+                                    id="address"
+                                    name="address"
+                                    value={formData.address}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    rows={2}
+                                    className="block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed resize-none"
+                                    placeholder="House/Flat No., Building, Street"
+                                />
+                            </div>
                         </div>
 
                         {/* Action Buttons */}

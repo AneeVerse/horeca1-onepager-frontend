@@ -250,7 +250,14 @@ export default function CustomersPage() {
                         {customer.address ? (
                           <>
                             <MapPinIcon className="h-4 w-4 text-gray-400 mt-0.5 flex-shrink-0" />
-                            <span title={customer.address}>{customer.address}</span>
+                            <div className="flex flex-col">
+                              <span title={customer.address}>{customer.address}</span>
+                              {(customer.zipCode || customer.city) && (
+                                <span className="text-xs text-blue-600 font-medium">
+                                  {[customer.zipCode, customer.city, customer.country].filter(Boolean).join(", ")}
+                                </span>
+                              )}
+                            </div>
                           </>
                         ) : (
                           <span className="text-gray-400 italic">No address</span>
