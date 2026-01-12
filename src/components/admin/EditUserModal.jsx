@@ -174,7 +174,7 @@ export default function EditUserModal({ isOpen, onClose, customer, onUserUpdated
                         {/* Phone Field */}
                         <div className="mb-4">
                             <label htmlFor="edit-phone" className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone <span className="text-red-500">*</span> <span className="text-gray-400 text-xs">(Include country code, e.g. 91xxxxxxxxxx)</span>
+                                Phone <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="tel"

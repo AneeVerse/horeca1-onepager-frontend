@@ -177,7 +177,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                         {/* Phone Field */}
                         <div className="mb-4">
                             <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                                Phone <span className="text-red-500">*</span> <span className="text-gray-400 text-xs">(Include country code, e.g. 91xxxxxxxxxx)</span>
+                                Phone <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="tel"
@@ -191,7 +191,6 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                                 placeholder="Enter phone number"
                             />
                             {errors.phone && <p className="mt-1 text-sm text-red-600">{errors.phone}</p>}
-                            <p className="mt-1 text-xs text-gray-500">No verification required</p>
                         </div>
 
                         {/* Email Field */}
@@ -257,7 +256,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 }
