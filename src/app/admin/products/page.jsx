@@ -70,6 +70,11 @@ function SortableProductRow({ product, currency, onToggleStatus, onDelete }) {
 
   return (
     <tr ref={setNodeRef} style={style} className="hover:bg-gray-50">
+      <td className="whitespace-nowrap px-3 py-3 text-sm text-gray-500">
+        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 font-mono">
+          {product.sku || "—"}
+        </code>
+      </td>
       <td className="whitespace-nowrap py-3 pl-4 pr-3 sm:pl-4">
         <div className="flex items-center gap-3">
           <button
@@ -99,8 +104,10 @@ function SortableProductRow({ product, currency, onToggleStatus, onDelete }) {
               </div>
             )}
           </div>
-          <div className="text-sm font-medium text-gray-900">
-            {getLanguageValue(product.title, "Untitled Product")}
+          <div className="flex flex-col">
+            <div className="text-sm font-medium text-gray-900">
+              {getLanguageValue(product.title, "Untitled Product")}
+            </div>
           </div>
         </div>
       </td>
@@ -250,6 +257,9 @@ function CategorySection({
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
+                      <th className="px-3 py-2 text-left text-xs font-semibold text-gray-500">
+                        SKU
+                      </th>
                       <th className="py-2 pl-4 pr-3 text-left text-xs font-semibold text-gray-500 sm:pl-4">
                         Product
                       </th>
@@ -573,6 +583,9 @@ export default function ProductsPage() {
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bg-gray-50">
                     <tr>
+                      <th className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                        SKU
+                      </th>
                       <th className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                         Product
                       </th>
@@ -596,6 +609,11 @@ export default function ProductsPage() {
                   <tbody className="divide-y divide-gray-200 bg-white">
                     {filteredProducts.map((product) => (
                       <tr key={product._id} className="hover:bg-gray-50">
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded text-gray-700 font-mono">
+                            {product.sku || "—"}
+                          </code>
+                        </td>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 flex-shrink-0">
