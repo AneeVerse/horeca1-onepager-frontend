@@ -103,6 +103,7 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
             address: state.user.address,
             phone: state.user.phone,
             image: state.user.image,
+            email: state.user.email,
           },
         });
       }
@@ -118,7 +119,7 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
         address: state.user.address,
         phone: state.user.phone,
         image: state.user.image,
-        email: state.user.email || userInfo?.email,
+        email: state.user.email !== undefined ? state.user.email : userInfo?.email,
       };
 
       Cookies.set("userInfo", JSON.stringify(updatedUserInfo), getCookieOptions(30));
@@ -236,11 +237,9 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
 
                         <div className="col-span-6 sm:col-span-3">
                           <InputAreaTwo
-                            // register={register}
-                            readOnly={true}
                             name="email"
                             type="email"
-                            defaultValue={displayUserInfo?.email}
+                            defaultValue={displayUserInfo?.email || ""}
                             label={showingTranslateValue(
                               storeCustomizationSetting?.dashboard?.user_email
                             )}
@@ -248,7 +247,6 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
                               storeCustomizationSetting?.dashboard?.user_email
                             )}
                           />
-                          {/* <Error errorName={errors.email} /> */}
                           <Error errorName={state?.errors?.email?.join(" ")} />
                         </div>
                       </div>

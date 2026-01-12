@@ -10,8 +10,15 @@ import {
   PhoneIcon,
   CalendarIcon,
   MapPinIcon,
+  PlusIcon,
+  EllipsisVerticalIcon,
+  PencilIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
 import dayjs from "dayjs";
+import CreateUserModal from "@components/admin/CreateUserModal";
+import EditUserModal from "@components/admin/EditUserModal";
+import DeleteConfirmationModal from "@components/admin/DeleteConfirmationModal";
 
 export default function CustomersPage() {
   const [customers, setCustomers] = useState([]);
@@ -21,6 +28,13 @@ export default function CustomersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [page, setPage] = useState(1);
   const [limit] = useState(20);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [openDropdownId, setOpenDropdownId] = useState(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedCustomer, setSelectedCustomer] = useState(null);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [customerToDelete, setCustomerToDelete] = useState(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const fetchCustomers = async () => {
     setLoading(true);
@@ -73,6 +87,51 @@ export default function CustomersPage() {
   // Calculate verified customers if the field exists, else just show total
   const verifiedCustomers = customers.filter(c => c.isVerified || c.emailVerified).length;
 
+  const handleDeleteCustomer = (customerId, customerName) => {
+    setCustomerToDelete({ id: customerId, name: customerName });
+    setIsDeleteModalOpen(true);
+    setOpenDropdownId(null);
+  };
+
+  const confirmDeletion = async () => {
+    if (!customerToDelete) return;
+
+    setDeleteLoading(true);
+    try {
+      const response = await fetch(`/api/admin/customer/delete/${customerToDelete.id}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        alert(data.message || "Failed to delete customer");
+        return;
+      }
+
+      // Remove customer from the list
+      setCustomers(customers.filter(c => c._id !== customerToDelete.id));
+      setFilteredCustomers(filteredCustomers.filter(c => c._id !== customerToDelete.id));
+      setIsDeleteModalOpen(false);
+      setCustomerToDelete(null);
+    } catch (error) {
+      console.error("Error deleting customer:", error);
+      alert("Failed to delete customer. Please try again.");
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleEditCustomer = (customer) => {
+    setSelectedCustomer(customer);
+    setIsEditModalOpen(true);
+    setOpenDropdownId(null);
+  };
+
+  const toggleDropdown = (customerId) => {
+    setOpenDropdownId(openDropdownId === customerId ? null : customerId);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -95,7 +154,13 @@ export default function CustomersPage() {
           </p>
         </div>
         <div className="mt-4 sm:mt-0">
-          {/* Action buttons could go here */}
+          <button
+            onClick={() => setIsCreateModalOpen(true)}
+            className="inline-flex items-center gap-2 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 transition-colors"
+          >
+            <PlusIcon className="h-5 w-5" />
+            Create User
+          </button>
         </div>
       </div>
 
@@ -141,11 +206,14 @@ export default function CustomersPage() {
                 <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                   Joined
                 </th>
+                <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span className="sr-only">Actions</span>
+                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200 bg-white">
               {filteredCustomers.length > 0 ? (
-                filteredCustomers.map((customer) => (
+                filteredCustomers.map((customer, index) => (
                   <tr key={customer._id} className="hover:bg-gray-50">
                     <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                       <div className="flex items-center gap-3">
@@ -206,11 +274,56 @@ export default function CustomersPage() {
                         {dayjs(customer.createdAt).format("MMM D, YYYY")}
                       </div>
                     </td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <div className="relative inline-block text-left">
+                        <button
+                          onClick={() => toggleDropdown(customer._id)}
+                          className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        >
+                          <span className="sr-only">Open options</span>
+                          <EllipsisVerticalIcon className="h-5 w-5" />
+                        </button>
+
+                        {/* Dropdown menu */}
+                        {openDropdownId === customer._id && (
+                          <>
+                            {/* Backdrop to close dropdown when clicking outside */}
+                            <div
+                              className="fixed inset-0 z-10"
+                              onClick={() => setOpenDropdownId(null)}
+                            />
+
+                            {/* Dropdown panel */}
+                            <div className={`absolute right-0 z-20 w-48 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ${index >= filteredCustomers.length - 2 && filteredCustomers.length > 2
+                              ? "bottom-full mb-2 origin-bottom-right"
+                              : "top-full mt-2 origin-top-right"
+                              }`}>
+                              <div className="py-1">
+                                <button
+                                  onClick={() => handleEditCustomer(customer)}
+                                  className="group flex w-full items-center gap-3 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                                >
+                                  <PencilIcon className="h-4 w-4 text-gray-400 group-hover:text-gray-500" />
+                                  Edit
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteCustomer(customer._id, customer.name || 'this customer')}
+                                  className="group flex w-full items-center gap-3 px-4 py-2 text-sm text-red-700 hover:bg-red-50 hover:text-red-900"
+                                >
+                                  <TrashIcon className="h-4 w-4 text-red-400 group-hover:text-red-500" />
+                                  Delete
+                                </button>
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan="5" className="py-10 text-center text-gray-500">
+                  <td colSpan="6" className="py-10 text-center text-gray-500">
                     No customers found matching your search.
                   </td>
                 </tr>
@@ -219,6 +332,48 @@ export default function CustomersPage() {
           </table>
         </div>
       </div>
+
+      {/* Create User Modal */}
+      <CreateUserModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        onUserCreated={(newCustomer) => {
+          // Add new customer to the list
+          setCustomers([newCustomer, ...customers]);
+          setFilteredCustomers([newCustomer, ...filteredCustomers]);
+        }}
+      />
+
+      {/* Edit User Modal */}
+      <EditUserModal
+        isOpen={isEditModalOpen}
+        onClose={() => {
+          setIsEditModalOpen(false);
+          setSelectedCustomer(null);
+        }}
+        customer={selectedCustomer}
+        onUserUpdated={(updatedCustomer) => {
+          // Update customer in the list
+          setCustomers(customers.map(c =>
+            c._id === updatedCustomer._id ? updatedCustomer : c
+          ));
+          setFilteredCustomers(filteredCustomers.map(c =>
+            c._id === updatedCustomer._id ? updatedCustomer : c
+          ));
+        }}
+      />
+
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => {
+          setIsDeleteModalOpen(false);
+          setCustomerToDelete(null);
+        }}
+        onConfirm={confirmDeletion}
+        customerName={customerToDelete?.name}
+        loading={deleteLoading}
+      />
     </div>
   );
 }

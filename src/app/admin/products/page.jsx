@@ -99,7 +99,7 @@ function SortableProductRow({ product, currency, onToggleStatus, onDelete }) {
               </div>
             )}
           </div>
-          <div className="text-sm font-medium text-gray-900 max-w-[200px] truncate">
+          <div className="text-sm font-medium text-gray-900">
             {getLanguageValue(product.title, "Untitled Product")}
           </div>
         </div>

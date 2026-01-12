@@ -36,16 +36,17 @@ const updateProfileFormSchema = z.object({
     .min(2, { message: "Name must be at least 2 characters long." })
     .trim(),
   address: z
-    .string()
-    .min(6, { message: "Name must be at least 6 characters long." })
-    .trim(),
+    .union([z.string().min(5, { message: "Address must be at least 5 characters long." }), z.literal("")])
+    .optional(),
   phone: z
     .string()
     .min(10, { message: "Contact must be at least 10 characters long." })
     .max(15, { message: "Contact must be at most 15 characters long." })
     .regex(/^\d+$/, { message: "Contact must only contain numbers." })
     .trim(),
-  email: z.string().email({ message: "Please enter a valid email." }).trim(),
+  email: z
+    .union([z.string().email({ message: "Please enter a valid email." }), z.literal("")])
+    .optional(),
   image: z
     .string()
     .optional()
