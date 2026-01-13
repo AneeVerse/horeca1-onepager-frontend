@@ -19,7 +19,7 @@ const JWTExpiredHandler = () => {
     Cookies.remove("userInfo");
     Cookies.remove("couponInfo");
     // Redirect to login
-    window.location.href = "/auth/otp-login?redirectUrl=/user/dashboard";
+    window.location.href = "/auth/otp-login?redirectUrl=/";
   }, []);
 
   return (

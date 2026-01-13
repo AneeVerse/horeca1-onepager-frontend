@@ -107,7 +107,7 @@ const shippingAddressFormSchema = z.object({
     .trim(),
   address: z
     .string()
-    .min(10, { message: "Name must be at least 10 characters long." })
+    .min(5, { message: "Address must be at least 5 characters long." })
     .trim(),
   contact: z
     .string()
@@ -118,6 +118,12 @@ const shippingAddressFormSchema = z.object({
   country: z.string().min(2, { message: "Country is required." }).trim(),
   city: z.string().min(2, { message: "City is required." }).trim(),
   area: z.string().min(2, { message: "Area is required." }).trim(),
+  zipCode: z
+    .string()
+    .min(6, { message: "PIN code must be 6 digits." })
+    .max(6, { message: "PIN code must be 6 digits." })
+    .regex(/^\d{6}$/, { message: "PIN code must be 6 digits." })
+    .trim(),
 });
 
 const checkoutFormSchema = (shippingOptions) => {

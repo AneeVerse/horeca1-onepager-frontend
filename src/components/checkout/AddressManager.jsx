@@ -14,6 +14,8 @@ const AddressManager = ({
     onAddressSelect,
     register,
     setValue,
+    getValues,
+    freshContactData,
     errors
 }) => {
     const [addresses, setAddresses] = useState([]);
@@ -53,16 +55,23 @@ const AddressManager = ({
         }
     }, [shippingAddress]);
 
+    // Live sync from Modal back to Background Form
+    useEffect(() => {
+        if (isModalOpen) {
+            const name = addressForm.name || "";
+            setValue("firstName", name);
+            // setValue("lastName", lastName); // Removed last name field
+            setValue("contact", addressForm.contact);
+            setValue("email", addressForm.email);
+        }
+    }, [addressForm.name, addressForm.contact, addressForm.email, isModalOpen, setValue]);
+
     // Fill the checkout form with selected address
     const fillFormWithAddress = (address) => {
         if (!address) return;
 
-        const nameParts = address.name?.split(" ") || [];
-        const firstName = nameParts[0] || "";
-        const lastName = nameParts.slice(1).join(" ") || "";
-
-        setValue("firstName", firstName, { shouldValidate: true });
-        setValue("lastName", lastName, { shouldValidate: true });
+        setValue("firstName", address.name || "", { shouldValidate: true });
+        // setValue("lastName", "", { shouldValidate: true }); // Field removed from UI
         setValue("contact", address.contact || "", { shouldValidate: true });
         setValue("email", address.email || "", { shouldValidate: true });
         setValue("address", address.address || "", { shouldValidate: true });
@@ -125,37 +134,50 @@ const AddressManager = ({
         }
     };
 
-    // Open modal for new address
+    // Open modal for new address - pre-fill with contact details from checkout form
     const openAddModal = () => {
         setIsEditing(false);
         setEditingAddress(null);
+
+        // Use live "fresh" value from the background form (watching keystrokes)
+        const fullName = freshContactData?.firstName || "";
+
         setAddressForm({
-            name: "",
-            contact: "",
-            email: "",
+            name: fullName,
+            contact: contact,
+            email: email,
             address: "",
             city: "",
             country: "",
             zipCode: "",
             isDefault: addresses.length === 0, // First address is default
         });
+        setPincodeError(""); // Clear any previous pincode error
         setIsModalOpen(true);
     };
 
-    // Open modal for editing
+    // Open modal for editing - also sync with background form
     const openEditModal = (address) => {
         setIsEditing(true);
         setEditingAddress(address);
+
+        // Use live "fresh" value from the background form
+        const fullName = freshContactData?.firstName || "";
+        const contact = freshContactData?.contact || "";
+        const email = freshContactData?.email || "";
+
         setAddressForm({
-            name: address.name || "",
-            contact: address.contact || "",
-            email: address.email || "",
+            // Prefer current live values if they are typed, fallback to address object
+            name: fullName || address.name || "",
+            contact: contact || address.contact || "",
+            email: email || address.email || "",
             address: address.address || "",
             city: address.city || "",
             country: address.country || "",
             zipCode: address.zipCode || "",
             isDefault: address.isDefault || false,
         });
+        setPincodeError("");
         setIsModalOpen(true);
     };
 
@@ -357,11 +379,7 @@ const AddressManager = ({
                 </div>
             )}
 
-            {/* Hidden form fields for the actual form submission */}
-            <input type="hidden" {...register("firstName")} />
-            <input type="hidden" {...register("lastName")} />
-            <input type="hidden" {...register("contact")} />
-            <input type="hidden" {...register("email")} />
+            {/* Hidden form fields for the address details (not in main form) */}
             <input type="hidden" {...register("address")} />
             <input type="hidden" {...register("city")} />
             <input type="hidden" {...register("country")} />

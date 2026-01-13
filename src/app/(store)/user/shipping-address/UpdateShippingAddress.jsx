@@ -1,18 +1,18 @@
 "use client";
 
 import { useActionState, useEffect, useState } from "react";
+import { IoLocationOutline, IoSearch } from "react-icons/io5";
 
 //internal imports
-
 import Error from "@components/form/Error";
-import { countries } from "@utils/countries";
 import ErrorTwo from "@components/form/ErrorTwo";
 import { getUserSession } from "@lib/auth-client";
 import useCustomToast from "@hooks/useCustomToast";
-import InputAreaTwo from "@components/form/InputAreaTwo";
-import SelectOption from "@components/form/SelectOption";
 import SubmitButton from "@components/user-dashboard/SubmitButton";
 import { addShippingAddress } from "@services/ServerActionServices";
+import { lookupPincode } from "@utils/pincode";
+import { Input } from "@components/ui/input";
+import { Textarea } from "@components/ui/textarea";
 
 const UpdateShippingAddress = ({ shippingAddress, error }) => {
   const userInfo = getUserSession();
@@ -21,211 +21,190 @@ const UpdateShippingAddress = ({ shippingAddress, error }) => {
     undefined
   );
 
-  const [cities, setCities] = useState([]);
-  const [areas, setAreas] = useState([]);
-  const [selectedValue, setSelectedValue] = useState({
-    country: shippingAddress?.country || "",
+  const [pincodeLoading, setPincodeLoading] = useState(false);
+  const [pincodeError, setPincodeError] = useState("");
+  const [formData, setFormData] = useState({
+    name: shippingAddress?.name || "",
+    address: shippingAddress?.address || "",
+    contact: shippingAddress?.contact?.replace("+91 ", "") || "",
+    country: shippingAddress?.country || "Maharashtra", // Using State as Country in DB
     city: shippingAddress?.city || "",
-    area: shippingAddress?.area || "",
+    zipCode: shippingAddress?.zipCode || "",
   });
-
-  //   console.log("shippingAddress", shippingAddress);
-
-  const handleInputChange = (name, value) => {
-    setSelectedValue((prevState) => ({
-      ...prevState,
-      [name]: value,
-    }));
-    if (name === "country") {
-      const result = countries?.find(
-        (country) => country?.name === value
-      ).cities;
-      setCities(result);
-      setAreas([]);
-    }
-    if (name === "city") {
-      const result = cities?.find((city) => city?.name === value).areas;
-      setAreas(result);
-    }
-  };
 
   const { formRef } = useCustomToast(state);
 
-  useEffect(() => {
-    if (shippingAddress) {
-      const element = countries?.find(
-        (country) => country?.name === shippingAddress?.country
-      )?.cities;
-      setCities(element);
-      const result = element?.find(
-        (city) => city?.name === shippingAddress?.city
-      )?.areas;
-      setAreas(result);
-    }
-  }, [shippingAddress]);
+  // Handle PIN code lookup
+  const handlePincodeChange = async (pincode) => {
+    const cleanPincode = pincode.replace(/\D/g, "");
+    setFormData(prev => ({ ...prev, zipCode: cleanPincode }));
 
-  // console.log("selectedValue", selectedValue, "state", state);
+    if (cleanPincode.length === 6) {
+      setPincodeLoading(true);
+      setPincodeError("");
+
+      const result = await lookupPincode(cleanPincode);
+
+      if (result.success) {
+        setFormData(prev => ({
+          ...prev,
+          city: result.district || result.city,
+          country: result.state,
+        }));
+        setPincodeError("");
+      } else {
+        setPincodeError(result.error || "Invalid PIN code");
+      }
+      setPincodeLoading(false);
+    }
+  };
 
   return (
-    <div className="max-w-screen-2xl">
-      <div className="md:grid md:grid-cols-3 md:gap-6">
-        <div className="md:col-span-1">
-          <div className="px-4 sm:px-0">
-            <h2 className="text-xl font-semibold mb-5">
-              Update Shipping Address
-            </h2>
-          </div>
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Header section with icon */}
+      <div className="flex items-center gap-3 mb-8">
+        <div className="w-12 h-12 rounded-2xl bg-emerald-50 flex items-center justify-center">
+          <IoLocationOutline className="w-6 h-6 text-[#018549]" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Update Shipping Address</h1>
+          <p className="text-sm text-gray-500">Manage where your gourmet delights get delivered</p>
         </div>
       </div>
-      <form ref={formRef} action={formAction}>
-        <div className="mt-5 md:mt-0 md:col-span-2">
-          <div className="bg-white shadow sm:rounded-lg py-4 px-2">
-            <div className="mt-10 sm:mt-0">
-              <div className="md:grid-cols-6 md:gap-6">
-                <div className="mt-5 md:mt-0 md:col-span-2">
-                  <div className="lg:mt-6 mt-4">
-                    <div className="grid grid-cols-6 gap-6">
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputAreaTwo
-                          // register={register}
-                          label="Full Name"
-                          name="name"
-                          type="text"
-                          defaultValue={shippingAddress?.name}
-                          placeholder="Input your full name"
-                        />
 
-                        <Error errorName={state?.errors?.name?.join(" ")} />
+      <form ref={formRef} action={formAction} className="space-y-6">
+        <div className="bg-white border border-gray-100 rounded-3xl p-6 md:p-8 shadow-xl shadow-gray-100/50">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            {/* Left Column: Contact info */}
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Full Name <span className="text-red-500">*</span>
+                </label>
+                <Input
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData(p => ({ ...p, name: e.target.value }))}
+                  placeholder="Input your full name"
+                  className="rounded-xl border-gray-200 focus:border-[#018549] focus:ring-[#018549]/20 h-12"
+                />
+                <Error errorName={state?.errors?.name?.join(" ")} />
+              </div>
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Mobile Number <span className="text-red-500">*</span>
+                </label>
+                <div className="relative group">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium">+91</span>
+                  <Input
+                    name="contact"
+                    type="tel"
+                    inputMode="numeric"
+                    maxLength={10}
+                    value={formData.contact}
+                    onChange={(e) => setFormData(p => ({ ...p, contact: e.target.value.replace(/\D/g, "") }))}
+                    placeholder="10-digit mobile number"
+                    className="pl-14 rounded-xl border-gray-200 focus:border-[#018549] focus:ring-[#018549]/20 h-12 w-full"
+                  />
+                </div>
+                <ErrorTwo errors={state?.errors?.contact} />
+              </div>
+            </div>
+
+            {/* Right Column: Address info */}
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    PIN Code <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <Input
+                      name="zipCode"
+                      type="text"
+                      inputMode="numeric"
+                      maxLength={6}
+                      value={formData.zipCode}
+                      onChange={(e) => handlePincodeChange(e.target.value)}
+                      placeholder="6-digit PIN"
+                      className="rounded-xl border-gray-200 focus:border-[#018549] focus:ring-[#018549]/20 h-12 w-full"
+                    />
+                    {pincodeLoading && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="w-5 h-5 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
                       </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputAreaTwo
-                          // register={register}
-                          label="Full Address"
-                          name="address"
-                          type="text"
-                          defaultValue={shippingAddress?.address}
-                          placeholder="Input your full address"
-                        />
-
-                        <Error errorName={state?.errors?.address?.join(" ")} />
-                      </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <InputAreaTwo
-                          // register={register}
-                          label="Contact"
-                          name="contact"
-                          type="tel"
-                          defaultValue={shippingAddress?.contact}
-                          placeholder="Phone/Mobile"
-                        />
-
-                        <ErrorTwo errors={state?.errors?.contact} />
-                      </div>
-
-                      <div className="col-span-6 sm:col-span-3">
-                        <SelectOption
-                          name="country"
-                          label="Country"
-                          options={countries?.map((country) => country?.name)}
-                          onChange={handleInputChange}
-                          value={selectedValue?.country || ""}
-                        />
-                        <Error errorName={state?.errors?.country?.join(" ")} />
-
-                        {/* passing country value */}
-                        <div className="form-group hidden">
-                          <InputAreaTwo
-                            label="country"
-                            name="country"
-                            type="text"
-                            defaultValue={selectedValue.country}
-                            placeholder="country"
-                            readOnly={true}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-span-6 sm:col-span-3">
-                        <SelectOption
-                          name="city"
-                          label="City"
-                          options={cities?.map((city) => city?.name)}
-                          onChange={handleInputChange}
-                          value={selectedValue?.city || ""}
-                        />
-                        <Error errorName={state?.errors?.city?.join(" ")} />
-
-                        {/* passing city value */}
-                        <div className="form-group hidden">
-                          <InputAreaTwo
-                            label="city"
-                            name="city"
-                            type="text"
-                            defaultValue={selectedValue.country}
-                            placeholder="city"
-                            readOnly={true}
-                          />
-                        </div>
-                      </div>
-                      <div className="col-span-6 sm:col-span-3">
-                        <SelectOption
-                          name="area"
-                          label="Area"
-                          options={areas}
-                          onChange={handleInputChange}
-                          value={selectedValue?.area || ""}
-                        />
-                        <Error errorName={state?.errors?.area?.join(" ")} />
-
-                        {/* passing area value */}
-                        <div className="form-group hidden">
-                          <InputAreaTwo
-                            label="area"
-                            name="area"
-                            type="text"
-                            defaultValue={selectedValue.country}
-                            placeholder="area"
-                            readOnly={true}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                    {/* passing update shipping id value */}
-                    <div className="form-group hidden">
-                      <InputAreaTwo
-                        label="shippingAddressId"
-                        name="shippingAddressId"
-                        type="text"
-                        defaultValue={shippingAddress?._id || ""}
-                        placeholder="area"
-                        readOnly={true}
-                      />
-                    </div>
-                    <div className="col-span-6 sm:col-span-3 mt-5 text-right">
-                      <SubmitButton title="Update Shipping Address" />
-                    </div>
+                    )}
                   </div>
+                  {pincodeError && <p className="text-xs text-red-500 mt-1">{pincodeError}</p>}
+                </div>
+
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    City
+                  </label>
+                  <Input
+                    name="city"
+                    type="text"
+                    readOnly
+                    value={formData.city}
+                    className="rounded-xl border-gray-100 bg-gray-50 text-gray-500 h-12 cursor-not-allowed"
+                  />
+                  <Error errorName={state?.errors?.city?.join(" ")} />
                 </div>
               </div>
-              {/* passing user _id  */}
-              <div className="form-group hidden">
-                <InputAreaTwo
-                  label="userId"
-                  name="userId"
+
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  State / Territory
+                </label>
+                <Input
+                  name="country"
                   type="text"
-                  defaultValue={userInfo?._id}
-                  placeholder="userId"
-                  readOnly={true}
+                  readOnly
+                  value={formData.country}
+                  className="rounded-xl border-gray-100 bg-gray-50 text-gray-500 h-12 cursor-not-allowed"
                 />
+                <Error errorName={state?.errors?.country?.join(" ")} />
               </div>
             </div>
           </div>
+
+          <div className="mt-8">
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Complete Address <span className="text-red-500">*</span>
+            </label>
+            <Textarea
+              name="address"
+              value={formData.address}
+              onChange={(e) => setFormData(p => ({ ...p, address: e.target.value }))}
+              placeholder="House/Flat No., Building, Street, Landmark"
+              className="rounded-2xl border-gray-200 focus:border-[#018549] focus:ring-[#018549]/20 min-h-[120px] resize-none py-4 px-5"
+            />
+            <Error errorName={state?.errors?.address?.join(" ")} />
+          </div>
+
+          <div className="mt-10 flex justify-end">
+            <SubmitButton
+              title="Update Delivery Address"
+              className="bg-[#018549] hover:bg-[#016e3c] text-white px-10 h-14 rounded-2xl font-bold text-lg transition-all shadow-lg shadow-emerald-900/10 hover:shadow-emerald-900/20 w-full md:w-auto"
+            />
+          </div>
         </div>
+
+        {/* Hidden internal fields */}
+        <input type="hidden" name="shippingAddressId" value={shippingAddress?._id || ""} />
+        <input type="hidden" name="userId" value={userInfo?._id || ""} />
+        {/* Fill area field with city to match backend schema */}
+        <input type="hidden" name="area" value={formData.city} />
+
       </form>
     </div>
   );
 };
 
 export default UpdateShippingAddress;
+
 

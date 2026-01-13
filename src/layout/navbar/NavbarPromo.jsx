@@ -43,12 +43,14 @@ const NavbarPromo = ({ languages, categories, categoryError }) => {
   const isSearchPage = pathname?.startsWith("/search");
   // Hide on checkout page
   const isCheckoutPage = pathname === "/checkout";
+  // Hide on order page
+  const isOrderPage = pathname?.startsWith("/order");
 
   const { showingTranslateValue } = useUtilsFunction();
   const navbar = storeCustomization?.navbar;
 
-  // Hide navigation bar on home page, auth pages, contact-us page, user dashboard, search page, or checkout page
-  if (isHomePage || isAuthPage || isContactPage || isUserDashboard || isSearchPage || isCheckoutPage) {
+  // Hide navigation bar on specific pages or globally if requested
+  if (isHomePage || isAuthPage || isContactPage || isUserDashboard || isSearchPage || isCheckoutPage || isOrderPage) {
     return null;
   }
 

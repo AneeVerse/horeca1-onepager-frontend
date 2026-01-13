@@ -15,7 +15,7 @@ import { getCookieOptions } from "@utils/cookieConfig";
 const OTPLogin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const redirectUrl = searchParams.get("redirectUrl") || "/user/dashboard";
+  const redirectUrl = searchParams.get("redirectUrl") || "/";
   const { dispatch } = useContext(UserContext);
   const { setCartDrawerOpen } = useContext(SidebarContext);
 
@@ -278,7 +278,7 @@ const OTPLogin = () => {
         notifySuccess("Login successful!");
 
         // Redirect immediately - use window.location for full reload
-        const targetUrl = redirectUrl || "/user/dashboard";
+        const targetUrl = redirectUrl || "/";
         console.log("[OTP Login] Redirecting to:", targetUrl);
 
         // Immediate redirect to prevent any loops

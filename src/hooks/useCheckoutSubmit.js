@@ -63,6 +63,8 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
     register,
     handleSubmit,
     setValue,
+    getValues,
+    watch,
     formState: { errors },
   } = useForm();
 
@@ -88,9 +90,7 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
     }
     // Auto-fill name if available
     if (userInfo?.name) {
-      const nameParts = userInfo.name.split(" ");
-      setValue("firstName", nameParts[0] || "");
-      setValue("lastName", nameParts.slice(1).join(" ") || "");
+      setValue("firstName", userInfo.name);
     }
   }, [isCouponApplied, userInfo]);
 
@@ -138,7 +138,7 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
       setError("");
 
       const userDetails = {
-        name: `${data.firstName} ${data.lastName}`,
+        name: data.firstName,
         contact: data.contact,
         email: data.email,
         address: data.address,
@@ -342,15 +342,23 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
       const { notification, error } = await addNotification(notificationInfo);
 
       // Proceed with order success
+      console.log("[Checkout] Order processed successfully, redirecting...");
+
       if (!orderResponse?._id) {
         throw new Error("Order ID missing in response");
       }
-      router.push(`/order/${orderResponse?._id}`);
+
+      // Clear data before redirect
+      emptyCart();
+      Cookies.remove("couponInfo");
+
       notifySuccess(
         "Your Order Confirmed! The invoice will be emailed to you shortly."
       );
-      Cookies.remove("couponInfo");
-      emptyCart();
+
+      // Hard redirect to order page for maximum reliability
+      window.location.replace(`/order/${orderResponse?._id}`);
+
       setIsCheckoutSubmit(false);
     } catch (err) {
       console.error("Order success handling error:", err.message);
@@ -591,14 +599,8 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
     setUseExistingAddress(value);
     if (value) {
       const address = shippingAddress;
-      const nameParts = address?.name?.split(" "); // Split the name into parts
-      const firstName = nameParts[0]; // First name is the first element
-      const lastName =
-        nameParts?.length > 1 ? nameParts[nameParts?.length - 1] : ""; // Last name is the last element, if it exists
-      // console.log("address", address.name.split(" "), "value", value);
 
-      setValue("firstName", firstName);
-      setValue("lastName", lastName);
+      setValue("firstName", address?.name);
 
       setValue("address", address.address);
       setValue("contact", address.contact);
@@ -608,7 +610,6 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
       setValue("zipCode", address.zipCode);
     } else {
       setValue("firstName");
-      setValue("lastName");
       setValue("address");
       setValue("contact");
       // setValue("email");
@@ -692,6 +693,8 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
     showingTranslateValue,
     handleDefaultShippingAddress,
     setValue,
+    getValues,
+    watch,
   };
 };
 

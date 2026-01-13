@@ -63,7 +63,22 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
     showingTranslateValue,
     handleDefaultShippingAddress,
     setValue,
+    getValues,
+    watch,
   } = useCheckoutSubmit({ shippingAddress });
+
+  // Watch contact fields for real-time sync with Address modal
+  const watchedFirstName = watch("firstName");
+  const watchedLastName = watch("lastName");
+  const watchedContact = watch("contact");
+  const watchedEmail = watch("email");
+
+  const freshContactData = {
+    firstName: watchedFirstName,
+    lastName: watchedLastName,
+    contact: watchedContact,
+    email: watchedEmail
+  };
   const checkout = storeCustomization?.checkout;
 
   // Limit products shown initially (show first 2)
@@ -157,26 +172,15 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 01. Contact Details
               </h2>
               <div className="grid grid-cols-6 gap-4 sm:gap-6">
-                <div className="col-span-3">
+                <div className="col-span-6">
                   <InputArea
                     register={register}
-                    label="First Name"
+                    label="Full Name"
                     name="firstName"
                     type="text"
-                    placeholder="Enter first name"
+                    placeholder="Enter your full name"
                   />
                   <Error errorMessage={errors.firstName} />
-                </div>
-
-                <div className="col-span-3">
-                  <InputArea
-                    register={register}
-                    label="Last Name"
-                    name="lastName"
-                    type="text"
-                    placeholder="Enter last name"
-                  />
-                  <Error errorMessage={errors.lastName} />
                 </div>
 
                 <div className="col-span-6 sm:col-span-3">
@@ -206,6 +210,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                     name="email"
                     type="email"
                     placeholder="Enter your email"
+                    required={false}
                   />
                   <Error errorMessage={errors.email} />
                 </div>
@@ -222,6 +227,8 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
                 }}
                 register={register}
                 setValue={setValue}
+                getValues={getValues}
+                freshContactData={freshContactData}
                 errors={errors}
               />
 
@@ -250,17 +257,17 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
           </form>
           {/* </Elements> */}
         </div>
-      </div>
+      </div >
 
       {/* Cart Drawer */}
-      <CartDrawer
+      < CartDrawer
         open={cartDrawerOpen}
         setOpen={setCartDrawerOpen}
         currency={currency}
       />
 
       {/* cart section - Redesigned Order Summary */}
-      <div className="md:w-full lg:w-2/5 lg:ml-10 xl:ml-14 md:ml-6 flex flex-col h-full md:sticky lg:sticky top-28 md:order-2 lg:order-2">
+      < div className="md:w-full lg:w-2/5 lg:ml-10 xl:ml-14 md:ml-6 flex flex-col h-full md:sticky lg:sticky top-28 md:order-2 lg:order-2" >
         <div className="border rounded-xl bg-white shadow-sm overflow-hidden order-1 sm:order-2">
           <div className="p-5 lg:px-6 lg:py-6">
             <h2 className="font-bold text-lg text-gray-900 pb-4">
@@ -436,8 +443,8 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 

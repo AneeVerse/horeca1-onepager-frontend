@@ -215,6 +215,7 @@ const addShippingAddress = async (userInfo, currentState, formState) => {
       country: formState.get("country"),
       city: formState.get("city"),
       area: formState.get("area"),
+      zipCode: formState.get("zipCode"),
     });
 
     // revalidatePath("/");
@@ -275,11 +276,11 @@ const updateCategoryOrder = async (categories, token) => {
     });
 
     const data = await handleResponse(response);
-    
+
     // Invalidate cache so frontend shows updated order immediately
     // This is the key fix: revalidateTag invalidates the ISR cache
     revalidateTag("categories");
-    
+
     return { data, error: null };
   } catch (error) {
     return { data: null, error: error.message };

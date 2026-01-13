@@ -20,7 +20,7 @@ const BottomNavigation = ({ or, route, desc, pageName, loginTitle }) => {
       <div className="flex flex-col mb-4">
         <Button
           onClick={() =>
-            signIn("google", { callbackUrl: "/user/dashboard", redirect: true })
+            signIn("google", { callbackUrl: "/", redirect: true })
           }
           className={
             buttonStyles + "bg-green-600 text-white hover:bg-green-700"
@@ -32,7 +32,7 @@ const BottomNavigation = ({ or, route, desc, pageName, loginTitle }) => {
         <Button
           onClick={() =>
             signIn("facebook", {
-              callbackUrl: "/user/dashboard",
+              callbackUrl: "/",
               redirect: true,
             })
           }
@@ -43,7 +43,7 @@ const BottomNavigation = ({ or, route, desc, pageName, loginTitle }) => {
         </Button>
         <Button
           onClick={() =>
-            signIn("github", { callbackUrl: "/user/dashboard", redirect: true })
+            signIn("github", { callbackUrl: "/", redirect: true })
           }
           className={buttonStyles + "bg-gray-700 text-white hover:bg-gray-900"}
         >

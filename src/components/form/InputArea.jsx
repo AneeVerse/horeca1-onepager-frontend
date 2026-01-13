@@ -11,6 +11,7 @@ const InputArea = ({
   defaultValue,
   autocomplete,
   placeholder,
+  required = true,
 }) => {
   return (
     <>
@@ -25,7 +26,7 @@ const InputArea = ({
         )}
         <Input
           {...register(`${name}`, {
-            required: `${label} is required!`,
+            required: required ? `${label} is required!` : false,
           })}
           type={type}
           name={name}

@@ -17,16 +17,16 @@ const Login = () => {
         const userInfo = JSON.parse(userInfoCookie);
         if (userInfo?.token) {
           // Already logged in, redirect to account or specified URL
-          router.replace(redirectUrl || "/user/dashboard");
+          router.replace(redirectUrl || "/");
           return;
         }
       } catch {
         // Invalid cookie, continue to OTP login
       }
     }
-    
+
     // Redirect to OTP login (passwordless authentication)
-    const url = redirectUrl 
+    const url = redirectUrl
       ? `/auth/otp-login?redirectUrl=${encodeURIComponent(redirectUrl)}`
       : "/auth/otp-login";
     router.replace(url);

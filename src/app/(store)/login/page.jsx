@@ -79,7 +79,7 @@ const Login = () => {
                     {/* passing the redirect url for redirect from page after login */}
                     <div className="form-group hidden">
                       <InputAreaTwo
-                        defaultValue={redirectUrl || "user/dashboard"}
+                        defaultValue={redirectUrl || "/"}
                         label="redirectUrl"
                         name="redirectUrl"
                         type="text"

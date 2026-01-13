@@ -31,7 +31,7 @@ const Sidebar = () => {
 
   // Get userInfo from cookie (primary auth method for OTP login)
   const [userInfo, setUserInfo] = useState(null);
-  
+
   useEffect(() => {
     const loadUserInfo = async () => {
       const userInfoCookie = Cookies.get("userInfo");
@@ -39,14 +39,14 @@ const Sidebar = () => {
         try {
           const parsed = JSON.parse(userInfoCookie);
           setUserInfo(parsed);
-          
+
           // Fetch fresh customer data from database to get latest name/email
           const customerId = parsed.id || parsed._id;
           if (customerId) {
             try {
               const { baseURL } = await import("@services/CommonService");
               const token = parsed.token;
-              
+
               const response = await fetch(`${baseURL}/customer/${customerId}`, {
                 cache: "no-store",
                 headers: {
@@ -54,10 +54,10 @@ const Sidebar = () => {
                   ...(token && { Authorization: `Bearer ${token}` }),
                 },
               });
-              
+
               if (response.ok) {
                 const customer = await response.json();
-                
+
                 // Update userInfo with fresh data (prioritize name from database)
                 const freshUserInfo = {
                   ...parsed,
@@ -65,9 +65,9 @@ const Sidebar = () => {
                   email: customer.email || parsed.email, // Use email from DB if available
                   phone: customer.phone || parsed.phone,
                 };
-                
+
                 setUserInfo(freshUserInfo);
-                
+
                 // Update cookie with fresh data
                 Cookies.set("userInfo", JSON.stringify(freshUserInfo), getCookieOptions(30));
               }
@@ -81,20 +81,20 @@ const Sidebar = () => {
         }
       }
     };
-    
+
     // Load initially
     loadUserInfo();
-    
+
     // Listen for custom event when profile is updated
     const handleProfileUpdate = () => {
       loadUserInfo();
     };
-    
+
     window.addEventListener('profileUpdated', handleProfileUpdate);
-    
+
     // Also poll every 5 seconds to refresh data (less frequent to reduce overhead)
     const interval = setInterval(loadUserInfo, 5000);
-    
+
     return () => {
       window.removeEventListener('profileUpdated', handleProfileUpdate);
       clearInterval(interval);
@@ -140,16 +140,16 @@ const Sidebar = () => {
     //   href: "/user/shipping-address",
     //   icon: Home,
     // },
-    {
-      title: showingTranslateValue(dashboard?.update_profile),
-      href: "/user/update-profile",
-      icon: Settings,
-    },
-    {
-      title: showingTranslateValue(dashboard?.change_password),
-      href: "/user/change-password",
-      icon: File,
-    },
+    // {
+    //   title: showingTranslateValue(dashboard?.update_profile),
+    //   href: "/user/update-profile",
+    //   icon: Settings,
+    // },
+    // {
+    //   title: showingTranslateValue(dashboard?.change_password),
+    //   href: "/user/change-password",
+    //   icon: File,
+    // },
     {
       title: "Contact Us",
       href: "/contact-us",
@@ -267,16 +267,14 @@ const Sidebar = () => {
                 <Link
                   href={item.href}
                   key={item.title}
-                  className={`inline-flex items-center rounded-md hover:bg-primary-50 py-3 px-4 text-sm font-medium w-full mb-1 transition-colors ${
-                    isActive
+                  className={`inline-flex items-center rounded-md hover:bg-primary-50 py-3 px-4 text-sm font-medium w-full mb-1 transition-colors ${isActive
                       ? "text-primary-600 bg-primary-100"
                       : "text-gray-600"
-                  }`}
+                    }`}
                 >
                   <item.icon
-                    className={`flex-shrink-0 h-4 w-4 mr-3 ${
-                      isActive ? "text-primary-600" : "text-gray-500"
-                    }`}
+                    className={`flex-shrink-0 h-4 w-4 mr-3 ${isActive ? "text-primary-600" : "text-gray-500"
+                      }`}
                     aria-hidden="true"
                   />
 
