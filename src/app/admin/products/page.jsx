@@ -24,6 +24,7 @@ import {
   updateProductStatus,
   getProductsByCategory,
   updateProductOrder,
+  updateProductStock,
 } from "@services/AdminProductService";
 import {
   PlusIcon,
@@ -51,8 +52,72 @@ const getLanguageValue = (data, fallback = "Untitled") => {
   return fallback;
 };
 
+// Editable Stock Component
+function EditableStock({ productId, initialStock, onUpdate }) {
+  const [stock, setStock] = useState(initialStock || 0);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [message, setMessage] = useState(null);
+
+  useEffect(() => {
+    setStock(initialStock || 0);
+  }, [initialStock]);
+
+  const handleUpdate = async (newStock) => {
+    if (newStock === initialStock) return;
+
+    setIsUpdating(true);
+    setMessage(null);
+    try {
+      const result = await updateProductStock(productId, newStock);
+      if (result.error) {
+        setStock(initialStock);
+        setMessage({ type: 'error', text: 'Error' });
+      } else {
+        setMessage({ type: 'success', text: 'Saved' });
+        // Update local state in parent if needed
+        if (onUpdate) onUpdate(productId, newStock);
+      }
+    } catch (err) {
+      setStock(initialStock);
+      setMessage({ type: 'error', text: 'Error' });
+    } finally {
+      setIsUpdating(false);
+      // Clear message after 2 seconds
+      setTimeout(() => setMessage(null), 2000);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-1 items-start">
+      <div className="relative group">
+        <input
+          type="number"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+          onBlur={(e) => handleUpdate(Number(e.target.value))}
+          disabled={isUpdating}
+          className={`w-20 px-2 py-1 text-sm border rounded focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all ${isUpdating ? 'bg-gray-100 opacity-50' : 'bg-white hover:border-gray-400'
+            } ${stock <= 0 ? 'border-red-200 text-red-600 bg-red-50' : 'border-gray-300 text-gray-900'
+            }`}
+        />
+        {isUpdating && (
+          <div className="absolute right-2 top-1/2 -translate-y-1/2">
+            <div className="animate-spin h-3 w-3 border-b-2 border-blue-600 rounded-full"></div>
+          </div>
+        )}
+      </div>
+      {message && (
+        <span className={`text-[10px] font-medium uppercase px-1 rounded ${message.type === 'success' ? 'text-green-600 bg-green-50' : 'text-red-600 bg-red-50'
+          }`}>
+          {message.text}
+        </span>
+      )}
+    </div>
+  );
+}
+
 // Sortable Product Row Component
-function SortableProductRow({ product, currency, onToggleStatus, onDelete }) {
+function SortableProductRow({ product, currency, onToggleStatus, onDelete, onStockUpdate }) {
   const {
     attributes,
     listeners,
@@ -119,14 +184,11 @@ function SortableProductRow({ product, currency, onToggleStatus, onDelete }) {
         </div>
       </td>
       <td className="whitespace-nowrap px-3 py-3 text-sm text-gray-500">
-        <span
-          className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${(product.stock || 0) > 0
-            ? "bg-green-100 text-green-800"
-            : "bg-red-100 text-red-800"
-            }`}
-        >
-          {product.stock || 0}
-        </span>
+        <EditableStock
+          productId={product._id}
+          initialStock={product.stock}
+          onUpdate={onStockUpdate}
+        />
       </td>
       <td className="whitespace-nowrap px-3 py-3 text-sm text-gray-500">
         <button
@@ -172,6 +234,7 @@ function CategorySection({
   sensors,
   isExpanded,
   onToggleExpand,
+  onStockUpdate,
 }) {
   const { category, products } = categoryData;
   const [localProducts, setLocalProducts] = useState(products);
@@ -285,6 +348,7 @@ function CategorySection({
                         currency={currency}
                         onToggleStatus={onToggleStatus}
                         onDelete={onDelete}
+                        onStockUpdate={onStockUpdate}
                       />
                     ))}
                   </tbody>
@@ -427,6 +491,16 @@ export default function ProductsPage() {
     setDeleteModalOpen(false);
     setDeletingProductId(null);
     setDeletingProductName("");
+  };
+
+  const handleUpdateStock = (id, newStock) => {
+    // Update main products state
+    setProducts(prev => prev.map(p => p._id === id ? { ...p, stock: newStock } : p));
+    // Update by category state
+    setProductsByCategory(prev => prev.map(cat => ({
+      ...cat,
+      products: cat.products.map(p => p._id === id ? { ...p, stock: newStock } : p)
+    })));
   };
 
   const handleToggleStatus = async (id, currentStatus) => {
@@ -662,14 +736,11 @@ export default function ProductsPage() {
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          <span
-                            className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${(product.stock || 0) > 0
-                              ? "bg-green-100 text-green-800"
-                              : "bg-red-100 text-red-800"
-                              }`}
-                          >
-                            {product.stock || 0}
-                          </span>
+                          <EditableStock
+                            productId={product._id}
+                            initialStock={product.stock}
+                            onUpdate={handleUpdateStock}
+                          />
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           <button
@@ -749,6 +820,7 @@ export default function ProductsPage() {
                   sensors={sensors}
                   isExpanded={expandedCategories[categoryData.category._id] ?? true}
                   onToggleExpand={() => toggleCategoryExpand(categoryData.category._id)}
+                  onStockUpdate={handleUpdateStock}
                 />
               ))}
             </div>

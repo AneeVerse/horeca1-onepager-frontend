@@ -146,6 +146,26 @@ export const updateProductOrder = async (products) => {
   }
 };
 
+// Update product stock
+export const updateProductStock = async (id, stock) => {
+  try {
+    const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+    const response = await fetch(`${baseURL}/products/stock/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+      body: JSON.stringify({ stock: Number(stock) }),
+    });
+
+    const data = await handleResponse(response);
+    return { data, error: null };
+  } catch (error) {
+    return { data: null, error: error.message };
+  }
+};
+
 // Get products grouped by category
 export const getProductsByCategory = async () => {
   try {
