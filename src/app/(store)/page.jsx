@@ -36,23 +36,30 @@ const Home = async () => {
 
   const currency = globalSetting?.default_currency || "₹";
 
-  // Get top 3 categories in order (already sorted by order field from backend)
-  const topCategories = (allCategories[0]?.children || []).filter(cat => cat && cat._id).slice(0, 3);
+  // Get all categories in order (already sorted by order field from backend)
+  const allHomeCategories = (allCategories[0]?.children || []).filter(cat => cat && cat._id);
 
-  // Fetch products for top 3 categories (in order, show even if no products)
+  // Fetch products for all categories in parallel
   const productsByCategory = {};
-
-  for (const category of topCategories) {
+  const categoryProductsPromises = allHomeCategories.map(async (category) => {
     try {
       const categoryProducts = await getShowingStoreProducts({
         category: category._id,
         title: ""
       });
-      productsByCategory[category._id] = categoryProducts.products?.slice(0, 20) || [];
+      return {
+        id: category._id,
+        products: categoryProducts.products?.slice(0, 20) || []
+      };
     } catch (err) {
-      productsByCategory[category._id] = [];
+      return { id: category._id, products: [] };
     }
-  }
+  });
+
+  const categoryProductsResults = await Promise.all(categoryProductsPromises);
+  categoryProductsResults.forEach(result => {
+    productsByCategory[result.id] = result.products;
+  });
 
   // console.log("storeCustomizationSetting", storeCustomizationSetting);
 
@@ -91,7 +98,7 @@ const Home = async () => {
       )}
 
       {/* Category-based products sections */}
-      {storeCustomizationSetting?.home?.popular_products_status && topCategories.length > 0 && (
+      {storeCustomizationSetting?.home?.popular_products_status && allHomeCategories.length > 0 && (
         <div className="bg-gray-50 dark:bg-zinc-900 lg:pt-4 lg:pb-16 pt-3 pb-10 mx-auto max-w-screen-2xl px-3 sm:px-10">
           {error ? (
             <CMSkeletonTwo
@@ -102,7 +109,7 @@ const Home = async () => {
             />
           ) : (
             <CategoryProductsSection
-              categories={topCategories}
+              categories={allHomeCategories}
               productsByCategory={productsByCategory}
               attributes={attributes}
               currency={currency}
