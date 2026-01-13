@@ -43,6 +43,24 @@ const UpdateShippingAddress = ({ shippingAddress, error }) => {
       setPincodeLoading(true);
       setPincodeError("");
 
+      // Check if PIN code is serviceable
+      const storedPincodes = typeof window !== 'undefined' ? localStorage.getItem("deliveryPincodes") : null;
+      if (storedPincodes) {
+        const allowedPincodes = JSON.parse(storedPincodes);
+        const isServiceable = allowedPincodes.some(p => p.pincode === cleanPincode);
+
+        if (!isServiceable) {
+          setPincodeError("Sorry currently we do not have service in your pincode. Hope to serve you soon");
+          setFormData(prev => ({
+            ...prev,
+            city: "",
+            country: "",
+          }));
+          setPincodeLoading(false);
+          return;
+        }
+      }
+
       const result = await lookupPincode(cleanPincode);
 
       if (result.success) {
@@ -54,8 +72,16 @@ const UpdateShippingAddress = ({ shippingAddress, error }) => {
         setPincodeError("");
       } else {
         setPincodeError(result.error || "Invalid PIN code");
+        setFormData(prev => ({
+          ...prev,
+          city: "",
+          country: "",
+        }));
       }
       setPincodeLoading(false);
+    } else {
+      setPincodeError("");
+      // Don't clear city/state while typing, only if length is 6 and invalid
     }
   };
 

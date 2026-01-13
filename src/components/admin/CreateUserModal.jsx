@@ -40,6 +40,25 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
 
         if (pincode.length === 6) {
             setPincodeLoading(true);
+
+            // Check if PIN code is serviceable
+            const storedPincodes = typeof window !== 'undefined' ? localStorage.getItem("deliveryPincodes") : null;
+            if (storedPincodes) {
+                const allowedPincodes = JSON.parse(storedPincodes);
+                const isServiceable = allowedPincodes.some(p => p.pincode === pincode);
+
+                if (!isServiceable) {
+                    setErrors(prev => ({ ...prev, zipCode: "Sorry currently we do not have service in your pincode. Hope to serve you soon" }));
+                    setFormData(prev => ({
+                        ...prev,
+                        city: "",
+                        country: "",
+                    }));
+                    setPincodeLoading(false);
+                    return;
+                }
+            }
+
             const result = await lookupPincode(pincode);
             if (result.success) {
                 setFormData(prev => ({
@@ -58,11 +77,6 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                 setErrors(prev => ({ ...prev, zipCode: "We do not deliver to this location." }));
             }
             setPincodeLoading(false);
-        } else if (pincode.length > 0 && pincode.length < 6) {
-            // Clear city/state while typing if it's not a full PIN yet, or keep previous?
-            // Better to keep previous until we know it's a new 6-digit PIN.
-            // But if they backspace, we might want to clear.
-            // For now, let's strictly validate on 6 chars.
         }
     };
 

@@ -74,6 +74,25 @@ export default function EditUserModal({ isOpen, onClose, customer, onUserUpdated
 
         if (pincode.length === 6) {
             setPincodeLoading(true);
+
+            // Check if PIN code is serviceable
+            const storedPincodes = typeof window !== 'undefined' ? localStorage.getItem("deliveryPincodes") : null;
+            if (storedPincodes) {
+                const allowedPincodes = JSON.parse(storedPincodes);
+                const isServiceable = allowedPincodes.some(p => p.pincode === pincode);
+
+                if (!isServiceable) {
+                    setErrors(prev => ({ ...prev, zipCode: "Sorry currently we do not have service in your pincode. Hope to serve you soon" }));
+                    setFormData(prev => ({
+                        ...prev,
+                        city: "",
+                        country: "",
+                    }));
+                    setPincodeLoading(false);
+                    return;
+                }
+            }
+
             const result = await lookupPincode(pincode);
             if (result.success) {
                 setFormData(prev => ({
