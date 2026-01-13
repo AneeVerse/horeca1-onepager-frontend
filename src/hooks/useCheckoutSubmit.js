@@ -147,6 +147,21 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
         zipCode: data.zipCode,
       };
 
+      // Pincode Validation
+      const pincode = data.zipCode;
+      const storedPincodes = typeof window !== 'undefined' ? localStorage.getItem("deliveryPincodes") : null;
+      if (storedPincodes) {
+        const allowedPincodes = JSON.parse(storedPincodes);
+        const isServiceable = allowedPincodes.some(p => p.pincode === pincode);
+
+        if (!isServiceable) {
+          setError("Sorry currently we do not have service in your pincode. Hope to serve you soon");
+          notifyError("Sorry currently we do not have service in your pincode. Hope to serve you soon");
+          setIsCheckoutSubmit(false);
+          return;
+        }
+      }
+
       // Calculate final total at submit time to ensure accuracy
       const cartTotalNum = parseFloat(cartTotal) || 0;
       const shippingNum = parseFloat(shippingCost) || 0;
@@ -457,7 +472,7 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
       // orderInfo.total is the final calculated total passed from submitHandler
       const orderTotal = parseFloat(orderInfo.total);
       const fallbackTotal = parseFloat(cartTotal) + parseFloat(shippingCost) - parseFloat(discountAmount);
-      const amountInRupees = Math.round(orderTotal > 0 ? orderTotal : fallbackTotal);
+      const amountInRupees = orderTotal > 0 ? orderTotal : fallbackTotal;
 
       console.log("[Frontend Razorpay] ========== Payment Start ==========");
       console.log("[Frontend Razorpay] Order Info Total:", orderInfo.total);

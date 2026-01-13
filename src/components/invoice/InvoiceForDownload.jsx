@@ -170,9 +170,9 @@ const InvoicePDF = ({ data, globalSetting }) => {
               <Text style={tw("text-xs text-gray-500 text-right w-40")}>
                 {data?.user_info?.address}
               </Text>
-              {data?.city && (
+              {data?.user_info?.city && (
                 <Text style={tw("text-xs text-gray-500 text-right")}>
-                  {data?.city}, {data?.country} {data?.zipCode}
+                  {data?.user_info?.city}, {data?.user_info?.country} {data?.user_info?.zipCode}
                 </Text>
               )}
             </View>

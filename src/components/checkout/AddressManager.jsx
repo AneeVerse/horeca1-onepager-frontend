@@ -106,7 +106,7 @@ const AddressManager = ({
                 const isServiceable = allowedPincodes.some(p => p.pincode === pincode);
 
                 if (!isServiceable) {
-                    setPincodeError("Sorry, we don't deliver to this PIN code yet.");
+                    setPincodeError("Sorry currently we do not have service in your pincode. Hope to serve you soon");
                     setPincodeLoading(false);
                     // Clear city/state if invalid
                     setAddressForm(prev => ({
