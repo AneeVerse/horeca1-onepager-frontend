@@ -63,10 +63,10 @@ const ContactUs = async () => {
               </h5>
               <p className="mb-0 text-base text-gray-600 leading-7">
                 <a
-                  href="mailto:saket@red.org.in"
+                  href="mailto:sales@horeca1.com"
                   className="text-primary-600 hover:text-primary-700 font-medium"
                 >
-                  saket@red.org.in
+                  sales@horeca1.com
                 </a>
               </p>
             </div>

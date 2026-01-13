@@ -23,7 +23,7 @@ const FooterContent = ({ storeCustomizationSetting }) => {
             </p>
             <p className="text-gray-500 text-sm">
               7710920002<br />
-              saket@red.org.in
+              sales@horeca1.com
             </p>
           </div>
 
