@@ -161,13 +161,23 @@ const SearchScreen = ({ products, attributes, categories, currency, initialFilte
                     onClick={() => handleCategoryClick(null, "All")}
                     className="flex flex-col items-center p-2 sm:p-3 cursor-pointer hover:bg-gray-50 rounded-md transition-colors"
                   >
-                    <Image
-                      src="/product-header.png"
-                      alt="All Products"
-                      width={32}
-                      height={32}
-                      className="sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain mb-1 sm:mb-2"
-                    />
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="sm:w-10 sm:h-10 lg:w-12 lg:h-12 object-contain mb-1 sm:mb-2 transform transition-transform duration-300"
+                    >
+                      {/* Top Left Rounded Square */}
+                      <rect x="3" y="3" width="7.5" height="7.5" rx="2.5" stroke="#374151" strokeWidth="2" />
+                      {/* Top Right Rounded Square */}
+                      <rect x="13.5" y="3" width="7.5" height="7.5" rx="2.5" stroke="#374151" strokeWidth="2" />
+                      {/* Bottom Left Rounded Square */}
+                      <rect x="3" y="13.5" width="7.5" height="7.5" rx="2.5" stroke="#374151" strokeWidth="2" />
+                      {/* Bottom Right Dot - Website Theme Color */}
+                      <circle cx="17.25" cy="17.25" r="4.5" fill="#018549" />
+                    </svg>
                     <span className="text-[10px] sm:text-xs lg:text-sm text-gray-700 font-medium leading-tight line-clamp-2 text-center hover:text-primary-600">
                       All
                     </span>

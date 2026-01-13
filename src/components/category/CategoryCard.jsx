@@ -51,7 +51,25 @@ const CategoryCard = ({ title, icon, nested, id, onClose }) => {
         className="flex flex-col items-center justify-start p-2 rounded-xl hover:bg-gray-50 transition-colors cursor-pointer group w-full"
       >
         <div className="w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center bg-slate-100 rounded-2xl mb-2 group-hover:bg-white group-hover:shadow-md transition-all overflow-hidden border border-gray-100">
-          {icon ? (
+          {id === null ? (
+            <svg
+              width="44"
+              height="44"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="transform group-hover:scale-110 transition-transform duration-300"
+            >
+              {/* Top Left Rounded Square */}
+              <rect x="3" y="3" width="7.5" height="7.5" rx="2.5" stroke="#374151" strokeWidth="2" />
+              {/* Top Right Rounded Square */}
+              <rect x="13.5" y="3" width="7.5" height="7.5" rx="2.5" stroke="#374151" strokeWidth="2" />
+              {/* Bottom Left Rounded Square */}
+              <rect x="3" y="13.5" width="7.5" height="7.5" rx="2.5" stroke="#374151" strokeWidth="2" />
+              {/* Bottom Right Dot - Website Theme Color */}
+              <circle cx="17.25" cy="17.25" r="4.5" fill="#018549" />
+            </svg>
+          ) : icon ? (
             <Image
               src={icon}
               width={100}
