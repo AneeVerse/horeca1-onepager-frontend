@@ -76,14 +76,13 @@ const useAddToCart = () => {
       prices: product.prices || { price: product.price, originalPrice: product.originalPrice },
     };
 
+    const availableStock = product?.variants?.length > 0
+      ? (product?.variant?.quantity || 0)
+      : (product?.stock || 0);
+
     if (result !== undefined) {
       // Item exists (and IDs match, so no migration needed)
-      if (
-        result?.quantity + quantityToAdd <=
-        (product?.variants?.length > 0
-          ? product?.variant?.quantity
-          : product?.stock)
-      ) {
+      if (result?.quantity + quantityToAdd <= availableStock) {
         addItem(cartItem, quantityToAdd);
         notifySuccess(`${quantityToAdd} ${product.title} added to cart!`);
       } else {
@@ -91,12 +90,7 @@ const useAddToCart = () => {
       }
     } else {
       // New item (or migrated item)
-      if (
-        quantityToAdd <=
-        (product?.variants?.length > 0
-          ? product?.variant?.quantity
-          : product?.stock)
-      ) {
+      if (quantityToAdd <= availableStock) {
         addItem(cartItem, quantityToAdd);
         notifySuccess(`${item} ${product.title} added to cart!`);
       } else {

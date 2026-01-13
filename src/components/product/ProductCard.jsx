@@ -116,6 +116,13 @@ const ProductCard = ({ product, attributes }) => {
       return;
     }
 
+    // Stock validation
+    const availableStock = product.stock || product.quantity || 0;
+    if (quantity > availableStock) {
+      notifyError("Insufficient stock!");
+      return;
+    }
+
     let shouldOpenModal = true; // Track if we should open modal after cart update
 
     const { slug, variants, categories, description, ...updatedProduct } =
@@ -223,8 +230,7 @@ const ProductCard = ({ product, attributes }) => {
       e.stopPropagation();
     }
     const newQuantity = cartItem.quantity + 1;
-    const availableStock = product.stock || product.quantity || 9999;
-
+    const availableStock = product.stock || product.quantity || 0;
     if (newQuantity > availableStock) {
       notifyError("Insufficient stock!");
       return;
@@ -328,7 +334,7 @@ const ProductCard = ({ product, attributes }) => {
   // Handle quantity input blur or Enter key
   const handleQuantityInputBlur = (cartItem) => {
     const inputValue = quantityInputs[cartItem.id] || cartItem.quantity.toString();
-    const availableStock = product.stock || product.quantity || 9999;
+    const availableStock = product.stock || product.quantity || 0;
     const minQty = product?.minOrderQuantity || cartItem?.minOrderQuantity || 1;
     let newQuantity = parseInt(inputValue, 10);
 

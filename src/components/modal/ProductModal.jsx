@@ -315,7 +315,11 @@ const ProductModal = ({
 
         if (item > availableStock) {
             notifyError("Insufficient stock!");
-            setItem(Math.max(minQty, availableStock));
+            if (availableStock <= 0) {
+                setItem(0);
+            } else {
+                setItem(Math.max(minQty, availableStock));
+            }
             return;
         }
 
