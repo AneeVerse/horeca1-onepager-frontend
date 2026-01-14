@@ -138,12 +138,13 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
       setError("");
 
       const userDetails = {
-        name: data.firstName,
+        name: data.lastName ? `${data.firstName} ${data.lastName}`.trim() : (data.firstName || "").trim(),
         contact: data.contact,
         email: data.email,
         address: data.address,
         country: data.country,
         city: data.city,
+        area: data.city, // Populate area with city as seen in other address forms
         zipCode: data.zipCode,
       };
 
@@ -225,15 +226,26 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
           fetch('http://127.0.0.1:7243/ingest/7c8b8306-06cf-4e61-b56f-4a46c890ce31', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ location: 'useCheckoutSubmit.js:203', message: 'Making API call to update profile', data: { customerId, userDetails, hasToken: !!token }, timestamp: Date.now(), sessionId: 'debug-session', runId: 'run1', hypothesisId: 'A' }) }).catch(() => { });
           // #endregion
 
+          // Construct strictly validated address data for the API (excluding email to match schema)
+          const addressData = {
+            name: data.lastName ? `${data.firstName} ${data.lastName}`.trim() : (data.firstName || "").trim(),
+            contact: data.contact.replace(/\D/g, ""), // formatted phone - strictly numeric
+            address: data.address,
+            country: data.country,
+            city: data.city,
+            area: data.city,
+            zipCode: data.zipCode.replace(/\D/g, ""), // Ensure clean numeric zip
+          };
+
           const response = await fetch(
-            `${baseURL}/customer/shipping/address/${customerId}`,
+            `${baseURL}/customer/shipping/address/${customerId}?id=`, // Append ?id= to match Add Address behavior
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
                 ...(token && { Authorization: `Bearer ${token}` }),
               },
-              body: JSON.stringify(userDetails),
+              body: JSON.stringify(addressData),
             }
           );
 

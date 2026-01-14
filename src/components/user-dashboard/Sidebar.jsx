@@ -58,10 +58,18 @@ const Sidebar = () => {
               if (response.ok) {
                 const customer = await response.json();
 
+                // Sanitize name - remove "undefined" strings that may have been saved incorrectly
+                let customerName = customer.name || parsed.name;
+                if (customerName && customerName.includes('undefined')) {
+                  // Try to use the default shipping address name instead
+                  const defaultAddr = customer.shippingAddresses?.find(a => a.isDefault) || customer.shippingAddresses?.[0];
+                  customerName = defaultAddr?.name || customerName.replace(/\s*undefined/g, '').trim();
+                }
+
                 // Update userInfo with fresh data (prioritize name from database)
                 const freshUserInfo = {
                   ...parsed,
-                  name: customer.name || parsed.name, // Use name from DB if available
+                  name: customerName, // Use sanitized name
                   email: customer.email || parsed.email, // Use email from DB if available
                   phone: customer.phone || parsed.phone,
                 };
@@ -268,8 +276,8 @@ const Sidebar = () => {
                   href={item.href}
                   key={item.title}
                   className={`inline-flex items-center rounded-md hover:bg-primary-50 py-3 px-4 text-sm font-medium w-full mb-1 transition-colors ${isActive
-                      ? "text-primary-600 bg-primary-100"
-                      : "text-gray-600"
+                    ? "text-primary-600 bg-primary-100"
+                    : "text-gray-600"
                     }`}
                 >
                   <item.icon

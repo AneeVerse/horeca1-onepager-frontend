@@ -39,7 +39,9 @@ const ProfileDropDown = () => {
               });
 
               if (response.ok) {
-                const customer = await response.json();
+                const text = await response.text();
+                if (!text) return; // Silent return if response is empty
+                const customer = JSON.parse(text);
 
                 // Update userInfo with fresh data (prioritize image from database)
                 const freshUserInfo = {

@@ -23,7 +23,7 @@ import { SidebarContext } from "@context/SidebarContext";
 import ImageWithFallback from "@components/common/ImageWithFallBack";
 import useCartPriceSync from "@hooks/useCartPriceSync";
 
-const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
+const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddress }) => {
   const { t } = useTranslation();
   const [mounted, setMounted] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
@@ -221,6 +221,7 @@ const CheckoutForm = ({ shippingAddress, hasShippingAddress }) => {
               {/* Address Manager Component */}
               <AddressManager
                 shippingAddress={shippingAddress}
+                shippingAddresses={shippingAddresses}
                 onAddressSelect={(address) => {
                   // Optionally handle address selection
                   console.log("Selected address:", address);

@@ -11,6 +11,7 @@ import { notifySuccess, notifyError } from "@utils/toast";
 
 const AddressManager = ({
     shippingAddress,
+    shippingAddresses = [],
     onAddressSelect,
     register,
     setValue,
@@ -38,10 +39,24 @@ const AddressManager = ({
         isDefault: false,
     });
 
-    // Initialize addresses from shippingAddress prop
+    // Initialize addresses from shippingAddresses array prop (new multi-address system)
     useEffect(() => {
-        if (shippingAddress && Object.keys(shippingAddress).length > 0) {
-            // Convert single address to array format
+        if (shippingAddresses && shippingAddresses.length > 0) {
+            // Use the full addresses array
+            const formattedAddresses = shippingAddresses.map(addr => ({
+                ...addr,
+                id: addr._id || addr.id || 'addr-' + Math.random().toString(36).substr(2, 9),
+            }));
+            setAddresses(formattedAddresses);
+
+            // Select the default address, or the first one
+            const defaultAddr = formattedAddresses.find(a => a.isDefault) || formattedAddresses[0];
+            setSelectedAddress(defaultAddr);
+
+            // Auto-fill form fields with the selected address
+            fillFormWithAddress(defaultAddr);
+        } else if (shippingAddress && Object.keys(shippingAddress).length > 0) {
+            // Fallback: Convert single address to array format (backward compatibility)
             const addressWithId = {
                 ...shippingAddress,
                 id: shippingAddress._id || 'default',
@@ -53,7 +68,7 @@ const AddressManager = ({
             // Auto-fill form fields with the selected address
             fillFormWithAddress(addressWithId);
         }
-    }, [shippingAddress]);
+    }, [shippingAddress, shippingAddresses]);
 
     // Live sync from Modal back to Background Form
     useEffect(() => {
@@ -141,6 +156,8 @@ const AddressManager = ({
 
         // Use live "fresh" value from the background form (watching keystrokes)
         const fullName = freshContactData?.firstName || "";
+        const contact = freshContactData?.contact || "";
+        const email = freshContactData?.email || "";
 
         setAddressForm({
             name: fullName,

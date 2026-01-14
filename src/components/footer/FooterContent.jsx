@@ -34,7 +34,7 @@ const FooterContent = ({ storeCustomizationSetting }) => {
             <div className="flex flex-wrap justify-center gap-x-6 gap-y-3 lg:hidden">
               <Link href="/pages/payment-policy" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">Payment Policy</Link>
               <Link href="/pages/terms-and-conditions" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">Terms & Conditions</Link>
-              <Link href="/pages/privacy-policy" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">Privacy Policy</Link>
+              <Link href="/privacy-policy" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">Privacy Policy</Link>
               <Link href="/user/dashboard" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">My Orders</Link>
               <Link href="/user/dashboard" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">Customer Support</Link>
               <Link href="/about-us" className="text-gray-700 hover:text-primary-600 transition-colors text-sm font-medium">About Us</Link>
@@ -45,9 +45,8 @@ const FooterContent = ({ storeCustomizationSetting }) => {
             <div className="hidden lg:grid grid-cols-3 gap-8">
               {/* Column 1 */}
               <div className="space-y-3">
-                <Link href="/pages/payment-policy" className="block text-gray-700 hover:text-primary-600 transition-colors text-sm">Payment Policy</Link>
-                <Link href="/pages/terms-and-conditions" className="block text-gray-700 hover:text-primary-600 transition-colors text-sm">Terms & Conditions</Link>
-                <Link href="/pages/privacy-policy" className="block text-gray-700 hover:text-primary-600 transition-colors text-sm">Privacy Policy</Link>
+                <Link href="/privacy-policy" className="block text-gray-700 hover:text-primary-600 transition-colors text-sm">Privacy Policy</Link>
+                <Link href="/terms-and-conditions" className="block text-gray-700 hover:text-primary-600 transition-colors text-sm">Terms & Conditions</Link>
               </div>
 
               {/* Column 2 */}
@@ -71,9 +70,9 @@ const FooterContent = ({ storeCustomizationSetting }) => {
         <div className={`border-t border-gray-200 py-6 flex flex-col items-center justify-center text-center lg:flex-row lg:justify-between lg:text-left text-xs text-gray-500 space-y-4 lg:space-y-0 lg:gap-4 ${isHomePage ? 'pt-6' : ''}`}>
           <p className="lg:order-1">© {new Date().getFullYear()} Horeca1. All rights reserved.</p>
           <div className="lg:order-2 flex items-center justify-center gap-3 lg:gap-4">
-            <Link href="/pages/privacy-policy" className="hover:text-primary-600 transition-colors">Privacy Policy</Link>
+            <Link href="/privacy-policy" className="hover:text-primary-600 transition-colors">Privacy Policy</Link>
             <span className="text-gray-300">|</span>
-            <Link href="/pages/terms-and-conditions" className="hover:text-primary-600 transition-colors">Terms of Service</Link>
+            <Link href="/terms-and-conditions" className="hover:text-primary-600 transition-colors">Terms of Service</Link>
           </div>
           <p className="lg:order-3 text-gray-400">Designed & Managed by <span className="text-primary-600 font-medium">Aneeverse</span></p>
         </div>

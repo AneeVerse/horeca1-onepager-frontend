@@ -93,9 +93,9 @@ const getShippingAddress = async ({ id = "" }) => {
     const userInfo = await getUserServerSession();
     // console.log("userInfo", userInfo);
     const response = await fetch(
-      `${baseURL}/customer/shipping/address/${userInfo?.id}?id=${id}`,
+      `${baseURL}/customer/shipping/address/${userInfo?.id || userInfo?._id}?id=${id}`,
       {
-        // cache: "no-cache",
+        cache: "no-store",
         headers: await getHeaders(),
       }
     );
@@ -105,10 +105,11 @@ const getShippingAddress = async ({ id = "" }) => {
 
     return {
       shippingAddress: res.shippingAddress,
+      shippingAddresses: res.shippingAddresses || [], // Return all addresses
     };
   } catch (error) {
     // console.log("error", error);
-    return { error: error.message };
+    return { error: error.message, shippingAddresses: [] };
   }
 };
 

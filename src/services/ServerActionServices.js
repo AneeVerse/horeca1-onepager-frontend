@@ -218,13 +218,6 @@ const addShippingAddress = async (userInfo, currentState, formState) => {
       zipCode: formState.get("zipCode"),
     });
 
-    // revalidatePath("/");
-    // return {
-    //   success: "Hello from success message.",
-    // };
-
-    // console.log("validatedFields", validatedFields);
-
     // If any form fields are invalid, return early
     if (!validatedFields.success) {
       return {
@@ -233,30 +226,25 @@ const addShippingAddress = async (userInfo, currentState, formState) => {
     }
 
     const shippingAddressId = formState.get("shippingAddressId") || "";
-
-    // console.log(
-    //   "shippingAddressId",
-    //   shippingAddressId,
-    //   "validatedFields",
-    //   validatedFields
-    // );
+    const customerId = userInfo?.id || userInfo?._id;
 
     const response = await fetch(
-      `${baseURL}/customer/shipping/address/${userInfo?.id}?id=${shippingAddressId}`,
+      `${baseURL}/customer/shipping/address/${customerId}?id=${shippingAddressId}`,
       {
         cache: "no-cache",
         method: "POST",
-        headers: getHeaders(),
+        headers: getHeaders(userInfo),
         body: JSON.stringify(validatedFields.data),
       }
     );
 
     const res = await handleResponse(response);
-    // console.log("res:::", res);
 
     revalidatePath("/user/shipping-address");
+    revalidatePath("/user/my-account");
+
     return {
-      success: "Shipping address added successfully!",
+      success: shippingAddressId ? "Address updated successfully!" : "New address added successfully!",
     };
   } catch (error) {
     return { error: error.message };

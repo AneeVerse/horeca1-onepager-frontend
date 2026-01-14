@@ -22,10 +22,10 @@ const Navbar = async ({ globalSetting, storeCustomization }) => {
 
       <TopNavbar storeCustomization={storeCustomization} />
 
-      <header as="header" className="bg-primary-500 shadow">
+      <header className="bg-primary-500 shadow">
         <div className="max-w-screen-2xl mx-auto px-3 sm:px-10 lg:divide-y lg:divide-gray-200">
           <div className="relative flex h-20 justify-between">
-            <div className="relative z-10 hidden sm:flex px-2 lg:px-0">
+            <div className="relative z-50 hidden sm:flex px-2 lg:px-0">
               <Link href="/" className="flex flex-shrink-0 items-center">
                 <img
                   className="h-8 w-auto filter brightness-0 invert"
