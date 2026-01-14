@@ -93,6 +93,9 @@ const AddressManager = ({
         setValue("city", address.city || "", { shouldValidate: true });
         setValue("country", address.country || "", { shouldValidate: true });
         setValue("zipCode", address.zipCode || "", { shouldValidate: true });
+        // Use either _id (from backend) or id (local/existing)
+        setValue("addressId", address._id || address.id || "", { shouldValidate: true });
+        setValue("isDefault", address.isDefault || false, { shouldValidate: true });
 
         if (onAddressSelect) {
             onAddressSelect(address);
@@ -281,6 +284,14 @@ const AddressManager = ({
             isDefault: addr.id === addressId,
         }));
         setAddresses(updatedAddresses);
+
+        // If the affected address is the currently selected one, update the form
+        const currentSelectedAffected = updatedAddresses.find(a => a.id === selectedAddress?.id);
+        if (currentSelectedAffected) {
+            setSelectedAddress(currentSelectedAffected);
+            fillFormWithAddress(currentSelectedAffected);
+        }
+
         notifySuccess("Default address updated");
     };
 
@@ -401,6 +412,8 @@ const AddressManager = ({
             <input type="hidden" {...register("city")} />
             <input type="hidden" {...register("country")} />
             <input type="hidden" {...register("zipCode")} />
+            <input type="hidden" {...register("addressId")} />
+            <input type="hidden" {...register("isDefault")} />
 
             {/* Address Modal */}
             <Transition show={isModalOpen} as={Fragment}>

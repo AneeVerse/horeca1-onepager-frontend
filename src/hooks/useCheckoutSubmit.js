@@ -235,10 +235,15 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
             city: data.city,
             area: data.city,
             zipCode: data.zipCode.replace(/\D/g, ""), // Ensure clean numeric zip
+            isDefault: data.isDefault || false,
           };
 
+          // Determine if we are using an existing address or a new one
+          // Local IDs start with 'addr' in AddressManager
+          const addressId = data.addressId && !data.addressId.toString().startsWith('addr') ? data.addressId : "";
+
           const response = await fetch(
-            `${baseURL}/customer/shipping/address/${customerId}?id=`, // Append ?id= to match Add Address behavior
+            `${baseURL}/customer/shipping/address/${customerId}?id=${addressId}`, // Pass ID to prevent duplicates
             {
               method: "POST",
               headers: {
