@@ -22,17 +22,191 @@ import CartDrawer from "@components/drawer/CartDrawer";
 import { SidebarContext } from "@context/SidebarContext";
 import ImageWithFallback from "@components/common/ImageWithFallBack";
 import useCartPriceSync from "@hooks/useCartPriceSync";
+import { getUserSession } from "@lib/auth-client";
+import Cookies from "js-cookie";
+import { getCookieOptions } from "@utils/cookieConfig";
+import { useRouter } from "next/navigation";
+import { sendOTP, verifyOTP, resendOTP } from "@services/OTPServices";
+import { notifySuccess, notifyError } from "@utils/toast";
+import { UserContext } from "@context/UserContext";
+import { baseURL } from "@services/CommonService";
 
 const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddress }) => {
   const { t } = useTranslation();
+  const router = useRouter();
+  const { dispatch } = useContext(UserContext);
   const [mounted, setMounted] = useState(false);
   const [showAllProducts, setShowAllProducts] = useState(false);
   const { cartDrawerOpen, setCartDrawerOpen } = useContext(SidebarContext);
 
+  // OTP verification states
+  const [isVerified, setIsVerified] = useState(false);
+  const [otpStep, setOtpStep] = useState("idle"); // "idle", "sending", "sent", "verifying"
+  const [otpValues, setOtpValues] = useState(["", "", "", ""]);
+  const [resendTimer, setResendTimer] = useState(0);
+  const [devOtp, setDevOtp] = useState(null);
+  const [localShippingAddresses, setLocalShippingAddresses] = useState(shippingAddresses);
+  const otpInputRefs = React.useRef([]);
+
+  // Sync with prop changes
+  useEffect(() => {
+    if (shippingAddresses?.length > 0) {
+      setLocalShippingAddresses(shippingAddresses);
+    }
+  }, [shippingAddresses]);
+
   // Sync cart prices when promo time changes
   useCartPriceSync();
 
-  useEffect(() => setMounted(true), []);
+  // Check authentication status on mount
+  useEffect(() => {
+    setMounted(true);
+    const session = getUserSession();
+    if (session?.token) {
+      setIsVerified(true);
+    }
+  }, []);
+
+  // Resend timer countdown
+  useEffect(() => {
+    if (resendTimer > 0) {
+      const timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [resendTimer]);
+
+  // Format phone number for API
+  const formatPhoneNumber = (phoneNumber) => {
+    const cleaned = (phoneNumber || "").replace(/\D/g, "");
+    if (cleaned.startsWith("0")) return cleaned.substring(1);
+    if (cleaned.length === 10) return `91${cleaned}`;
+    return cleaned;
+  };
+
+  // Handle Send OTP
+  const handleSendOTP = async () => {
+    const contactValue = getValues("contact");
+    if (!contactValue || contactValue.length < 10) {
+      notifyError("Please enter a valid 10-digit mobile number");
+      return;
+    }
+
+    setOtpStep("sending");
+    const formattedPhone = formatPhoneNumber(contactValue);
+
+    try {
+      const result = await sendOTP(formattedPhone);
+      if (result.success) {
+        notifySuccess("OTP sent to your mobile");
+        setOtpStep("sent");
+        setResendTimer(30);
+        if (result.otp) setDevOtp(result.otp); // Dev mode
+        setTimeout(() => otpInputRefs.current[0]?.focus(), 100);
+      } else {
+        notifyError(result.message || "Failed to send OTP");
+        setOtpStep("idle");
+      }
+    } catch (error) {
+      notifyError(error.message || "Failed to send OTP");
+      setOtpStep("idle");
+    }
+  };
+
+  // Handle OTP input change
+  const handleOTPChange = (index, value) => {
+    if (value && !/^\d$/.test(value)) return;
+    const newOtpValues = [...otpValues];
+    newOtpValues[index] = value;
+    setOtpValues(newOtpValues);
+    if (value && index < 3) otpInputRefs.current[index + 1]?.focus();
+    // Auto-verify when all 4 digits entered
+    if (newOtpValues.every((val) => val !== "") && newOtpValues.length === 4) {
+      handleVerifyOTP(newOtpValues.join(""));
+    }
+  };
+
+  // Handle OTP verification
+  const handleVerifyOTP = async (otp) => {
+    if (!otp || otp.length !== 4) return;
+
+    setOtpStep("verifying");
+    const contactValue = getValues("contact");
+    const formattedPhone = formatPhoneNumber(contactValue);
+
+    try {
+      const result = await verifyOTP(formattedPhone, otp);
+      if (result.success && result.userInfo) {
+        const user = result.userInfo;
+        // Robust name formatting to avoid "undefined"
+        const fullName = user.name ||
+          (user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` :
+            user.firstName || user.lastName || "");
+
+        const userInfoForCookie = {
+          ...user,
+          id: user._id || user.id,
+          name: fullName
+        };
+
+        Cookies.set("userInfo", JSON.stringify(userInfoForCookie), getCookieOptions(30));
+        dispatch({ type: "USER_LOGIN", payload: userInfoForCookie });
+
+        // Pre-fill form fields immediately before refresh
+        if (fullName) setValue("firstName", fullName);
+        if (user.email) setValue("email", user.email);
+
+        // FETCH ADDRESSES INSTANTLY
+        try {
+          const customerId = user._id || user.id;
+          const addressResponse = await fetch(`${baseURL}/customer/shipping/address/${customerId}?id=`, {
+            headers: {
+              ...(user.token && { Authorization: `Bearer ${user.token}` }),
+            }
+          });
+          const addressData = await addressResponse.json();
+          if (addressData.shippingAddresses) {
+            setLocalShippingAddresses(addressData.shippingAddresses);
+          }
+        } catch (err) {
+          console.error("Instant address fetch failed:", err);
+        }
+
+        notifySuccess("Mobile verified successfully!");
+        setIsVerified(true);
+      } else {
+        notifyError(result.error || "Invalid OTP");
+        setOtpValues(["", "", "", ""]);
+        otpInputRefs.current[0]?.focus();
+        setOtpStep("sent");
+      }
+    } catch (error) {
+      notifyError(error.message || "Failed to verify OTP");
+      setOtpValues(["", "", "", ""]);
+      otpInputRefs.current[0]?.focus();
+      setOtpStep("sent");
+    }
+  };
+
+  // Handle Resend OTP
+  const handleResendOTP = async () => {
+    if (resendTimer > 0) return;
+    const contactValue = getValues("contact");
+    const formattedPhone = formatPhoneNumber(contactValue);
+
+    try {
+      const result = await resendOTP(formattedPhone);
+      if (result.success) {
+        notifySuccess("OTP sent again");
+        setResendTimer(30);
+        setOtpValues(["", "", "", ""]);
+        otpInputRefs.current[0]?.focus();
+      } else {
+        notifyError(result.message || "Failed to resend OTP");
+      }
+    } catch (error) {
+      notifyError(error.message || "Failed to resend OTP");
+    }
+  };
 
   const {
     error,
@@ -165,7 +339,6 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
       {/* checkout form */}
       <div className="md:w-full lg:w-3/5 flex h-full flex-col order-2 sm:order-1 lg:order-1">
         <div className="mt-5 md:mt-0 md:col-span-2">
-          {/* <Elements stripe={stripePromise}> */}
           <form onSubmit={handleSubmit(submitHandler)}>
             <div className="form-group">
               <h2 className="font-semibold text-base text-gray-700 pb-3">
@@ -183,6 +356,7 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
                   <Error errorMessage={errors.firstName} />
                 </div>
 
+                {/* Mobile Number with Inline OTP */}
                 <div className="col-span-6 sm:col-span-3">
                   <Label label="Mobile Number" />
                   <div className="relative">
@@ -196,10 +370,100 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
                       maxLength={10}
                       placeholder="10-digit mobile"
                       className="py-2 pl-12 pr-4"
-                      readOnly
+                      readOnly={isVerified}
+                      disabled={otpStep === "sending" || otpStep === "verifying"}
                     />
                   </div>
-                  <p className="text-xs text-gray-400 mt-1">Verified via OTP</p>
+
+                  {/* OTP Verification Section - Inline */}
+                  {!isVerified ? (
+                    <div className="mt-2">
+                      {otpStep === "idle" && (
+                        <button
+                          type="button"
+                          onClick={handleSendOTP}
+                          className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 transition-colors"
+                        >
+                          Send OTP to verify →
+                        </button>
+                      )}
+
+                      {otpStep === "sending" && (
+                        <p className="text-sm text-gray-500 flex items-center gap-2">
+                          <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                          </svg>
+                          Sending OTP...
+                        </p>
+                      )}
+
+                      {(otpStep === "sent" || otpStep === "verifying") && (
+                        <div className="space-y-2">
+                          <p className="text-xs text-gray-500">Enter 4-digit OTP:</p>
+                          <div className="flex gap-2">
+                            {otpValues.map((value, index) => (
+                              <input
+                                key={index}
+                                ref={(el) => (otpInputRefs.current[index] = el)}
+                                type="text"
+                                inputMode="numeric"
+                                maxLength={1}
+                                value={value}
+                                onChange={(e) => handleOTPChange(index, e.target.value)}
+                                onKeyDown={(e) => {
+                                  if (e.key === "Backspace" && !otpValues[index] && index > 0) {
+                                    otpInputRefs.current[index - 1]?.focus();
+                                  }
+                                }}
+                                disabled={otpStep === "verifying"}
+                                className="w-10 h-10 text-center text-lg font-bold border-2 border-gray-200 rounded-lg focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 outline-none transition-all disabled:opacity-50"
+                              />
+                            ))}
+                            {otpStep === "verifying" && (
+                              <div className="flex items-center ml-2">
+                                <svg className="animate-spin h-5 w-5 text-emerald-600" viewBox="0 0 24 24">
+                                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                                </svg>
+                              </div>
+                            )}
+                          </div>
+                          {devOtp && (
+                            <p className="text-xs text-yellow-600 bg-yellow-50 px-2 py-1 rounded inline-block">Dev OTP: {devOtp}</p>
+                          )}
+                          <div className="flex items-center gap-2">
+                            {resendTimer > 0 ? (
+                              <p className="text-xs text-gray-400">Resend in {resendTimer}s</p>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={handleResendOTP}
+                                className="text-xs text-emerald-600 hover:text-emerald-700 font-medium"
+                              >
+                                Resend OTP
+                              </button>
+                            )}
+                            <span className="text-gray-300">|</span>
+                            <button
+                              type="button"
+                              onClick={() => { setOtpStep("idle"); setOtpValues(["", "", "", ""]); }}
+                              className="text-xs text-gray-500 hover:text-gray-700"
+                            >
+                              Change number
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <p className="text-xs text-emerald-600 mt-1 flex items-center gap-1">
+                      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      Verified via OTP
+                    </p>
+                  )}
                   <Error errorMessage={errors.contact} />
                 </div>
 
@@ -218,20 +482,26 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
             </div>
 
             <div className="form-group mt-12">
-              {/* Address Manager Component */}
-              <AddressManager
-                shippingAddress={shippingAddress}
-                shippingAddresses={shippingAddresses}
-                onAddressSelect={(address) => {
-                  // Optionally handle address selection
-                  console.log("Selected address:", address);
-                }}
-                register={register}
-                setValue={setValue}
-                getValues={getValues}
-                freshContactData={freshContactData}
-                errors={errors}
-              />
+              {/* Address Manager Component - Only show when verified */}
+              {isVerified ? (
+                <AddressManager
+                  shippingAddress={shippingAddress}
+                  shippingAddresses={localShippingAddresses}
+                  onAddressSelect={(address) => {
+                    console.log("Selected address:", address);
+                  }}
+                  register={register}
+                  setValue={setValue}
+                  getValues={getValues}
+                  freshContactData={freshContactData}
+                  errors={errors}
+                />
+              ) : (
+                <div className="bg-gray-50 rounded-lg border border-dashed border-gray-200 p-6">
+                  <h3 className="font-semibold text-base text-gray-700 pb-2">02. Delivery Address</h3>
+                  <p className="text-sm text-gray-500">Please verify your mobile number to add/select delivery address</p>
+                </div>
+              )}
 
               {/* Hidden defaults: no delivery selection, always Razorpay */}
               <input type="hidden" value="Standard Delivery" {...register("shippingOption")} />
@@ -241,12 +511,16 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
             <div className="mt-10">
               <Button
                 type="submit"
-                disabled={isEmpty || isCheckoutSubmit}
+                disabled={isEmpty || isCheckoutSubmit || !isVerified}
                 isLoading={isCheckoutSubmit}
-                className="w-full h-12 rounded-lg bg-[#018549] hover:bg-[#016d3b] text-white font-bold shadow-md hover:shadow-lg"
+                className="w-full h-12 rounded-lg bg-[#018549] hover:bg-[#016d3b] text-white font-bold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {isCheckoutSubmit ? (
                   "Processing..."
+                ) : !isVerified ? (
+                  <span className="flex items-center justify-center">
+                    Verify Mobile to Checkout
+                  </span>
                 ) : (
                   <span className="flex items-center justify-center">
                     Checkout
@@ -256,10 +530,8 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
               </Button>
             </div>
           </form>
-          {/* </Elements> */}
         </div>
-      </div >
-
+      </div>
       {/* Cart Drawer */}
       < CartDrawer
         open={cartDrawerOpen}
@@ -444,11 +716,9 @@ const CheckoutForm = ({ shippingAddress, shippingAddresses = [], hasShippingAddr
             </div>
           </div>
         </div>
-      </div >
-    </div >
+      </div>
+    </div>
   );
 };
 
 export default CheckoutForm;
-
-

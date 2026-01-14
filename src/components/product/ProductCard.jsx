@@ -108,13 +108,7 @@ const ProductCard = ({ product, attributes }) => {
   };
 
   const handleAddItem = (p, quantity = 1, isBulkButton = false) => {
-    // Check if user is authenticated before adding to cart
-    const userInfoCookie = Cookies.get("userInfo");
-    if (!userInfoCookie) {
-      // Redirect to login page with current page as redirectUrl
-      router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
-      return;
-    }
+    // NOTE: We allow guests to add to cart - login will happen at checkout
 
     // Stock validation
     const availableStock = product.stock || product.quantity || 0;
@@ -603,9 +597,13 @@ const ProductCard = ({ product, attributes }) => {
                 </span>
               </div>
             ) : (
-              <span className="text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold text-[#065f46]">
+              <span className={`text-[10px] min-[300px]:text-xs min-[345px]:text-sm sm:text-base font-bold ${isPromoTime ? 'text-[#be123c]' : 'text-[#065f46]'}`}>
                 {currency}{product?.isCombination ? product?.variants[0]?.price : product?.prices?.price}
-                {product?.unit && <span className="text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal text-[#22c55e]">/{product.unit}</span>}
+                {product?.unit && (
+                  <span className={`text-[7px] min-[300px]:text-[8px] min-[345px]:text-[10px] sm:text-xs font-normal ${isPromoTime ? 'text-[#fda4af]' : 'text-[#22c55e]'}`}>
+                    /{product.unit}
+                  </span>
+                )}
               </span>
             )}
           </div>

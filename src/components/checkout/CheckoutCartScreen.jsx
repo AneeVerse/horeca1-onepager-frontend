@@ -114,14 +114,9 @@ const CheckoutCartScreen = () => {
     if (items?.length <= 0) {
       closeCartDrawer();
     } else {
-      if (!userInfo) {
-        // Redirect to login page with returnUrl query parameter
-        router.push(`/auth/login?redirectUrl=checkout`);
-        closeCartDrawer();
-      } else {
-        router.push("/checkout");
-        closeCartDrawer();
-      }
+      // Always go to checkout - guests will verify OTP inline on checkout page
+      router.push("/checkout");
+      closeCartDrawer();
     }
   };
 

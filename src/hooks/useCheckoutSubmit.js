@@ -27,7 +27,8 @@ import useUtilsFunction from "./useUtilsFunction";
 import { baseURL } from "@services/CommonService";
 
 const useCheckoutSubmit = ({ shippingAddress }) => {
-  const { dispatch } = useContext(UserContext);
+  const { state, dispatch } = useContext(UserContext);
+  const { userInfo } = state;
 
   const [error, setError] = useState("");
   const [total, setTotal] = useState("");
@@ -49,7 +50,6 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
   const { error: razorPayError, isLoading, Razorpay } = useRazorpay();
   const { isEmpty, emptyCart, items, cartTotal } = useCart();
 
-  const userInfo = getUserSession();
   const { globalSetting, storeSetting, storeCustomization } = useSetting();
   const { showDateFormat, showingTranslateValue } = useUtilsFunction();
 
@@ -377,14 +377,22 @@ const useCheckoutSubmit = ({ shippingAddress }) => {
 
       // Clear data before redirect
       emptyCart();
+
+      // Manual fallback to ensure react-use-cart is cleared from localStorage
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("react-use-cart");
+      }
+
       Cookies.remove("couponInfo");
 
       notifySuccess(
         "Your Order Confirmed! The invoice will be emailed to you shortly."
       );
 
-      // Hard redirect to order page for maximum reliability
-      window.location.replace(`/order/${orderResponse?._id}`);
+      // Give a tiny bit of time for state/storage to sync before hard redirect
+      setTimeout(() => {
+        window.location.replace(`/order/${orderResponse?._id}`);
+      }, 500);
 
       setIsCheckoutSubmit(false);
     } catch (err) {

@@ -1,6 +1,6 @@
 import useUtilsFunction from "@hooks/useUtilsFunction";
 
-const Price = ({ product, price, card, originalPrice, currency, showUnit = false }) => {
+const Price = ({ product, price, card, originalPrice, currency, showUnit = false, isPromoTime = false }) => {
   const { getNumberTwo } = useUtilsFunction();
 
   // From "second design" logic
@@ -22,23 +22,25 @@ const Price = ({ product, price, card, originalPrice, currency, showUnit = false
     <>
       <div className="product-price font-bold">
         <span
-          className={`${
-            card
-              ? "inline-block text-base text-gray-900"
-              : "inline-block text-xl"
-          }`}
+          className={`${card
+              ? `inline-block text-base ${isPromoTime ? 'text-[#be123c]' : 'text-gray-900'}`
+              : `inline-block text-xl ${isPromoTime ? 'text-[#be123c]' : 'text-gray-900'}`
+            }`}
         >
           {currency}
           {finalPrice}
-          {showUnit && unit && <span className="text-sm font-normal text-gray-500">/{unit}</span>}
+          {showUnit && unit && (
+            <span className={`text-sm font-normal ${isPromoTime ? 'text-[#fda4af]' : 'text-gray-500'}`}>
+              /{unit}
+            </span>
+          )}
         </span>
         {discountAmount > 0 && (
           <span
-            className={
-              card
-                ? "sm:text-sm font-normal text-base text-gray-400 ml-1"
-                : "text-sm font-normal text-gray-400 ml-1"
-            }
+            className={`${card
+                ? `sm:text-sm font-normal text-base ${isPromoTime ? 'text-[#fda4af]/70' : 'text-gray-400'} ml-1`
+                : `text-sm font-normal ${isPromoTime ? 'text-[#fda4af]/70' : 'text-gray-400'} ml-1`
+              } line-through`}
           >
             {currency}
             {baseOriginalPrice}

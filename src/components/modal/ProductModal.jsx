@@ -260,13 +260,7 @@ const ProductModal = ({
     useEffect(() => {
         if (!initialized || !modalOpen || (!product?._id && !product?.id) || item < 0) return;
 
-        // Check authentication before adding/updating cart
-        const userInfoCookie = Cookies.get("userInfo");
-        if (!userInfoCookie) {
-            // Redirect to login page with current page as redirectUrl
-            router.push(`/auth/otp-login?redirectUrl=${encodeURIComponent(pathname)}`);
-            return;
-        }
+        // NOTE: We allow guests to add to cart - login will happen at checkout
 
         // Check if product has variants and if all are selected
         const hasVariants = product?.variants?.length > 0;

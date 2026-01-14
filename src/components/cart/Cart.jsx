@@ -104,17 +104,9 @@ const Cart = ({ setOpen, currency }) => {
     if (items?.length <= 0) {
       setOpen(false);
     } else {
-      // Re-check user session right before redirect
-      const currentUserInfo = getUserSession();
-
-      if (!currentUserInfo) {
-        // Redirect to login with redirectUrl parameter to return to checkout after login
-        router.push(`/auth/login?redirectUrl=/checkout`, { scroll: true });
-        // Don't close cart - let it stay open so user can continue after login
-      } else {
-        router.push("/checkout");
-        setOpen(false);
-      }
+      // Always go to checkout - guests will verify OTP inline on checkout page
+      router.push("/checkout");
+      setOpen(false);
     }
   };
 

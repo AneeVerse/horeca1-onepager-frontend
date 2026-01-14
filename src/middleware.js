@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
 
 const locales = ["en", "en-US", "es", "fr", "nl-NL"];
-const protectedRoutes = ["/user", "/order", "/checkout"];
+// Checkout is NOT protected - guests can access it and verify OTP inline
+const protectedRoutes = ["/user", "/order"];
 
 export async function middleware(request) {
   const { pathname } = request.nextUrl;
@@ -31,7 +32,7 @@ export async function middleware(request) {
   if (isProtected && !pathAfterLocale.startsWith("/auth")) {
     // Simple cookie-based auth check - userInfo cookie set by OTP login
     const userInfoCookie = request.cookies.get("userInfo");
-    
+
     // Parse and validate the cookie
     let isAuthenticated = false;
     if (userInfoCookie?.value) {
@@ -44,7 +45,7 @@ export async function middleware(request) {
         isAuthenticated = false;
       }
     }
-    
+
     if (!isAuthenticated) {
       // Redirect to OTP login
       const loginUrl = new URL(`/auth/otp-login`, request.url);
@@ -58,6 +59,7 @@ export async function middleware(request) {
 
 export const config = {
   // Only run middleware on protected paths to reduce edge crashes/timeouts
-  matcher: ["/user/:path*", "/order/:path*", "/checkout/:path*"],
+  // Checkout is NOT protected - handled inline with OTP verification
+  matcher: ["/user/:path*", "/order/:path*"],
 };
 
