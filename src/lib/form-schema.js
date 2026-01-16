@@ -35,6 +35,10 @@ const updateProfileFormSchema = z.object({
     .string()
     .min(2, { message: "Name must be at least 2 characters long." })
     .trim(),
+  outletName: z
+    .string()
+    .min(2, { message: "Outlet name must be at least 2 characters long." })
+    .trim(),
   address: z
     .union([z.string().min(5, { message: "Address must be at least 5 characters long." }), z.literal("")])
     .optional(),

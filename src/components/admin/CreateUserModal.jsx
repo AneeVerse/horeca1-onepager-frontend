@@ -7,6 +7,7 @@ import { lookupPincode } from "@utils/pincode";
 export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
     const [formData, setFormData] = useState({
         name: "",
+        outletName: "",
         phone: "",
         email: "",
         address: "",
@@ -87,6 +88,10 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
         if (!formData.name.trim()) {
             newErrors.name = "Name is required";
         }
+        // Outlet Name validation (mandatory)
+        if (!formData.outletName.trim()) {
+            newErrors.outletName = "Outlet name is required";
+        }
 
         // Phone validation (mandatory)
         if (!formData.phone.trim()) {
@@ -129,6 +134,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                 },
                 body: JSON.stringify({
                     name: formData.name.trim(),
+                    outletName: formData.outletName.trim(),
                     phone: formData.phone.trim(),
                     email: formData.email.trim() || undefined,
                     address: formData.address.trim() || undefined,
@@ -147,6 +153,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
             // Reset form
             setFormData({
                 name: "",
+                outletName: "",
                 phone: "",
                 email: "",
                 address: "",
@@ -175,6 +182,7 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
         if (!loading) {
             setFormData({
                 name: "",
+                outletName: "",
                 phone: "",
                 email: "",
                 address: "",
@@ -269,23 +277,45 @@ export default function CreateUserModal({ isOpen, onClose, onUserCreated }) {
                             </div>
                         </div>
 
-                        {/* Email Field */}
-                        <div className="mb-4">
-                            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                                Email <span className="text-gray-400 text-xs">(Optional)</span>
-                            </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                disabled={loading}
-                                className={`block w-full rounded-md border ${errors.email ? "border-red-300" : "border-gray-300"
-                                    } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
-                                placeholder="Enter email address"
-                            />
-                            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                        {/* Email and Outlet Name Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                            {/* Email Field */}
+                            <div>
+                                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Email <span className="text-gray-400 text-xs">(Optional)</span>
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    className={`block w-full rounded-md border ${errors.email ? "border-red-300" : "border-gray-300"
+                                        } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                                    placeholder="Enter email address"
+                                />
+                                {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+                            </div>
+
+                            {/* Outlet Name Field */}
+                            <div>
+                                <label htmlFor="outletName" className="block text-sm font-medium text-gray-700 mb-1">
+                                    Outlet Name <span className="text-red-500">*</span>
+                                </label>
+                                <input
+                                    type="text"
+                                    id="outletName"
+                                    name="outletName"
+                                    value={formData.outletName}
+                                    onChange={handleChange}
+                                    disabled={loading}
+                                    className={`block w-full rounded-md border ${errors.outletName ? "border-red-300" : "border-gray-300"
+                                        } px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:bg-gray-100 disabled:cursor-not-allowed`}
+                                    placeholder="Enter outlet name"
+                                />
+                                {errors.outletName && <p className="mt-1 text-sm text-red-600">{errors.outletName}</p>}
+                            </div>
                         </div>
 
                         <div className="border-t border-gray-100 my-4 pt-4">

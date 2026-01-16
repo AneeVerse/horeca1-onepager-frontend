@@ -6,12 +6,12 @@ const apiBase = baseURL.endsWith('/v1') ? baseURL : `${baseURL}/v1`;
 export async function POST(request) {
     try {
         const body = await request.json();
-        const { name, phone, email, address, city, country, zipCode } = body;
+        const { name, outletName, phone, email, address, city, country, zipCode } = body;
 
         // Validate required fields
-        if (!name || !phone) {
+        if (!name || !phone || !outletName) {
             return NextResponse.json(
-                { message: "Name and phone are required fields" },
+                { message: "Name, phone and outlet name are required fields" },
                 { status: 400 }
             );
         }
@@ -24,6 +24,7 @@ export async function POST(request) {
             },
             body: JSON.stringify({
                 name,
+                outletName,
                 phone,
                 email: email || undefined,
                 address: address || undefined,

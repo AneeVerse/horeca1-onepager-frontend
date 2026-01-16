@@ -228,7 +228,12 @@ export default function CustomersPage() {
                             <UserIcon className="h-6 w-6" />
                           </div>
                         )}
-                        <div className="font-semibold">{customer.name || "N/A"}</div>
+                        <div className="flex flex-col">
+                          <div className="font-semibold text-gray-900">{customer.name || "N/A"}</div>
+                          {customer.outletName && (
+                            <div className="text-xs font-medium text-blue-600">{customer.outletName}</div>
+                          )}
+                        </div>
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

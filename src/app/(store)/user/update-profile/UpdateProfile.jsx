@@ -100,6 +100,7 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
           user: {
             ...session?.user,
             name: state.user.name,
+            outletName: state.user.outletName,
             address: state.user.address,
             phone: state.user.phone,
             image: state.user.image,
@@ -116,6 +117,7 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
       const updatedUserInfo = {
         ...userInfo,
         name: state.user.name,
+        outletName: state.user.outletName,
         address: state.user.address,
         phone: state.user.phone,
         image: state.user.image,
@@ -197,6 +199,20 @@ const UpdateProfile = ({ storeCustomizationSetting }) => {
                           />
 
                           <Error errorName={state?.errors?.name?.join(" ")} />
+                        </div>
+
+                        <div className="col-span-6 sm:col-span-3">
+                          <InputAreaTwo
+                            label="Outlet Name"
+                            name="outletName"
+                            type="text"
+                            placeholder="Enter outlet name"
+                            defaultValue={displayUserInfo?.outletName || ""}
+                          />
+
+                          <Error
+                            errorName={state?.errors?.outletName?.join(" ")}
+                          />
                         </div>
 
                         <div className="col-span-6 sm:col-span-3">

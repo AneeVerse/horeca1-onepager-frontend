@@ -10,7 +10,7 @@ export async function PUT(request, { params }) {
         const { id } = resolvedParams;
 
         const body = await request.json();
-        const { name, phone, email, address, city, country, zipCode } = body;
+        const { name, outletName, phone, email, address, city, country, zipCode } = body;
 
         if (!id) {
             return NextResponse.json(
@@ -20,9 +20,9 @@ export async function PUT(request, { params }) {
         }
 
         // Validate required fields
-        if (!name || !phone) {
+        if (!name || !phone || !outletName) {
             return NextResponse.json(
-                { message: "Name and phone are required fields" },
+                { message: "Name, phone and outlet name are required fields" },
                 { status: 400 }
             );
         }
@@ -35,6 +35,7 @@ export async function PUT(request, { params }) {
             },
             body: JSON.stringify({
                 name,
+                outletName,
                 phone,
                 email: email || undefined,
                 address: address || undefined,
@@ -60,6 +61,7 @@ export async function PUT(request, { params }) {
                 customer: {
                     _id: data._id,
                     name: data.name,
+                    outletName: data.outletName,
                     phone: data.phone,
                     email: data.email,
                     address: data.address,

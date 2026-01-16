@@ -70,6 +70,7 @@ const Sidebar = () => {
                 const freshUserInfo = {
                   ...parsed,
                   name: customerName, // Use sanitized name
+                  outletName: customer.outletName || parsed.outletName,
                   email: customer.email || parsed.email, // Use email from DB if available
                   phone: customer.phone || parsed.phone,
                 };
@@ -195,6 +196,9 @@ const Sidebar = () => {
               <h5 className="text-left text-md font-semibold leading-none text-gray-800 line-h">
                 {displayName}
               </h5>
+              {userInfo?.outletName && (
+                <p className="text-xs font-medium text-primary-600 mt-0.5">{userInfo.outletName}</p>
+              )}
               <p className="text-sm text-gray-500">{displayEmail}</p>
             </div>
           </div>
@@ -262,6 +266,9 @@ const Sidebar = () => {
                   <h5 className="text-lg text-left font-semibold leading-none text-gray-800 line-h">
                     {displayName}
                   </h5>
+                  {userInfo?.outletName && (
+                    <p className="text-xs font-bold text-primary-600 mb-0.5">{userInfo.outletName}</p>
+                  )}
                   <p className="text-sm text-gray-500">{displayEmail}</p>
                 </div>
               </div>

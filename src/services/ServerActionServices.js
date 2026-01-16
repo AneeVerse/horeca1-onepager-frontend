@@ -172,6 +172,7 @@ const updateCustomer = async (userInfo, currentState, formState) => {
   try {
     const validatedFields = updateProfileFormSchema.safeParse({
       name: formState.get("name"),
+      outletName: formState.get("outletName"),
       address: formState.get("address"),
       phone: formState.get("phone"),
       email: formState.get("email"),
