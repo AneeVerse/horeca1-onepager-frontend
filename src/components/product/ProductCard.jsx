@@ -6,17 +6,21 @@ import {
   IoRemove,
   IoExpand,
   IoBagAdd,
+  IoArrowRedoOutline,
+  IoLogoWhatsapp,
+  IoMailOutline,
+  IoCopyOutline,
 } from "react-icons/io5";
 import { useCart } from "react-use-cart";
 import { Expand } from "lucide-react";
 import dynamic from "next/dynamic";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Cookies from "js-cookie";
 
 //internal import
 import Price from "@components/common/Price";
 import Stock from "@components/common/Stock";
-import { notifyError } from "@utils/toast";
+import { notifyError, notifySuccess } from "@utils/toast";
 import { getTaxableRate } from "@utils/pricing";
 import Rating from "@components/common/Rating";
 import useAddToCart from "@hooks/useAddToCart";
@@ -34,10 +38,13 @@ const ProductCard = ({ product, attributes }) => {
   const { globalSetting } = useSetting();
   const { setCartDrawerOpen } = useContext(SidebarContext);
   const [isPromoTime, setIsPromoTime] = useState(false);
+  const [shareMenuOpen, setShareMenuOpen] = useState(false);
+  const shareMenuRef = useRef(null);
   const pendingAddRef = useRef(null); // Track pending add operation
   const [quantityInputs, setQuantityInputs] = useState({}); // Track input values for each item
   const router = useRouter();
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   const { items, addItem, updateItemQuantity, removeItem, inCart } = useCart();
   const { handleIncreaseQuantity } = useAddToCart();
@@ -45,6 +52,22 @@ const ProductCard = ({ product, attributes }) => {
   const { checkIsPromoTime } = require("@utils/date");
 
   const currency = globalSetting?.default_currency || "₹";
+
+  // Handle auto-opening modal from URL query param
+  useEffect(() => {
+    const productId = searchParams.get("product");
+    if (productId === (product._id || product.id)) {
+      setModalOpen(true);
+    }
+  }, [searchParams, product._id, product.id]);
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    // Remove product param from URL without refreshing
+    const params = new URLSearchParams(searchParams.toString());
+    params.delete("product");
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+  };
 
   // Check if current time is promo time (6pm-9am IST)
   useEffect(() => {
@@ -414,20 +437,68 @@ const ProductCard = ({ product, attributes }) => {
     }
   };
 
-  const handleModalOpen = (event, id) => {
-    setModalOpen(event);
+  // Handle modal opening/closing and URL updates
+  const handleModalOpen = (isOpen) => {
+    if (!isOpen) {
+      setModalOpen(false);
+      // Remove product param from URL without refreshing
+      const params = new URLSearchParams(searchParams.toString());
+      if (params.has("product")) {
+        params.delete("product");
+        router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+      }
+    } else {
+      setModalOpen(true);
+    }
   };
 
-  // Close on outside click
+  // Close modal/share menu on outside click
   useEffect(() => {
     function handleClickOutside(e) {
       if (modalRef.current && !modalRef.current.contains(e.target)) {
-        setModalOpen(false);
+        handleModalOpen(false);
+      }
+      if (shareMenuRef.current && !shareMenuRef.current.contains(e.target)) {
+        setShareMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [setModalOpen]);
+  }, []);
+
+  // Share functionality
+  const getProductUrl = () => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("product", product._id || product.id);
+      return `${window.location.origin}${pathname}?${params.toString()}`;
+    }
+    return "";
+  };
+
+  const handleShare = (platform) => {
+    const url = getProductUrl();
+    const title = showingTranslateValue(product?.title);
+    const text = `Check out this product: ${title}`;
+
+    switch (platform) {
+      case "whatsapp":
+        window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + url)}`, "_blank");
+        break;
+      case "email":
+        window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + "\n\n" + url)}`;
+        break;
+      case "copy":
+        navigator.clipboard.writeText(url);
+        notifySuccess("Link copied to clipboard!");
+        break;
+      default:
+        if (navigator.share) {
+          navigator.share({ title, text, url }).catch(console.error);
+        }
+    }
+    setShareMenuOpen(false);
+  };
 
   // console.log("product", product);
 
@@ -439,23 +510,16 @@ const ProductCard = ({ product, attributes }) => {
           modalOpen={modalOpen}
           attributes={attributes}
           globalSetting={globalSetting}
-          setModalOpen={setModalOpen}
+          setModalOpen={handleModalOpen}
         />
       )}
 
       <div className={`group relative flex flex-col overflow-hidden rounded-sm min-[300px]:rounded-md min-[345px]:rounded-lg sm:rounded-xl border bg-white transition-all duration-100 ease-in-out w-full h-full ${isPromoTime ? 'border-[#fda4af] hover:border-[#fb7185]' : 'border-[#86efac] hover:border-[#22c55e]'}`}>
-        <div className="w-full flex justify-between">
-          <Discount product={product} />
-        </div>
         <div className="relative w-full aspect-[4/3.5] min-[300px]:aspect-[4/3] min-[345px]:aspect-[4/3] sm:aspect-square">
           <div
             className="relative block w-full h-full overflow-hidden bg-gray-100 cursor-pointer rounded-t-sm min-[300px]:rounded-t-md min-[345px]:rounded-t-lg sm:rounded-t-xl"
             onClick={() => {
-              handleModalOpen(!modalOpen, product._id);
-              handleLogEvent(
-                "product",
-                `opened ${showingTranslateValue(product?.title)} product modal via image click`
-              );
+              handleModalOpen(true);
             }}
           >
             <ImageWithFallback
@@ -465,11 +529,57 @@ const ProductCard = ({ product, attributes }) => {
               src={product.image?.[0]}
             />
           </div>
+
+          {/* Discount Tag */}
+          <div className="absolute top-0 left-0 z-10">
+            <Discount product={product} />
+          </div>
+
+          {/* Share Button & Menu */}
+          <div className="absolute top-2 right-2 z-20" ref={shareMenuRef}>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setShareMenuOpen(!shareMenuOpen);
+              }}
+              className="p-1.5 rounded-full bg-slate-950/70 backdrop-blur-md text-white hover:bg-slate-900 transition-all shadow-md active:scale-95 border border-white/10"
+              title="Share"
+            >
+              <IoArrowRedoOutline size={14} className="min-[345px]:size-[16px] sm:size-[18px]" />
+            </button>
+
+            {shareMenuOpen && (
+              <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-xl border border-gray-100 py-2 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                <button
+                  onClick={() => handleShare("copy")}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <IoCopyOutline className="text-gray-400" size={16} />
+                  Copy Link
+                </button>
+                <button
+                  onClick={() => handleShare("whatsapp")}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <IoLogoWhatsapp className="text-[#25D366]" size={16} />
+                  WhatsApp
+                </button>
+                <button
+                  onClick={() => handleShare("email")}
+                  className="w-full flex items-center gap-3 px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                >
+                  <IoMailOutline className="text-blue-500" size={16} />
+                  Email
+                </button>
+              </div>
+            )}
+          </div>
           <div className="absolute lg:bottom-0 bottom-2 sm:bottom-4 lg:group-hover:bottom-4 inset-x-1 opacity-100 flex justify-center lg:opacity-0 lg:invisible group-hover:opacity-100 group-hover:visible transition-all">
             <button
               aria-label="quick view"
               onClick={() => {
-                handleModalOpen(!modalOpen, product._id);
+                handleModalOpen(true);
                 handleLogEvent(
                   "product",
                   `opened ${showingTranslateValue(
