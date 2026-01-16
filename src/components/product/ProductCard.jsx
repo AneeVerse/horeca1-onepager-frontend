@@ -536,7 +536,7 @@ const ProductCard = ({ product, attributes }) => {
           </div>
 
           {/* Share Button & Menu */}
-          <div className="absolute top-2 right-2 z-20" ref={shareMenuRef}>
+          <div className="absolute top-2 right-2 z-10" ref={shareMenuRef}>
             <button
               onClick={(e) => {
                 e.preventDefault();
