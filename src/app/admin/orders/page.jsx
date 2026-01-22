@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import dayjs from "dayjs";
 import {
   EyeIcon,
@@ -40,6 +40,54 @@ export default function OrdersPage() {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [updating, setUpdating] = useState(false);
+  const [tokenReady, setTokenReady] = useState(false);
+
+  // Check for token availability on mount and set up visibility listener
+  useEffect(() => {
+    const checkToken = () => {
+      const token = typeof window !== "undefined" ? localStorage.getItem("adminToken") : null;
+      if (token && token.startsWith('eyJ')) {
+        setTokenReady(true);
+        return true;
+      }
+      return false;
+    };
+
+    // Initial check
+    if (!checkToken()) {
+      // Retry a few times with delay in case token is being set by auth
+      let retryCount = 0;
+      const maxRetries = 5;
+      const retryInterval = setInterval(() => {
+        retryCount++;
+        if (checkToken() || retryCount >= maxRetries) {
+          clearInterval(retryInterval);
+          if (retryCount >= maxRetries) {
+            console.warn("[Admin Orders] Token not found after retries");
+            setLoading(false);
+          }
+        }
+      }, 200);
+
+      return () => clearInterval(retryInterval);
+    }
+  }, []);
+
+  // Track if we should refetch on visibility change
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  // Handle page visibility change to trigger refetch
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && tokenReady) {
+        console.log("[Admin Orders] Page became visible, will refetch orders...");
+        setShouldRefetch(true);
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [tokenReady]);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -126,8 +174,14 @@ export default function OrdersPage() {
   };
 
   useEffect(() => {
-    fetchOrders();
-  }, [page, statusFilter]);
+    if (tokenReady) {
+      fetchOrders();
+      // Reset the refetch flag after fetching
+      if (shouldRefetch) {
+        setShouldRefetch(false);
+      }
+    }
+  }, [page, statusFilter, tokenReady, shouldRefetch]);
 
   const updateOrderStatus = async (orderId, newStatus) => {
     setUpdating(true);
